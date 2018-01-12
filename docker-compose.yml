@@ -1,0 +1,29 @@
+version: '3'
+services:
+  rabbit:
+    image: rabbitmq:3.6-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    hostname: rabbit
+    container_name: rabbit
+  sqlserver:
+    image: microsoft/mssql-server-linux:latest
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Zaq123#!
+    container_name: sqlserver
+  catalog.api:
+    build: ./ECommerce.Catalog.Api
+    image: catalog.api
+    environment:
+      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=Products
+    ports:
+    - "8081:80"
+    depends_on: 
+    - rabbit
+    - sqlserver
+    hostname: catalog.api
+    container_name: catalog.api

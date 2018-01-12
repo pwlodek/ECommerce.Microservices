@@ -1,0 +1,21 @@
+#
+# This docker-compose file runs servers required to host the services.
+# It is useful in debugging scenarios.
+#
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:3.6-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    hostname: rabbit
+    container_name: rabbitmq
+  sqlserver:
+    image: microsoft/mssql-server-linux:latest
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Zaq123#!
+    container_name: sqlserver
