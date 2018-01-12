@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{2BEEC8AE-B036-487F-8309-CCC1317BD1D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Catalog.Api", "ECommerce.Catalog.Api\ECommerce.Catalog.Api.csproj", "{475C076A-91E7-4738-9EE9-E60DFA34C6E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Catalog.Api", "Services\ECommerce.Catalog.Api\ECommerce.Catalog.Api.csproj", "{EE19D81B-E3B9-416C-9E5B-7E6CF3DF3792}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{475C076A-91E7-4738-9EE9-E60DFA34C6E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{475C076A-91E7-4738-9EE9-E60DFA34C6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{475C076A-91E7-4738-9EE9-E60DFA34C6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{475C076A-91E7-4738-9EE9-E60DFA34C6E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE19D81B-E3B9-416C-9E5B-7E6CF3DF3792}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE19D81B-E3B9-416C-9E5B-7E6CF3DF3792}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE19D81B-E3B9-416C-9E5B-7E6CF3DF3792}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE19D81B-E3B9-416C-9E5B-7E6CF3DF3792}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{475C076A-91E7-4738-9EE9-E60DFA34C6E1} = {2BEEC8AE-B036-487F-8309-CCC1317BD1D0}
+		{EE19D81B-E3B9-416C-9E5B-7E6CF3DF3792} = {2BEEC8AE-B036-487F-8309-CCC1317BD1D0}
 	EndGlobalSection
 EndGlobal
