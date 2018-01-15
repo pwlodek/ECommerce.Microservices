@@ -32,3 +32,17 @@ services:
     - sqlserver
     hostname: catalog.api
     container_name: catalog.api
+
+  customers.api:
+    build: ./Services/ECommerce.Customers.Api
+    image: customers.api
+    environment:
+      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers
+      - RabbitHost=rabbitmq://rabbit
+    ports:
+    - "8082:80"
+    depends_on: 
+    - rabbit
+    - sqlserver
+    hostname: customers.api
+    container_name: customers.api

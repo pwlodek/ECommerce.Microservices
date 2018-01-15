@@ -44,3 +44,7 @@ CREATE TABLE [dbo].[Customers](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
  
 GO
+
+INSERT INTO [dbo].[Customers] VALUES ('John', 'Kowalski')
+INSERT INTO [dbo].[Customers] VALUES ('Roman', 'Polanski')
+INSERT INTO [dbo].[Customers] VALUES ('Jeff', 'Bridges')

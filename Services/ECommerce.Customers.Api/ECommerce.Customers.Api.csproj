@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +11,7 @@
     <PackageReference Include="MassTransit" Version="4.0.0" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
+    <PackageReference Include="Dapper" Version="1.50.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,5 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
+    <Folder Include="Model\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ECommerce.Customers.Api.Configuration;
+using ECommerce.Customers.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,8 +24,16 @@ namespace ECommerce.Customers.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            var rabbitHost = Configuration["RabbitHost"];
+            Console.WriteLine($"Using RabbitHost='{rabbitHost}'.");
+
+            var connectionString = Configuration["ConnectionString"];
+            Console.WriteLine($"Using connectionString='{connectionString}'.");
+
             services.AddMvc();
-            services.AddMassTransitUsingRabbit();
+            services.AddScoped<ICustomerRepository>(c => new CustomerRepository(connectionString));
+            services.AddMassTransitUsingRabbit(rabbitHost);
+
             Container = services.AddAutofac();
 
             return new AutofacServiceProvider(Container);

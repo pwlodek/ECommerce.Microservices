@@ -10,13 +10,13 @@ namespace ECommerce.Customers.Api.Configuration
 {
     public static class MassTransitConfiguration
     {
-        public static void AddMassTransitUsingRabbit(this IServiceCollection services)
+        public static void AddMassTransitUsingRabbit(this IServiceCollection services, string host)
         {
-            WaitForRabbit();
+            WaitForRabbit(host);
 
             var bus = Bus.Factory.CreateUsingRabbitMq(sbc =>
             {
-                sbc.Host("localhost", "/", h =>
+                sbc.Host(new Uri($"rabbitmq://{host}"), h =>
                 {
                     h.Username("guest");
                     h.Password("guest");
@@ -39,9 +39,9 @@ namespace ECommerce.Customers.Api.Configuration
             lifetime.ApplicationStopping.Register(() => bus.Stop());
         }
 
-        private static void WaitForRabbit()
+        private static void WaitForRabbit(string host)
         {
-            var factory = new ConnectionFactory() { HostName = "localhost", Port = 5672, UserName = "guest", Password = "guest" };
+            var factory = new ConnectionFactory() { HostName = host, Port = 5672, UserName = "guest", Password = "guest" };
             GetConnection(factory);
         }
 
