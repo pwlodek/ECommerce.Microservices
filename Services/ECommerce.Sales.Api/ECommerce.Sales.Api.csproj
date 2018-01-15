@@ -9,6 +9,7 @@
     <PackageReference Include="MassTransit" Version="4.0.0" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
+    <PackageReference Include="MassTransit.Autofac" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +19,7 @@
   <ItemGroup>
     <Folder Include="Model\" />
     <Folder Include="Consumers\" />
+    <Folder Include="Modules\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Model\Order.config" />

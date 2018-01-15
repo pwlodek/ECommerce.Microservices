@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ECommerce.Sales.Api.Consumers;
+using ECommerce.Sales.Api.Modules;
 using ECommerce.Services.Common.Configuration;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
@@ -34,15 +36,15 @@ namespace ECommerce.Sales.Api
             Console.WriteLine($"Using connectionString='{connectionString}'.");
 
             services.AddMvc();
-            services.AddMassTransitUsingRabbit(rabbitHost, sbc => {
+            services.WaitForRabbitMq(rabbitHost);
 
-                sbc.ReceiveEndpoint("test", ep =>
-                {
-                    ep.Consumer<SubmitOrderCommandConsumer>();
-                });
-            });
+            var builder = new ContainerBuilder();
 
-            var container = services.AddAutofac();
+            builder.Populate(services);
+            builder.RegisterModule<BusModule>();
+            builder.RegisterModule<ConsumerModule>();
+
+            var container = builder.Build();
 
             return new AutofacServiceProvider(container);
         }

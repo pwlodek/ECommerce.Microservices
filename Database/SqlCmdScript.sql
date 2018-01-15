@@ -63,8 +63,8 @@ GO
 CREATE TABLE [dbo].[Orders](
     [OrderId] [int] IDENTITY(1,1) NOT NULL,
     [CustomerId] [int] NOT NULL,
-    [Status] [nvarchar](max) NULL,
-    [Total] [float] NULL,
+    [Status] [int] NOT NULL,
+    [Total] [float] NOT NULL,
  CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
 (
     [OrderId] ASC

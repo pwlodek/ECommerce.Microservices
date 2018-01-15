@@ -16,8 +16,12 @@ namespace ECommerce.Sales.Api.Consumers
         {
             using (SalesContext ctx = new SalesContext())
             {
-                var order = new Order() { CustomerId = 1, Status = OrderStatus.Submitted, Total = 10 };
-                order.Items.Add(new OrderItem() { Name = "sdf", Price = 123, Quantity = 111 });
+                var order = new Order() { CustomerId = context.Message.CustomerId };
+
+                foreach (var item in context.Message.Items)
+                {
+                    order.Items.Add(new OrderItem() {  ProductId = item.ProductId, Quantity = item.Quantity, Name = "sdf", Price = 7878});
+                }
 
                 ctx.Orders.Add(order);
                 ctx.SaveChanges();

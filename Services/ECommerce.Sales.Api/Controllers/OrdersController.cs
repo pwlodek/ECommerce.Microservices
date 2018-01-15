@@ -24,10 +24,17 @@ namespace ECommerce.Sales.Api.Controllers
         [HttpGet]
         public IEnumerable<Order> Get()
         {
-            using (SalesContext ctx = new SalesContext())
+            try
             {
-                var orders = ctx.Orders.Include(o => o.Items).ToList();
-                return orders;
+                using (SalesContext ctx = new SalesContext())
+                {
+                    var orders = ctx.Orders.Include(o => o.Items).ToList();
+                    return orders;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 

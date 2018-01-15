@@ -11,6 +11,11 @@ namespace ECommerce.Services.Common.Configuration
 {
     public static class MassTransitConfiguration
     {
+        public static void WaitForRabbitMq(this IServiceCollection services, string host)
+        {
+            WaitForRabbit(host);
+        }
+
         public static void AddMassTransitUsingRabbit(this IServiceCollection services, string host, Action<IRabbitMqBusFactoryConfigurator> cfg)
         {
             WaitForRabbit(host);

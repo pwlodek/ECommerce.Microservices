@@ -8,6 +8,8 @@ namespace ECommerce.Sales.Api.Model
         [Key]
         public int OrderItemId { get; set; }
 
+        public int OrderId { get; set; }
+
         public int ProductId { get; set; }
 
         public string Name { get; set; }
