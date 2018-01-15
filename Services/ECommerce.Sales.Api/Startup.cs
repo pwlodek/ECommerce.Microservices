@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
+using ECommerce.Sales.Api.Consumers;
 using ECommerce.Services.Common.Configuration;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +35,11 @@ namespace ECommerce.Sales.Api
 
             services.AddMvc();
             services.AddMassTransitUsingRabbit(rabbitHost, sbc => {
-                
+
+                sbc.ReceiveEndpoint("test", ep =>
+                {
+                    ep.Consumer<SubmitOrderCommandConsumer>();
+                });
             });
 
             var container = services.AddAutofac();

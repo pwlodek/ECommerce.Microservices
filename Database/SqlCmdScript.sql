@@ -23,6 +23,7 @@ GO
 INSERT INTO [dbo].[Products] VALUES ('Carrots', 15, 153)
 INSERT INTO [dbo].[Products] VALUES ('Meat', 100, 200)
 INSERT INTO [dbo].[Products] VALUES ('Beans', 150, 300)
+GO
 
 ---
 --- Customers Database
@@ -48,12 +49,15 @@ GO
 INSERT INTO [dbo].[Customers] VALUES ('John', 'Kowalski')
 INSERT INTO [dbo].[Customers] VALUES ('Roman', 'Polanski')
 INSERT INTO [dbo].[Customers] VALUES ('Jeff', 'Bridges')
-
+GO
 
 ---
 --- Sales Database
 ---
 CREATE DATABASE [Ecommerce.Sales];
+GO
+
+USE [Ecommerce.Sales];
 GO
 
 CREATE TABLE [dbo].[Orders](
