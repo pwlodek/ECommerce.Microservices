@@ -11,19 +11,19 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/products",
+      "launchUrl": "api/values",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ECommerce.Catalog.Api": {
+    "ECommerce.Sales.Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/products",
+      "launchUrl": "api/values",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5001/"
+      "applicationUrl": "http://localhost:5000/"
     }
   }
 }
