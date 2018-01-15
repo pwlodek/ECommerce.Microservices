@@ -3,7 +3,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ECommerce.Customers.Api.Configuration
+namespace ECommerce.Services.Common.Configuration
 {
     public static class AutofacConfiguration
     {

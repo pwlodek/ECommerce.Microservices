@@ -19,7 +19,7 @@
     "ECommerce.Sales.Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/orders",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

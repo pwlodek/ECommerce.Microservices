@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Threading;
 using MassTransit;
+using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 
-namespace ECommerce.Customers.Api.Configuration
+namespace ECommerce.Services.Common.Configuration
 {
     public static class MassTransitConfiguration
     {
-        public static void AddMassTransitUsingRabbit(this IServiceCollection services, string host)
+        public static void AddMassTransitUsingRabbit(this IServiceCollection services, string host, Action<IRabbitMqBusFactoryConfigurator> cfg)
         {
             WaitForRabbit(host);
 
@@ -23,6 +24,7 @@ namespace ECommerce.Customers.Api.Configuration
                 });
 
                 sbc.ExchangeType = ExchangeType.Fanout;
+                cfg(sbc);
             });
 
             services.Add(new ServiceDescriptor(typeof(IBus), bus));

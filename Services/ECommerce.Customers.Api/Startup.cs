@@ -1,8 +1,8 @@
 ﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using ECommerce.Customers.Api.Configuration;
 using ECommerce.Customers.Api.Services;
+using ECommerce.Services.Common.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +32,9 @@ namespace ECommerce.Customers.Api
 
             services.AddMvc();
             services.AddScoped<ICustomerRepository>(c => new CustomerRepository(connectionString));
-            services.AddMassTransitUsingRabbit(rabbitHost);
+            services.AddMassTransitUsingRabbit(rabbitHost, sbc => {
+
+            });
 
             Container = services.AddAutofac();
 

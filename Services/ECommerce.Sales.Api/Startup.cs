@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac.Extensions.DependencyInjection;
+using ECommerce.Services.Common.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,13 +23,26 @@ namespace ECommerce.Sales.Api
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            var rabbitHost = Configuration["RabbitHost"];
+            Console.WriteLine($"Using RabbitHost='{rabbitHost}'.");
+
+            var connectionString = Configuration["ConnectionString"];
+            Console.WriteLine($"Using connectionString='{connectionString}'.");
+
             services.AddMvc();
+            services.AddMassTransitUsingRabbit(rabbitHost, sbc => {
+                
+            });
+
+            var container = services.AddAutofac();
+
+            return new AutofacServiceProvider(container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -35,6 +50,7 @@ namespace ECommerce.Sales.Api
             }
 
             app.UseMvc();
+            app.UseMassTransit();
         }
     }
 }

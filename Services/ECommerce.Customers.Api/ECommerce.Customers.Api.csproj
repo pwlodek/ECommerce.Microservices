@@ -19,8 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
     <Folder Include="Model\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECommerce.Services.Common\ECommerce.Services.Common.csproj" />
   </ItemGroup>
 </Project>
