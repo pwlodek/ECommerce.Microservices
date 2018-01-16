@@ -3,20 +3,25 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ECommerce.Sales.Api.Model;
+using Microsoft.Extensions.Configuration;
 
 namespace ECommerce.Sales.Api.Services
 {
     public class DataService : IDataService
     {
-        public DataService()
+        private readonly IConfiguration _configuration;
+
+        public DataService(IConfiguration configuration)
         {
+            this._configuration = configuration;
         }
 
         public async Task<Customer> GetCustomerAsync(int id)
         {
             using (HttpClient client = new HttpClient())
             {
-                var response = await client.GetStringAsync($"http://localhost:5001/api/customers/{id}");
+                var customersServiceHost = _configuration["CustomersServiceHost"];
+                var response = await client.GetStringAsync($"http://{customersServiceHost}/api/customers/{id}");
                 var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(response);
                 return obj;
             }
@@ -26,7 +31,8 @@ namespace ECommerce.Sales.Api.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                var response = await client.GetStringAsync($"http://localhost:5000/api/products");
+                var catalogServiceHost = _configuration["CatalogServiceHost"];
+                var response = await client.GetStringAsync($"http://{catalogServiceHost}/api/products");
                 var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Product>>(response);
                 return obj;
             }
