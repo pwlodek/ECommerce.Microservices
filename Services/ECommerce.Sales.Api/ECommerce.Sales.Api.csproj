@@ -10,6 +10,7 @@
     <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
     <PackageReference Include="MassTransit.Autofac" Version="4.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +21,7 @@
     <Folder Include="Model\" />
     <Folder Include="Consumers\" />
     <Folder Include="Modules\" />
+    <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Model\Order.config" />

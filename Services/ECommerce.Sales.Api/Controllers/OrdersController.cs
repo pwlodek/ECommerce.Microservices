@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ECommerce.Common.Commands;
 using ECommerce.Sales.Api.Model;
 using MassTransit;
@@ -24,17 +23,10 @@ namespace ECommerce.Sales.Api.Controllers
         [HttpGet]
         public IEnumerable<Order> Get()
         {
-            try
+            using (SalesContext ctx = new SalesContext())
             {
-                using (SalesContext ctx = new SalesContext())
-                {
-                    var orders = ctx.Orders.Include(o => o.Items).ToList();
-                    return orders;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
+                var orders = ctx.Orders.Include(o => o.Items).ToList();
+                return orders;
             }
         }
 

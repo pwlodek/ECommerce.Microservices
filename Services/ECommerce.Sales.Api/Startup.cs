@@ -6,6 +6,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ECommerce.Sales.Api.Consumers;
 using ECommerce.Sales.Api.Modules;
+using ECommerce.Sales.Api.Services;
 using ECommerce.Services.Common.Configuration;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
@@ -43,6 +44,7 @@ namespace ECommerce.Sales.Api
             builder.Populate(services);
             builder.RegisterModule<BusModule>();
             builder.RegisterModule<ConsumerModule>();
+            builder.RegisterType<DataService>().As<IDataService>();
 
             var container = builder.Build();
 
