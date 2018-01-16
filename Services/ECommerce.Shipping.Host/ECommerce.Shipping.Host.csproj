@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit.Automatonymous" Version="4.0.0" />
+    <PackageReference Include="Automatonymous" Version="3.6.1" />
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="MassTransit.Autofac" Version="4.0.0" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0" />
+    <PackageReference Include="MassTransit" Version="4.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Modules\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECommerce.Common\ECommerce.Common.csproj" />
+  </ItemGroup>
+</Project>
