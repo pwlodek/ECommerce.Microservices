@@ -32,7 +32,7 @@ namespace ECommerce.Sales.Api.Controllers
 
         // POST api/orders
         [HttpPost]
-        public void Post([FromBody]SubmitOrder submittedOrder)
+        public async void Post([FromBody]SubmitOrder submittedOrder)
         {
             var command = new SubmitOrderCommand()
             {
@@ -40,7 +40,8 @@ namespace ECommerce.Sales.Api.Controllers
                 Items = submittedOrder.Items.Select(t => new Item() { ProductId = t.ProductId, Quantity = t.Quantity }).ToArray()
             };
 
-            _bus.Publish(command);
+            var sendEndpoint = await _bus.GetSendEndpoint(new Uri("rabbitmq://localhost/submit_orders"));
+            await sendEndpoint.Send(command);
         }
     }
 }

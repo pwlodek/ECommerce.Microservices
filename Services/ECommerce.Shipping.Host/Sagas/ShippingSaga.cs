@@ -27,7 +27,7 @@ namespace ECommerce.Shipping.Host.Sagas
             During(Submitted,
                    When(PaymentReceived).Then(OnPaymentReceived),
                    When(OrderPacked).Then(OnOrderPacked),
-                   When(OrderCompleted).Then(OnOrderComplete).Finalize()
+                   When(OrderCompleted).Then(OnOrderComplete).TransitionTo(Shipped).Finalize()
                   );
 
             SetCompletedWhenFinalized();

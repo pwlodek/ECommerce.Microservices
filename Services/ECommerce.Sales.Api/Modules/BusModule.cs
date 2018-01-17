@@ -26,6 +26,11 @@ namespace ECommerce.Sales.Api.Modules
                     {
                         e.LoadFrom(context);
                     });
+
+                    cfg.ReceiveEndpoint(host, "submit_orders", e =>
+                    {
+                        e.LoadFrom(context);
+                    });
                 });
 
                 return busControl;
