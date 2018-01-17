@@ -9,6 +9,7 @@ namespace ECommerce.Sales.Api.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<SubmitOrderCommandConsumer>();
+            builder.RegisterType<OrderCompletedEventConsumer>();
         }
     }
 }

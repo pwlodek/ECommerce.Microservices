@@ -14,6 +14,7 @@ namespace ECommerce.Shipping.Host.Consumers
 
         public async Task Consume(ConsumeContext<InitiateOrderPackingCommand> context)
         {
+            await Task.Delay(1500);
             await context.Publish(new OrderPackedEvent()
             {
                 OrderId = context.Message.OrderId,
