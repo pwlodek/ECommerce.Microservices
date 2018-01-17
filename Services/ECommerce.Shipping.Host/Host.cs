@@ -17,7 +17,7 @@ namespace ECommerce.Shipping.Host
             var builder = new ContainerBuilder();
 
             builder.RegisterModule<BusModule>();
-            //builder.RegisterModule<ConsumerModule>();
+            builder.RegisterModule<ConsumerModule>();
 
             var container = builder.Build();
             var bus = container.Resolve<IBusControl>();

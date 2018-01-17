@@ -12,9 +12,12 @@
     <PackageReference Include="MassTransit.Autofac" Version="4.0.0" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0" />
     <PackageReference Include="MassTransit" Version="4.0.0" />
+    <PackageReference Include="MassTransit.Automatonymous.Autofac" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Modules\" />
+    <Folder Include="Sagas\" />
+    <Folder Include="Consumers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ECommerce.Common\ECommerce.Common.csproj" />

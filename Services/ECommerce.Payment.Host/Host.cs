@@ -23,6 +23,7 @@ namespace ECommerce.Payment.Host
             var bus = container.Resolve<IBusControl>();
             bus.Start();
 
+            Console.WriteLine("Running Payment microservice.");
             Thread.Sleep(int.MaxValue);
         }
     }

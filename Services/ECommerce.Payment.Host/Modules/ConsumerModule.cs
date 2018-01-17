@@ -9,6 +9,7 @@ namespace ECommerce.Payment.Host.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<OrderSubmittedEventConsumer>();
+            builder.RegisterType<InitiatePaymentCommandConsumer>();
         }
     }
 }
