@@ -5,13 +5,16 @@ namespace ECommerce.Sales.Api.Model
 {
     public class SalesContext : DbContext
     {
-        public SalesContext()
+        private readonly string _connectionString;
+
+        public SalesContext(string connectionString)
         {
+            _connectionString = connectionString;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=localhost;Database=ECommerce.Sales;User Id=sa;Password=Zaq123#!;");
+            optionsBuilder.UseSqlServer(_connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

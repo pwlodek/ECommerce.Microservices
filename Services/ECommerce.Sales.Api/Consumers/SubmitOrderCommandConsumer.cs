@@ -6,16 +6,20 @@ using ECommerce.Common.Events;
 using ECommerce.Sales.Api.Model;
 using ECommerce.Sales.Api.Services;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
 
 namespace ECommerce.Sales.Api.Consumers
 {
     public class SubmitOrderCommandConsumer : IConsumer<SubmitOrderCommand>
     {
-        readonly IDataService _dataService;
+        private readonly IDataService _dataService;
 
-        public SubmitOrderCommandConsumer(IDataService dataService)
+        private readonly IConfiguration _cfg;
+
+        public SubmitOrderCommandConsumer(IDataService dataService, IConfiguration cfg)
         {
-            this._dataService = dataService;
+            _dataService = dataService;
+            _cfg = cfg;
         }
 
         public async Task Consume(ConsumeContext<SubmitOrderCommand> context)
@@ -30,7 +34,7 @@ namespace ECommerce.Sales.Api.Consumers
             var products = await _dataService.GetProductsAsync();
             var order = new Order() { CustomerId = context.Message.CustomerId };
 
-            using (SalesContext ctx = new SalesContext())
+            using (SalesContext ctx = new SalesContext(_cfg["ConnectionString"]))
             {
                 double total = 0.0;
                 foreach (var item in context.Message.Items)

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ECommerce.Common;
 using ECommerce.Common.Commands;
 using ECommerce.Sales.Api.Model;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ECommerce.Sales.Api.Controllers
 {
@@ -13,17 +15,19 @@ namespace ECommerce.Sales.Api.Controllers
     public class OrdersController : Controller
     {
         private readonly IBus _bus;
+        private readonly IConfiguration _cfg;
 
-        public OrdersController(IBus bus)
+        public OrdersController(IBus bus, IConfiguration cfg)
         {
-            this._bus = bus;
+            _bus = bus;
+            _cfg = cfg;
         }
 
         // GET api/orders
         [HttpGet]
         public IEnumerable<Order> Get()
         {
-            using (SalesContext ctx = new SalesContext())
+            using (SalesContext ctx = new SalesContext(_cfg["ConnectionString"]))
             {
                 var orders = ctx.Orders.Include(o => o.Items).ToList();
                 return orders;
@@ -40,7 +44,7 @@ namespace ECommerce.Sales.Api.Controllers
                 Items = submittedOrder.Items.Select(t => new Item() { ProductId = t.ProductId, Quantity = t.Quantity }).ToArray()
             };
 
-            var sendEndpoint = await _bus.GetSendEndpoint(new Uri("rabbitmq://localhost/submit_orders"));
+            var sendEndpoint = await _bus.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/submit_orders"));
             await sendEndpoint.Send(command);
         }
     }

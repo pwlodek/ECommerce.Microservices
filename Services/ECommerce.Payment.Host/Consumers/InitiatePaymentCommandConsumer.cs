@@ -16,6 +16,8 @@ namespace ECommerce.Payment.Host.Consumers
         {
             await Task.Delay(2000); // simulate payment
 
+            Console.WriteLine($"Processing payment for order {context.Message.OrderId} by customer {context.Message.CustomerId} in the amount of {context.Message.Total}");
+
             // Payment was accepted
             await context.Publish(new PaymentAcceptedEvent() { 
                 OrderId = context.Message.OrderId,

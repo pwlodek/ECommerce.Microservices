@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ECommerce.Common;
 using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
 using MassTransit;
@@ -14,7 +15,7 @@ namespace ECommerce.Payment.Host.Consumers
 
         public async Task Consume(ConsumeContext<OrderSubmittedEvent> context)
         {
-            var endpoint = await context.GetSendEndpoint(new Uri("rabbitmq://localhost/payment"));
+            var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/payment"));
             await endpoint.Send(new InitiatePaymentCommand() {
                 CustomerId = context.Message.CustomerId,
                 OrderId = context.Message.OrderId,
