@@ -9,6 +9,7 @@ using ECommerce.Sales.Api.Modules;
 using ECommerce.Sales.Api.Services;
 using ECommerce.Services.Common.Configuration;
 using MassTransit;
+using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,8 @@ namespace ECommerce.Sales.Api
             Configuration = configuration;
         }
 
+        public IContainer Container { get; private set; }
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -36,8 +39,11 @@ namespace ECommerce.Sales.Api
             var connectionString = Configuration["ConnectionString"];
             Console.WriteLine($"Using connectionString='{connectionString}'.");
 
+            var waiter = new DependencyAwaiter();
+            waiter.WaitForRabbit(rabbitHost);
+            waiter.WaitForSql(connectionString);
+
             services.AddMvc();
-            services.WaitForRabbitMq(rabbitHost);
 
             var builder = new ContainerBuilder();
 
@@ -46,9 +52,9 @@ namespace ECommerce.Sales.Api
             builder.RegisterModule<ConsumerModule>();
             builder.RegisterType<DataService>().As<IDataService>();
 
-            var container = builder.Build();
+            Container = builder.Build();
 
-            return new AutofacServiceProvider(container);
+            return new AutofacServiceProvider(Container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +66,10 @@ namespace ECommerce.Sales.Api
             }
 
             app.UseMvc();
-            app.UseMassTransit();
+
+            var bus = Container.Resolve<IBusControl>();
+            var busHandle = TaskUtil.Await(() => bus.StartAsync());
+            lifetime.ApplicationStopping.Register(() => busHandle.Stop());
         }
     }
 }

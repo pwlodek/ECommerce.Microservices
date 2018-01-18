@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using Autofac;
+using ECommerce.Common;
+using ECommerce.Services.Common.Configuration;
 using ECommerce.Shipping.Host.Modules;
 using MassTransit;
 
@@ -14,6 +16,9 @@ namespace ECommerce.Shipping.Host
 
         public void Run()
         {
+            var waiter = new DependencyAwaiter();
+            waiter.WaitForRabbit(Configuration.RabbitMqHost);
+
             var builder = new ContainerBuilder();
 
             builder.RegisterModule<BusModule>();

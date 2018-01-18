@@ -18,4 +18,8 @@
     <Folder Include="Models\" />
     <Folder Include="Services\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECommerce.Services.Common\ECommerce.Services.Common.csproj" />
+    <ProjectReference Include="..\ECommerce.Common\ECommerce.Common.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ECommerce.Catalog.Api.Services;
+using ECommerce.Services.Common.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace ECommerce.Catalog.Api
 {
@@ -26,6 +22,9 @@ namespace ECommerce.Catalog.Api
         {
             var connectionString = Configuration["ConnectionString"];
             Console.WriteLine($"Using connectionString='{connectionString}'.");
+
+            var waiter = new DependencyAwaiter();
+            waiter.WaitForSql(connectionString);
 
             services.AddMvc();
             services.AddScoped<IProductRepository>(c => new ProductRepository(connectionString));
