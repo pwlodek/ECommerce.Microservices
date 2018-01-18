@@ -14,6 +14,8 @@ namespace ECommerce.Shipping.Host.Consumers
 
         public async Task Consume(ConsumeContext<ShipOrderCommand> context)
         {
+            await Task.Delay(2000); // shipping takes some time!
+
             await context.Publish(new OrderCompletedEvent() { 
                 OrderId = context.Message.OrderId,
                 CustomerId = context.Message.CustomerId

@@ -14,7 +14,8 @@ namespace ECommerce.Payment.Host.Consumers
 
         public async Task Consume(ConsumeContext<OrderSubmittedEvent> context)
         {
-            await context.Publish(new InitiatePaymentCommand() {
+            var endpoint = await context.GetSendEndpoint(new Uri("rabbitmq://localhost/payment"));
+            await endpoint.Send(new InitiatePaymentCommand() {
                 CustomerId = context.Message.CustomerId,
                 OrderId = context.Message.OrderId,
                 Total = context.Message.Total

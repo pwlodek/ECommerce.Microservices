@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using ECommerce.Payment.Host.Consumers;
 using MassTransit;
 
 namespace ECommerce.Payment.Host.Modules
@@ -20,9 +21,14 @@ namespace ECommerce.Payment.Host.Modules
                     });
 
                     // https://stackoverflow.com/questions/39573721/disable-round-robin-pattern-and-use-fanout-on-masstransit
-                    cfg.ReceiveEndpoint(host, "test" + Guid.NewGuid().ToString(), e =>
+                    cfg.ReceiveEndpoint(host, "ecommerce_main_fanout" + Guid.NewGuid().ToString(), e =>
                     {
-                        e.LoadFrom(context);
+                        e.Consumer<OrderSubmittedEventConsumer>(context);
+                    });
+
+                    cfg.ReceiveEndpoint(host, "payment", e =>
+                    {
+                        e.Consumer<InitiatePaymentCommandConsumer>(context);
                     });
                 });
 
