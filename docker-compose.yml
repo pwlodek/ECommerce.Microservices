@@ -1,5 +1,7 @@
 version: '3'
 services:
+
+  # Rabbit MQ
   rabbit:
     image: rabbitmq:3.6-management
     ports:
@@ -8,6 +10,7 @@ services:
     hostname: rabbit
     container_name: rabbit
   
+  # SQL Server for Linux
   sqlserver:
     image: sqlserver
     build:
@@ -20,6 +23,7 @@ services:
       - SA_PASSWORD=Zaq123#!
     container_name: sqlserver
   
+  # Catalog Microservice
   catalog.api:
     build: ./Services/ECommerce.Catalog.Api
     image: catalog.api
@@ -33,12 +37,13 @@ services:
     hostname: catalog.api
     container_name: catalog.api
 
+  # Customers Microservice
   customers.api:
     build: ./Services/ECommerce.Customers.Api
     image: customers.api
     environment:
       - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers
-      - RabbitHost=rabbitmq://rabbit
+      - RabbitHost=rabbit
     ports:
     - "8082:80"
     depends_on: 
@@ -46,3 +51,42 @@ services:
     - sqlserver
     hostname: customers.api
     container_name: customers.api
+
+  # Sales Microservice
+  sales.api:
+    build: ./Services/ECommerce.Sales.Api
+    image: sales.api
+    environment:
+      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales
+      - RabbitHost=rabbit
+      - CustomersServiceHost=customers.api
+      - CatalogServiceHost=catalog.api
+    ports:
+    - "8083:80"
+    depends_on: 
+    - rabbit
+    - sqlserver
+    hostname: sales.api
+    container_name: sales.api
+
+  # Payment Microservice
+  payment.host:
+    build: ./Services/ECommerce.Payment.Host
+    image: payment.host
+    environment:
+      - RabbitHost=rabbit
+    depends_on: 
+    - rabbit
+    hostname: payment.host
+    container_name: payment.host
+
+  # Shipping Microservice
+  shipping.host:
+    build: ./Services/ECommerce.Shipping.Host
+    image: shipping.host
+    environment:
+      - RabbitHost=rabbit
+    depends_on: 
+    - rabbit
+    hostname: shipping.host
+    container_name: shipping.host
