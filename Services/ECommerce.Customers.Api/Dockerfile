@@ -2,6 +2,6 @@
 
 EXPOSE 80
 WORKDIR /app
-COPY /bin/Debug/netcoreapp2.0 .
+COPY /bin/Debug/netcoreapp2.0/publish .
 
 ENTRYPOINT ["dotnet", "ECommerce.Customers.Api.dll"]
