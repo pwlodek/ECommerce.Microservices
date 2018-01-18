@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using ECommerce.Common;
 using ECommerce.Payment.Host.Consumers;
 using MassTransit;
 
@@ -11,10 +12,9 @@ namespace ECommerce.Payment.Host.Modules
         {
             builder.Register(context =>
             {
-                var rabbitHost = "localhost";
                 var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    var host = cfg.Host(new Uri($"rabbitmq://{rabbitHost}"), h =>
+                    var host = cfg.Host(new Uri($"rabbitmq://{Configuration.RabbitMqHost}"), h =>
                     {
                         h.Username("guest");
                         h.Password("guest");
