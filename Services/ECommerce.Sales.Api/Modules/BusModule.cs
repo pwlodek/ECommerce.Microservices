@@ -25,10 +25,15 @@ namespace ECommerce.Sales.Api.Modules
                     // https://stackoverflow.com/questions/39573721/disable-round-robin-pattern-and-use-fanout-on-masstransit
                     cfg.ReceiveEndpoint(host, "ecommerce_main_fanout" + Guid.NewGuid().ToString(), e =>
                     {
+                        
+                    });
+
+                    cfg.ReceiveEndpoint(host, "sales_fanout", e =>
+                    {
                         e.Consumer<OrderCompletedEventConsumer>(context);
                     });
 
-                    cfg.ReceiveEndpoint(host, "submit_orders", e =>
+                    cfg.ReceiveEndpoint(host, "sales_submit_orders", e =>
                     {
                         e.Consumer<SubmitOrderCommandConsumer>(context);
                     });

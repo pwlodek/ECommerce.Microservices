@@ -23,10 +23,14 @@ namespace ECommerce.Payment.Host.Modules
                     // https://stackoverflow.com/questions/39573721/disable-round-robin-pattern-and-use-fanout-on-masstransit
                     cfg.ReceiveEndpoint(host, "ecommerce_main_fanout" + Guid.NewGuid().ToString(), e =>
                     {
+                    });
+
+                    cfg.ReceiveEndpoint(host, "payment_fanout", e =>
+                    {
                         e.Consumer<OrderSubmittedEventConsumer>(context);
                     });
 
-                    cfg.ReceiveEndpoint(host, "payment", e =>
+                    cfg.ReceiveEndpoint(host, "payment_initiate_payment", e =>
                     {
                         e.Consumer<InitiatePaymentCommandConsumer>(context);
                     });

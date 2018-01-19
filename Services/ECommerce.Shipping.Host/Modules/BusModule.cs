@@ -23,15 +23,19 @@ namespace ECommerce.Shipping.Host.Modules
                     // https://stackoverflow.com/questions/39573721/disable-round-robin-pattern-and-use-fanout-on-masstransit
                     cfg.ReceiveEndpoint(host, "ecommerce_main_fanout" + Guid.NewGuid().ToString(), e =>
                     {
+                    });
+
+                    cfg.ReceiveEndpoint(host, "shipping_fanout", e =>
+                    {
                         e.LoadStateMachineSagas(context);
                     });
 
-                    cfg.ReceiveEndpoint(host, "shiporder", e =>
+                    cfg.ReceiveEndpoint(host, "shipping_shiporder", e =>
                     {
                         e.Consumer<ShipOrderCommandConsumer>(context);
                     });
 
-                    cfg.ReceiveEndpoint(host, "packorder", e =>
+                    cfg.ReceiveEndpoint(host, "shipping_packorder", e =>
                     {
                         e.Consumer<InitiateOrderPackingCommandConsumer>(context);
                     });

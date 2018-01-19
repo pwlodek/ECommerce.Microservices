@@ -44,7 +44,7 @@ namespace ECommerce.Sales.Api.Controllers
                 Items = submittedOrder.Items.Select(t => new Item() { ProductId = t.ProductId, Quantity = t.Quantity }).ToArray()
             };
 
-            var sendEndpoint = await _bus.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/submit_orders"));
+            var sendEndpoint = await _bus.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/sales_submit_orders"));
             await sendEndpoint.Send(command);
         }
     }

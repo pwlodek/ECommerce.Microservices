@@ -41,7 +41,7 @@ namespace ECommerce.Shipping.Host.Sagas
 
             Console.WriteLine($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId}");
 
-            var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/packorder"));
+            var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shipping_packorder"));
             await endpoint.Send(new InitiateOrderPackingCommand() { CustomerId = context.Instance.CustomerId, OrderId = context.Instance.OrderId });
         }
 
@@ -52,7 +52,7 @@ namespace ECommerce.Shipping.Host.Sagas
 
             if (context.Instance.IsPacked && context.Instance.IsPayed)
             {
-                var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shiporder"));
+                var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shipping_shiporder"));
                 await endpoint.Send(new ShipOrderCommand() { CustomerId = context.Instance.CustomerId, OrderId = context.Instance.OrderId });
             }
         }
@@ -64,7 +64,7 @@ namespace ECommerce.Shipping.Host.Sagas
 
             if (context.Instance.IsPacked && context.Instance.IsPayed)
             {
-                var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shiporder"));
+                var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shipping_shiporder"));
                 await endpoint.Send(new ShipOrderCommand() { CustomerId = context.Instance.CustomerId, OrderId = context.Instance.OrderId });
             }
         }
