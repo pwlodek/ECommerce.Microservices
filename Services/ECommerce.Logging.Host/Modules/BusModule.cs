@@ -1,11 +1,10 @@
 ﻿using System;
 using Autofac;
 using ECommerce.Common;
-using ECommerce.Payment.Host.Consumers;
-using ECommerce.Services.Common.Logging;
+using ECommerce.Logging.Host.Consumers;
 using MassTransit;
 
-namespace ECommerce.Payment.Host.Modules
+namespace ECommerce.Logging.Host.Modules
 {
     internal class BusModule : Module
     {
@@ -21,23 +20,11 @@ namespace ECommerce.Payment.Host.Modules
                         h.Password("guest");
                     });
 
-                    // https://stackoverflow.com/questions/39573721/disable-round-robin-pattern-and-use-fanout-on-masstransit
-                    cfg.ReceiveEndpoint(host, "ecommerce_main_fanout" + Guid.NewGuid().ToString(), e =>
+                    cfg.ReceiveEndpoint(host, "logging", e =>
                     {
-                    });
-
-                    cfg.ReceiveEndpoint(host, "payment_fanout", e =>
-                    {
-                        e.Consumer<OrderSubmittedEventConsumer>(context);
-                    });
-
-                    cfg.ReceiveEndpoint(host, "payment_initiate_payment", e =>
-                    {
-                        e.Consumer<InitiatePaymentCommandConsumer>(context);
+                        e.Consumer<LogCommandConsumer>(context);
                     });
                 });
-
-                MassTransitAppender.Bus = busControl;
 
                 return busControl;
             })

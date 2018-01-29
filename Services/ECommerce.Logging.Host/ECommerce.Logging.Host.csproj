@@ -7,26 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="4.0.0" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0" />
-    <PackageReference Include="MassTransit.Autofac" Version="4.0.0" />
-    <PackageReference Include="Autofac" Version="4.6.2" />
-    <PackageReference Include="log4net" Version="2.0.8" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Modules\" />
-    <Folder Include="Consumers\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\ECommerce.Common\ECommerce.Common.csproj" />
     <ProjectReference Include="..\ECommerce.Services.Common\ECommerce.Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="log4net.config" />
+    <PackageReference Include="MassTransit" Version="4.0.0" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0" />
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="MassTransit.Autofac" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="log4net.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Folder Include="Modules\" />
+    <Folder Include="Consumers\" />
   </ItemGroup>
 </Project>

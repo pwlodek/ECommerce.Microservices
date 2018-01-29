@@ -86,3 +86,13 @@ services:
     depends_on: 
     - rabbit
     container_name: shipping-host
+
+# Logging Microservice
+  logging-host:
+    build: ./Services/ECommerce.Logging.Host
+    image: ecommerce/logging-host
+    environment:
+      - RabbitHost=rabbit
+    depends_on: 
+    - rabbit
+    container_name: logging-host

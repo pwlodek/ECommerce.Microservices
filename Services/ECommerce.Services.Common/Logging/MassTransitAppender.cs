@@ -4,6 +4,8 @@ using log4net.Core;
 using MassTransit;
 using ECommerce.Common;
 using ECommerce.Common.Commands;
+using System.Text;
+using System.Collections.Generic;
 
 namespace ECommerce.Services.Common.Logging
 {
@@ -11,13 +13,34 @@ namespace ECommerce.Services.Common.Logging
     {
         public static IBus Bus { get; set; }
 
-        public MassTransitAppender()
-        {
-        }
-
         public string ServiceName { get; set; }
 
+        private List<LoggingEvent> _buffer = new List<LoggingEvent>();
+
         protected override void Append(LoggingEvent loggingEvent)
+        {
+            if (Bus == null)
+            {
+                _buffer.Add(loggingEvent);
+            }
+            else
+            {
+                if (_buffer.Count > 0)
+                {
+                    var buffer = _buffer.ToArray();
+                    _buffer.Clear();
+
+                    // send buffer
+                    foreach (var item in buffer)
+                    {
+                        Process(item);
+                    }
+                }
+                Process(loggingEvent);
+            }
+        }
+
+        private void Process(LoggingEvent loggingEvent)
         {
             var message = RenderLoggingEvent(loggingEvent);
 

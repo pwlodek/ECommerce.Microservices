@@ -1,21 +1,15 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Threading;
-using System.Xml;
 using Autofac;
 using ECommerce.Common;
-using ECommerce.Payment.Host.Modules;
+using ECommerce.Logging.Host.Modules;
 using ECommerce.Services.Common.Configuration;
-using log4net;
 using MassTransit;
 
-namespace ECommerce.Payment.Host
+namespace ECommerce.Logging.Host
 {
     public class Host
     {
-        private static ILog Logger = LogManager.GetLogger(typeof(Host));
-
         public Host()
         {
         }
@@ -34,7 +28,7 @@ namespace ECommerce.Payment.Host
             var bus = container.Resolve<IBusControl>();
             bus.Start();
 
-            Logger.Info("Running Payment microservice.");
+            Console.WriteLine("Running Logging microservice.");
             Thread.Sleep(int.MaxValue);
         }
     }

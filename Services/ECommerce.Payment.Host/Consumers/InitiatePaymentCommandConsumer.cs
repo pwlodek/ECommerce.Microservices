@@ -2,12 +2,15 @@
 using System.Threading.Tasks;
 using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
+using log4net;
 using MassTransit;
 
 namespace ECommerce.Payment.Host.Consumers
 {
     public class InitiatePaymentCommandConsumer : IConsumer<InitiatePaymentCommand>
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(InitiatePaymentCommandConsumer));
+
         public InitiatePaymentCommandConsumer()
         {
         }
@@ -16,7 +19,7 @@ namespace ECommerce.Payment.Host.Consumers
         {
             await Task.Delay(2000); // simulate payment
 
-            Console.WriteLine($"Processing payment for order {context.Message.OrderId} by customer {context.Message.CustomerId} in the amount of {context.Message.Total}");
+            Logger.Info($"Processing payment for order {context.Message.OrderId} by customer {context.Message.CustomerId} in the amount of {context.Message.Total}");
 
             // Payment was accepted
             await context.Publish(new PaymentAcceptedEvent() { 
