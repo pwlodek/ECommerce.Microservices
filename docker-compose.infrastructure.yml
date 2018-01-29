@@ -1,6 +1,7 @@
 #
-# This docker-compose file runs servers required to host the services.
-# It is useful in debugging scenarios.
+# This docker-compose file runs infrastructure required to host the services.
+# It is useful in debugging from Visual Studio, just run the infrastructure in Docker,
+# and services from the VS.
 #
 version: '3'
 services:
