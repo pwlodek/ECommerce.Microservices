@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ECommerce.Common.Events;
 using ECommerce.Sales.Api.Model;
+using log4net;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 
@@ -10,6 +11,8 @@ namespace ECommerce.Sales.Api.Consumers
 {
     public class OrderCompletedEventConsumer : IConsumer<OrderCompletedEvent>
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
+
         private IConfiguration _cfg;
 
         public OrderCompletedEventConsumer(IConfiguration cfg)
@@ -28,6 +31,8 @@ namespace ECommerce.Sales.Api.Consumers
                     ctx.SaveChanges();
                 }
             }
+
+            Logger.Info($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as shipped");
         }
     }
 }

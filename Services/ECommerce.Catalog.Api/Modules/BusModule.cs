@@ -1,11 +1,10 @@
 ﻿using System;
 using Autofac;
-using ECommerce.Common;
 using ECommerce.Services.Common.Logging;
-using ECommerce.Shipping.Host.Consumers;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
 
-namespace ECommerce.Shipping.Host.Modules
+namespace ECommerce.Catalog.Api.Modules
 {
     internal class BusModule : Module
     {
@@ -13,9 +12,11 @@ namespace ECommerce.Shipping.Host.Modules
         {
             builder.Register(context =>
             {
+                var config = context.Resolve<IConfiguration>();
+                var rabbitHost = config["RabbitHost"];
                 var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    var host = cfg.Host(new Uri($"rabbitmq://{Configuration.RabbitMqHost}"), h =>
+                    var host = cfg.Host(new Uri($"rabbitmq://{rabbitHost}"), h =>
                     {
                         h.Username("guest");
                         h.Password("guest");
@@ -24,21 +25,7 @@ namespace ECommerce.Shipping.Host.Modules
                     // https://stackoverflow.com/questions/39573721/disable-round-robin-pattern-and-use-fanout-on-masstransit
                     cfg.ReceiveEndpoint(host, "ecommerce_main_fanout" + Guid.NewGuid().ToString(), e =>
                     {
-                    });
 
-                    cfg.ReceiveEndpoint(host, "shipping_fanout", e =>
-                    {
-                        e.LoadStateMachineSagas(context);
-                    });
-
-                    cfg.ReceiveEndpoint(host, "shipping_shiporder", e =>
-                    {
-                        e.Consumer<ShipOrderCommandConsumer>(context);
-                    });
-
-                    cfg.ReceiveEndpoint(host, "shipping_packorder", e =>
-                    {
-                        e.Consumer<InitiateOrderPackingCommandConsumer>(context);
                     });
                 });
 

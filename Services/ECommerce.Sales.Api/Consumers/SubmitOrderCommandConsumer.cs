@@ -5,6 +5,7 @@ using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
 using ECommerce.Sales.Api.Model;
 using ECommerce.Sales.Api.Services;
+using log4net;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 
@@ -12,6 +13,8 @@ namespace ECommerce.Sales.Api.Consumers
 {
     public class SubmitOrderCommandConsumer : IConsumer<SubmitOrderCommand>
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
+
         private readonly IDataService _dataService;
 
         private readonly IConfiguration _cfg;
@@ -57,6 +60,8 @@ namespace ECommerce.Sales.Api.Consumers
                 ctx.Orders.Add(order);
                 ctx.SaveChanges();
             }
+
+            Logger.Info($"Created order {order.OrderId} for customer {customer.CustomerId} for the total amount of {order.Total}");
 
             await context.Publish(new OrderSubmittedEvent() {
                 CustomerId = customer.CustomerId,

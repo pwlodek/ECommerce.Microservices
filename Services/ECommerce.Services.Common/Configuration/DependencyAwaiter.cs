@@ -3,6 +3,7 @@ using System.Threading;
 using System.Data.SqlClient;
 
 using RabbitMQ.Client;
+using log4net;
 
 namespace ECommerce.Services.Common.Configuration
 {
@@ -28,6 +29,7 @@ namespace ECommerce.Services.Common.Configuration
     internal class SqlAwaiter
     {
         private int _count = 1;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(SqlAwaiter));
 
         public void WaitForSql(string connectionString)
         {
@@ -38,13 +40,16 @@ namespace ECommerce.Services.Common.Configuration
                     Thread.Sleep(1000 * _count);
                     _count *= 2; //exponental backoff
 
-                    Console.WriteLine("Trying to connect to SQL database: " + i);
+                    Logger.Debug("Trying to connect to SQL database: " + i);
                 }
                 try
                 {
                     var conn = new SqlConnection(connectionString);
                     conn.Open();
                     conn.Close();
+
+                    Logger.Debug("Connection to SQL database established successfully");
+                          
                     return;
                 }
                 catch (Exception ex)
@@ -59,6 +64,7 @@ namespace ECommerce.Services.Common.Configuration
     internal class RabbitAwaiter
     {
         private int _count = 1;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(RabbitAwaiter));
 
         public void WaitForRabbit(string host)
         {
@@ -75,12 +81,15 @@ namespace ECommerce.Services.Common.Configuration
                     Thread.Sleep(1000 * _count);
                     _count *= 2; //exponental backoff
 
-                    Console.WriteLine("Trying to connect to rabbit mq: " + i);
+                    Logger.Debug("Trying to connect to rabbit mq: " + i);
                 }
                 try
                 {
                     var conn = factory.CreateConnection();
                     conn.Close();
+
+                    Logger.Debug("Connection to Rabbit MQ established successfully");
+
                     return;
                 }
                 catch (Exception ex)

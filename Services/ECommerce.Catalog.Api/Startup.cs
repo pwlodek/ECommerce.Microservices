@@ -1,7 +1,12 @@
 ﻿using System;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using ECommerce.Catalog.Api.Modules;
 using ECommerce.Catalog.Api.Services;
 using ECommerce.Services.Common.Configuration;
 using log4net;
+using MassTransit;
+using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,23 +24,39 @@ namespace ECommerce.Catalog.Api
             Configuration = configuration;
         }
 
+        public IContainer Container { get; set; }
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+
+            var rabbitHost = Configuration["RabbitHost"];
+            Logger.Info($"Using RabbitHost='{rabbitHost}'.");
+
             var connectionString = Configuration["ConnectionString"];
             Logger.Info($"Using connectionString='{connectionString}'.");
 
             var waiter = new DependencyAwaiter();
+            waiter.WaitForRabbit(rabbitHost);
             waiter.WaitForSql(connectionString);
 
             services.AddMvc();
-            services.AddScoped<IProductRepository>(c => new ProductRepository(connectionString));
+
+            var builder = new ContainerBuilder();
+
+            builder.Populate(services);
+            builder.RegisterModule<BusModule>();
+            builder.RegisterType<ProductRepository>().As<IProductRepository>();
+
+            Container = builder.Build();
+
+            return new AutofacServiceProvider(Container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -44,6 +65,10 @@ namespace ECommerce.Catalog.Api
 
             loggerFactory.AddLog4Net();
             app.UseMvc();
+
+            var bus = Container.Resolve<IBusControl>();
+            var busHandle = TaskUtil.Await(() => bus.StartAsync());
+            lifetime.ApplicationStopping.Register(() => busHandle.Stop());
         }
     }
 }

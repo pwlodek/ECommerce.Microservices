@@ -10,6 +10,10 @@
     <PackageReference Include="Dapper" Version="1.50.4" />
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.0.1" />
+    <PackageReference Include="MassTransit.Autofac" Version="4.0.1" />
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.1" />
+    <PackageReference Include="MassTransit" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,9 +23,15 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Services\" />
+    <Folder Include="Modules\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ECommerce.Services.Common\ECommerce.Services.Common.csproj" />
     <ProjectReference Include="..\ECommerce.Common\ECommerce.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

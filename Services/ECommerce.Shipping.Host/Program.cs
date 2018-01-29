@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace ECommerce.Shipping.Host
 {
@@ -11,6 +14,8 @@ namespace ECommerce.Shipping.Host
 
         static void Main(string[] args)
         {
+            ConfigureLogging();
+
             var host = new Host();
 
             // Fire and forget
@@ -29,6 +34,14 @@ namespace ECommerce.Shipping.Host
 
             // Wait
             waitHandle.WaitOne();
+        }
+
+        private static void ConfigureLogging()
+        {
+            XmlDocument log4netConfig = new XmlDocument();
+            log4netConfig.Load(File.OpenRead("log4net.config"));
+            var repo = log4net.LogManager.CreateRepository(Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
+            log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
         }
     }
 }

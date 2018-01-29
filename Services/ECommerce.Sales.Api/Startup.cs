@@ -8,6 +8,7 @@ using ECommerce.Sales.Api.Consumers;
 using ECommerce.Sales.Api.Modules;
 using ECommerce.Sales.Api.Services;
 using ECommerce.Services.Common.Configuration;
+using log4net;
 using MassTransit;
 using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +22,8 @@ namespace ECommerce.Sales.Api
 {
     public class Startup
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -34,10 +37,10 @@ namespace ECommerce.Sales.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             var rabbitHost = Configuration["RabbitHost"];
-            Console.WriteLine($"Using RabbitHost='{rabbitHost}'.");
+            Logger.Info($"Using RabbitHost='{rabbitHost}'.");
 
             var connectionString = Configuration["ConnectionString"];
-            Console.WriteLine($"Using connectionString='{connectionString}'.");
+            Logger.Info($"Using connectionString='{connectionString}'.");
 
             var waiter = new DependencyAwaiter();
             waiter.WaitForRabbit(rabbitHost);
@@ -58,7 +61,7 @@ namespace ECommerce.Sales.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -66,6 +69,7 @@ namespace ECommerce.Sales.Api
             }
 
             app.UseMvc();
+            loggerFactory.AddLog4Net();
 
             var bus = Container.Resolve<IBusControl>();
             var busHandle = TaskUtil.Await(() => bus.StartAsync());

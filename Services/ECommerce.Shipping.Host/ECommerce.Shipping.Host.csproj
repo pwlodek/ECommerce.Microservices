@@ -14,6 +14,7 @@
     <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0" />
     <PackageReference Include="MassTransit" Version="4.0.0" />
     <PackageReference Include="MassTransit.Automatonymous.Autofac" Version="4.0.0" />
+    <PackageReference Include="log4net" Version="2.0.8" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Modules\" />
@@ -23,5 +24,18 @@
   <ItemGroup>
     <ProjectReference Include="..\ECommerce.Common\ECommerce.Common.csproj" />
     <ProjectReference Include="..\ECommerce.Services.Common\ECommerce.Services.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="log4net.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

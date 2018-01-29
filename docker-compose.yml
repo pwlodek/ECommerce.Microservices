@@ -28,11 +28,13 @@ services:
     image: ecommerce/catalog-api
     environment:
       - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products
+      - RabbitHost=rabbit
     ports:
     - "8081:80"
     depends_on: 
     - rabbit
     - sqlserver
+    hostname: catalog-api
     container_name: catalog-api
 
   # Customers Microservice
@@ -49,6 +51,7 @@ services:
     - sqlserver
     deploy:
       replicas: 2
+    hostname: customers-api
     container_name: customers-api
 
   # Sales Microservice
@@ -65,6 +68,7 @@ services:
     depends_on: 
     - rabbit
     - sqlserver
+    hostname: sales-host
     container_name: sales-api
 
   # Payment Microservice
@@ -75,6 +79,7 @@ services:
       - RabbitHost=rabbit
     depends_on: 
     - rabbit
+    hostname: payment-host
     container_name: payment-host
 
   # Shipping Microservice
@@ -85,6 +90,7 @@ services:
       - RabbitHost=rabbit
     depends_on: 
     - rabbit
+    hostname: shipping-host
     container_name: shipping-host
 
 # Logging Microservice
@@ -95,4 +101,5 @@ services:
       - RabbitHost=rabbit
     depends_on: 
     - rabbit
+    hostname: logging-host
     container_name: logging-host

@@ -5,6 +5,7 @@ using ECommerce.Catalog.Api.Models;
 using Dapper;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace ECommerce.Catalog.Api.Services
 {
@@ -12,9 +13,9 @@ namespace ECommerce.Catalog.Api.Services
     {
         private string _connectionString;
 
-        public ProductRepository(string connectionString)
+        public ProductRepository(IConfiguration cfg)
         {
-            _connectionString = connectionString;
+            _connectionString = cfg["ConnectionString"];
         }
 
         public IDbConnection Connection
