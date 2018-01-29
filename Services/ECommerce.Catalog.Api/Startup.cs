@@ -1,15 +1,19 @@
 ﻿using System;
 using ECommerce.Catalog.Api.Services;
 using ECommerce.Services.Common.Configuration;
+using log4net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Catalog.Api
 {
     public class Startup
     {
+        private static ILog Logger = LogManager.GetLogger(typeof(Startup));
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -21,7 +25,7 @@ namespace ECommerce.Catalog.Api
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration["ConnectionString"];
-            Console.WriteLine($"Using connectionString='{connectionString}'.");
+            Logger.Info($"Using connectionString='{connectionString}'.");
 
             var waiter = new DependencyAwaiter();
             waiter.WaitForSql(connectionString);
@@ -31,13 +35,14 @@ namespace ECommerce.Catalog.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            loggerFactory.AddLog4Net();
             app.UseMvc();
         }
     }

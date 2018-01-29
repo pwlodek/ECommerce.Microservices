@@ -10,14 +10,19 @@
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.2" />
+    <PackageReference Include="log4net" Version="2.0.8" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configuration\" />
+    <Folder Include="Logging\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Configuration\DependencyAwaiter.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Configuration\AutofacConfiguration.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECommerce.Common\ECommerce.Common.csproj" />
   </ItemGroup>
 </Project>
