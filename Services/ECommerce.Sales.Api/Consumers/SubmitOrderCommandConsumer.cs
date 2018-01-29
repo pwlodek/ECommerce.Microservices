@@ -31,6 +31,8 @@ namespace ECommerce.Sales.Api.Consumers
             if (customer == null)
             {
                 // probably we want to log this
+                Logger.Warn($"Submitted invalid order for customer {context.Message.CustomerId}. No such customer");
+
                 return;
             }
 
@@ -54,6 +56,7 @@ namespace ECommerce.Sales.Api.Consumers
                 if (total > 100)
                 {
                     total = total * .9; // 10% off
+                    Logger.Info($"Applying bonus for customer {customer.CustomerId} for the total amount of {total}");
                 }
                 order.Total = total;
 

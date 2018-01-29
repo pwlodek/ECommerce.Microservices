@@ -74,6 +74,8 @@ namespace ECommerce.Sales.Api
             var bus = Container.Resolve<IBusControl>();
             var busHandle = TaskUtil.Await(() => bus.StartAsync());
             lifetime.ApplicationStopping.Register(() => busHandle.Stop());
+
+            Logger.Info("Running Sales microservice.");
         }
     }
 }

@@ -31,7 +31,6 @@ namespace ECommerce.Catalog.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-
             var rabbitHost = Configuration["RabbitHost"];
             Logger.Info($"Using RabbitHost='{rabbitHost}'.");
 
@@ -69,6 +68,8 @@ namespace ECommerce.Catalog.Api
             var bus = Container.Resolve<IBusControl>();
             var busHandle = TaskUtil.Await(() => bus.StartAsync());
             lifetime.ApplicationStopping.Register(() => busHandle.Stop());
+
+            Logger.Info("Running Catalog microservice.");
         }
     }
 }
