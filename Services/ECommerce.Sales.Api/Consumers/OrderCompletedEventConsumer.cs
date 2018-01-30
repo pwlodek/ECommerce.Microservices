@@ -11,7 +11,7 @@ namespace ECommerce.Sales.Api.Consumers
 {
     public class OrderCompletedEventConsumer : IConsumer<OrderCompletedEvent>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(OrderCompletedEventConsumer));
 
         private IConfiguration _cfg;
 

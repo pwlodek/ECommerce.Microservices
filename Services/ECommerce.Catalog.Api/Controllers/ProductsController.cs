@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ECommerce.Catalog.Api.Models;
 using ECommerce.Catalog.Api.Services;
+using ECommerce.Services.Common.Identity;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Catalog.Api.Controllers
@@ -11,10 +13,14 @@ namespace ECommerce.Catalog.Api.Controllers
     [Route("api/[controller]")]
     public class ProductsController : Controller
     {
-        private readonly IProductRepository _productRepository;
+        private static ILog Logger = LogManager.GetLogger(typeof(ProductsController));
 
-        public ProductsController(IProductRepository productRepository)
+        private readonly IProductRepository _productRepository;
+        private readonly IIdentityService _identityService;
+
+        public ProductsController(IProductRepository productRepository, IIdentityService identityService)
         {
+            this._identityService = identityService;
             this._productRepository = productRepository;
         }
 
@@ -22,6 +28,7 @@ namespace ECommerce.Catalog.Api.Controllers
         [HttpGet]
         public IEnumerable<Product> Get()
         {
+            Logger.Debug($"Instance {_identityService.InstanceId} is returning products.");
             return _productRepository.GetAll();
         }
 

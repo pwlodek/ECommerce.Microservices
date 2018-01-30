@@ -13,7 +13,7 @@ namespace ECommerce.Sales.Api.Consumers
 {
     public class SubmitOrderCommandConsumer : IConsumer<SubmitOrderCommand>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(SubmitOrderCommandConsumer));
 
         private readonly IDataService _dataService;
 

@@ -30,8 +30,6 @@ namespace ECommerce.Shipping.Host
                 waitHandle.Set();
             };
 
-            Console.WriteLine("Running Shipping microservice.");
-
             // Wait
             waitHandle.WaitOne();
         }

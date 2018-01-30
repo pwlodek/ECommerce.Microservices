@@ -4,6 +4,7 @@ using Autofac.Extensions.DependencyInjection;
 using ECommerce.Catalog.Api.Modules;
 using ECommerce.Catalog.Api.Services;
 using ECommerce.Services.Common.Configuration;
+using ECommerce.Services.Common.Identity;
 using log4net;
 using MassTransit;
 using MassTransit.Util;
@@ -48,6 +49,7 @@ namespace ECommerce.Catalog.Api
             builder.Populate(services);
             builder.RegisterModule<BusModule>();
             builder.RegisterType<ProductRepository>().As<IProductRepository>();
+            builder.RegisterType<IdentityService>().AsImplementedInterfaces().SingleInstance();
 
             Container = builder.Build();
 

@@ -70,7 +70,7 @@ services:
     depends_on: 
     - rabbit
     - sqlserver
-    hostname: sales-host
+    hostname: sales-api
     container_name: sales-api
 
   # Payment Microservice
