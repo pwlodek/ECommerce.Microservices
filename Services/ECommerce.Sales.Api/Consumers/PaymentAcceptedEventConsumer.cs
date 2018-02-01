@@ -13,23 +13,20 @@ namespace ECommerce.Sales.Api.Consumers
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PaymentAcceptedEventConsumer));
 
-        private IConfiguration _cfg;
+        private readonly SalesContext _salesContext;
 
-        public PaymentAcceptedEventConsumer(IConfiguration cfg)
+        public PaymentAcceptedEventConsumer(SalesContext salesContext)
         {
-            _cfg = cfg;
+            _salesContext = salesContext;
         }
 
         public async Task Consume(ConsumeContext<PaymentAcceptedEvent> context)
         {
-            using (SalesContext ctx = new SalesContext(_cfg["ConnectionString"]))
+            var order = _salesContext.Orders.FirstOrDefault(t => t.OrderId == context.Message.OrderId && t.CustomerId == context.Message.CustomerId);
+            if (order != null)
             {
-                var order = ctx.Orders.FirstOrDefault(t => t.OrderId == context.Message.OrderId && t.CustomerId == context.Message.CustomerId);
-                if (order != null)
-                {
-                    order.Status |= OrderStatus.Payed;
-                    ctx.SaveChanges();
-                }
+                order.Status |= OrderStatus.Payed;
+                _salesContext.SaveChanges();
             }
 
             Logger.Info($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as payed");

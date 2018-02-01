@@ -15,23 +15,20 @@ namespace ECommerce.Sales.Api.Controllers
     public class OrdersController : Controller
     {
         private readonly IBus _bus;
-        private readonly IConfiguration _cfg;
+        private readonly SalesContext _salesContext;
 
-        public OrdersController(IBus bus, IConfiguration cfg)
+        public OrdersController(IBus bus, SalesContext salesContext)
         {
             _bus = bus;
-            _cfg = cfg;
+            _salesContext = salesContext;
         }
 
         // GET api/orders
         [HttpGet]
         public IEnumerable<Order> Get()
         {
-            using (SalesContext ctx = new SalesContext(_cfg["ConnectionString"]))
-            {
-                var orders = ctx.Orders.Include(o => o.Items).ToList();
-                return orders;
-            }
+            var orders = _salesContext.Orders.Include(o => o.Items).ToList();
+            return orders;
         }
 
         // POST api/orders

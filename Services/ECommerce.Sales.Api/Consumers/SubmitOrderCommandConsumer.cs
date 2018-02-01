@@ -17,12 +17,12 @@ namespace ECommerce.Sales.Api.Consumers
 
         private readonly IDataService _dataService;
 
-        private readonly IConfiguration _cfg;
+        private readonly SalesContext _salesContext;
 
-        public SubmitOrderCommandConsumer(IDataService dataService, IConfiguration cfg)
+        public SubmitOrderCommandConsumer(IDataService dataService, SalesContext salesContext)
         {
             _dataService = dataService;
-            _cfg = cfg;
+            _salesContext = salesContext;
         }
 
         public async Task Consume(ConsumeContext<SubmitOrderCommand> context)
@@ -39,30 +39,27 @@ namespace ECommerce.Sales.Api.Consumers
             var products = await _dataService.GetProductsAsync();
             var order = new Order() { CustomerId = context.Message.CustomerId, Status = OrderStatus.Submitted };
 
-            using (SalesContext ctx = new SalesContext(_cfg["ConnectionString"]))
+            double total = 0.0;
+            foreach (var item in context.Message.Items)
             {
-                double total = 0.0;
-                foreach (var item in context.Message.Items)
+                var product = products.FirstOrDefault(t => t.ProductId == item.ProductId);
+                if (product != null)
                 {
-                    var product = products.FirstOrDefault(t => t.ProductId == item.ProductId);
-                    if (product != null)
-                    {
-                        total += item.Quantity * product.Price;
-                        order.Items.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity, Name = product.Name, Price = product.Price });
-                    }
+                    total += item.Quantity * product.Price;
+                    order.Items.Add(new OrderItem() { ProductId = item.ProductId, Quantity = item.Quantity, Name = product.Name, Price = product.Price });
                 }
-
-                // Business rule
-                if (total > 100)
-                {
-                    total = total * .9; // 10% off
-                    Logger.Info($"Applying bonus for customer {customer.CustomerId} for the total amount of {total}");
-                }
-                order.Total = total;
-
-                ctx.Orders.Add(order);
-                ctx.SaveChanges();
             }
+
+            // Business rule
+            if (total > 100)
+            {
+                total = total * .9; // 10% off
+                Logger.Info($"Applying bonus for customer {customer.CustomerId} for the total amount of {total}");
+            }
+            order.Total = total;
+
+            _salesContext.Orders.Add(order);
+            _salesContext.SaveChanges();
 
             Logger.Info($"Created order {order.OrderId} for customer {customer.CustomerId} for the total amount of {order.Total}");
 

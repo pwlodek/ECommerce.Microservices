@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ECommerce.Sales.Api.Consumers;
+using ECommerce.Sales.Api.Model;
 using ECommerce.Sales.Api.Modules;
 using ECommerce.Sales.Api.Services;
 using ECommerce.Services.Common.Configuration;
@@ -13,6 +14,7 @@ using MassTransit;
 using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -48,12 +50,24 @@ namespace ECommerce.Sales.Api
 
             services.AddMvc();
 
+            services.AddEntityFrameworkSqlServer()
+                    .AddDbContext<SalesContext>(options =>
+                    {
+                        options.UseSqlServer(Configuration["ConnectionString"],
+                            sqlServerOptionsAction: sqlOptions =>
+                            {
+                                sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                            });
+                    },
+                        ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
+                    );
+            
             var builder = new ContainerBuilder();
 
             builder.Populate(services);
             builder.RegisterModule<BusModule>();
             builder.RegisterModule<ConsumerModule>();
-            builder.RegisterType<DataService>().As<IDataService>();
+            builder.RegisterType<DataService>().As<IDataService>().SingleInstance();
 
             Container = builder.Build();
 

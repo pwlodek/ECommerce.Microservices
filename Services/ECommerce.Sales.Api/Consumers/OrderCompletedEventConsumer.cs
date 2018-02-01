@@ -5,7 +5,6 @@ using ECommerce.Common.Events;
 using ECommerce.Sales.Api.Model;
 using log4net;
 using MassTransit;
-using Microsoft.Extensions.Configuration;
 
 namespace ECommerce.Sales.Api.Consumers
 {
@@ -13,24 +12,22 @@ namespace ECommerce.Sales.Api.Consumers
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(OrderCompletedEventConsumer));
 
-        private IConfiguration _cfg;
+        private readonly SalesContext _salesContext;
 
-        public OrderCompletedEventConsumer(IConfiguration cfg)
+        public OrderCompletedEventConsumer(SalesContext salesContext)
         {
-            _cfg = cfg;
+            _salesContext = salesContext;
         }
 
         public async Task Consume(ConsumeContext<OrderCompletedEvent> context)
         {
-            using (SalesContext ctx = new SalesContext(_cfg["ConnectionString"]))
+            var order = _salesContext.Orders.FirstOrDefault(t => t.OrderId == context.Message.OrderId && t.CustomerId == context.Message.CustomerId);
+            if (order != null)
             {
-                var order = ctx.Orders.FirstOrDefault(t => t.OrderId == context.Message.OrderId && t.CustomerId == context.Message.CustomerId);
-                if (order != null)
-                {
-                    order.Status &= ~OrderStatus.Submitted; // unsettings Submitted state
-                    order.Status |= OrderStatus.Shipped; // setting Shipped state
-                    ctx.SaveChanges();
-                }
+                order.Status &= ~OrderStatus.Submitted; // unsettings Submitted state
+                order.Status |= OrderStatus.Shipped; // setting Shipped state
+
+                _salesContext.SaveChanges();
             }
 
             Logger.Info($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as shipped");
