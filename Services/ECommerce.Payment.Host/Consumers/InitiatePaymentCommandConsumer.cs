@@ -19,7 +19,7 @@ namespace ECommerce.Payment.Host.Consumers
         {
             Logger.Info($"Processing payment for order {context.Message.OrderId} by customer {context.Message.CustomerId} in the amount of {context.Message.Total}");
 
-            await Task.Delay(2000); // simulate payment
+            await Task.Delay(5000); // simulate payment
 
             // Payment was accepted
             await context.Publish(new PaymentAcceptedEvent() { 

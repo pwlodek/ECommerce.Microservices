@@ -32,6 +32,8 @@ namespace ECommerce.Sales.Api.Modules
                     cfg.ReceiveEndpoint(host, "sales_fanout", e =>
                     {
                         e.Consumer<OrderCompletedEventConsumer>(context);
+                        e.Consumer<OrderPackedEventConsumer>(context);
+                        e.Consumer<PaymentAcceptedEventConsumer>(context);
                     });
 
                     cfg.ReceiveEndpoint(host, "sales_submit_orders", e =>

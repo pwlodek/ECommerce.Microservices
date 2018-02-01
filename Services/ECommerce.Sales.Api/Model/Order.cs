@@ -23,11 +23,13 @@ namespace ECommerce.Sales.Api.Model
         public IList<OrderItem> Items { get; set; }
     }
 
+    [Flags]
     public enum OrderStatus
     {
-        Submitted,
-        Packing,
-        Packed,
-        Shipped
+        None = 0,
+        Submitted = 1,
+        Packed = 2,
+        Payed = 4,
+        Shipped = 8
     }
 }

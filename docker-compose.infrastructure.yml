@@ -5,15 +5,20 @@
 #
 version: '3'
 services:
-  rabbitmq:
+  # Rabbit MQ
+  rabbit:
     image: rabbitmq:3.6-management
     ports:
       - "5672:5672"
       - "15672:15672"
-    hostname: rabbit
-    container_name: rabbitmq
+    container_name: rabbit
+  
+  # SQL Server for Linux
   sqlserver:
-    image: microsoft/mssql-server-linux:latest
+    image: sqlserver
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
     ports:
       - "1433:1433"
     environment:

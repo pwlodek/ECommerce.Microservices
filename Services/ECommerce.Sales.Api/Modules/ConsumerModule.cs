@@ -10,6 +10,8 @@ namespace ECommerce.Sales.Api.Modules
         {
             builder.RegisterType<SubmitOrderCommandConsumer>();
             builder.RegisterType<OrderCompletedEventConsumer>();
+            builder.RegisterType<OrderPackedEventConsumer>();
+            builder.RegisterType<PaymentAcceptedEventConsumer>();
         }
     }
 }

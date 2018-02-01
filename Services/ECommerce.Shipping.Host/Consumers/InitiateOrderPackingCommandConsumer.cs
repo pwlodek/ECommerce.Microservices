@@ -19,7 +19,7 @@ namespace ECommerce.Shipping.Host.Consumers
         {
             Logger.Debug($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} is being packed");
 
-            await Task.Delay(5000);
+            await Task.Delay(10000);
 
             await context.Publish(new OrderPackedEvent()
             {

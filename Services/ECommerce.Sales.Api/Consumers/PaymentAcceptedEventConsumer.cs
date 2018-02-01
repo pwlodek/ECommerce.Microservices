@@ -9,31 +9,30 @@ using Microsoft.Extensions.Configuration;
 
 namespace ECommerce.Sales.Api.Consumers
 {
-    public class OrderCompletedEventConsumer : IConsumer<OrderCompletedEvent>
+    public class PaymentAcceptedEventConsumer : IConsumer<PaymentAcceptedEvent>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(OrderCompletedEventConsumer));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(PaymentAcceptedEventConsumer));
 
         private IConfiguration _cfg;
 
-        public OrderCompletedEventConsumer(IConfiguration cfg)
+        public PaymentAcceptedEventConsumer(IConfiguration cfg)
         {
             _cfg = cfg;
         }
 
-        public async Task Consume(ConsumeContext<OrderCompletedEvent> context)
+        public async Task Consume(ConsumeContext<PaymentAcceptedEvent> context)
         {
             using (SalesContext ctx = new SalesContext(_cfg["ConnectionString"]))
             {
                 var order = ctx.Orders.FirstOrDefault(t => t.OrderId == context.Message.OrderId && t.CustomerId == context.Message.CustomerId);
                 if (order != null)
                 {
-                    order.Status &= ~OrderStatus.Submitted; // unsettings Submitted state
-                    order.Status |= OrderStatus.Shipped; // setting Shipped state
+                    order.Status |= OrderStatus.Payed;
                     ctx.SaveChanges();
                 }
             }
 
-            Logger.Info($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as shipped");
+            Logger.Info($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as payed");
         }
     }
 }

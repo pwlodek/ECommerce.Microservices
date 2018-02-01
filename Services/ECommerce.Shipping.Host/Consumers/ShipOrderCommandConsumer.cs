@@ -19,7 +19,7 @@ namespace ECommerce.Shipping.Host.Consumers
         {
             Logger.Debug($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} is being shipped");
                    
-            await Task.Delay(2000); // shipping takes some time!
+            await Task.Delay(5000); // shipping takes some time!
 
             await context.Publish(new OrderCompletedEvent() { 
                 OrderId = context.Message.OrderId,

@@ -37,7 +37,7 @@ namespace ECommerce.Sales.Api.Consumers
             }
 
             var products = await _dataService.GetProductsAsync();
-            var order = new Order() { CustomerId = context.Message.CustomerId };
+            var order = new Order() { CustomerId = context.Message.CustomerId, Status = OrderStatus.Submitted };
 
             using (SalesContext ctx = new SalesContext(_cfg["ConnectionString"]))
             {
