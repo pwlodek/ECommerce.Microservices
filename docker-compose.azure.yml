@@ -1,13 +1,22 @@
 #
-# This docker-compose file runs entire ECommerce sample from azure registry called
-# ecommercesampleregistry.azurecr.io
+# This docker-compose file is meant to run entire ECommerce sample on Azure VMs in Docker Swarm mode 
+# from azure registry called ecommercesampleregistry.azurecr.io
 #
-# Steps:
-#  - build local images: docker-compose -f docker-compose.azure.yml build
-#  - login local docker: docker login ecommercesampleregistry.azurecr.io -u ecommercesampleregistry -p 6ooli14nIM3Wxt31q9dAcx3Ur1oKuGD=
+# Before you proceed, please make sure you have
+#  - Docker Swarm mode running on Azure (single VM, multiple VMs in availability set, or a scaleset)
+#  - private Azure Container Registry called ecommercesampleregistry
+#
+# Steps to run:
+#  - login to the remote registry on your local instance: docker login ecommercesampleregistry.azurecr.io -u ecommercesampleregistry -p 6ooli14nIM3Wxt31q9dAcx3Ur1oKuGD=
+#  - build local images: docker-compose -f docker-compose.azure.yml build  
 #  - push local images to the repository: docker-compose -f docker-compose.azure.yml push
-#  - download yaml onto manager node: curl -o docker-compose.yml https://raw.githubusercontent.com/pwlodek/ECommerce.Microservices/master/docker-compose.azure.yml
+#  - download yaml onto Docker swarm manager node: curl -o docker-compose.yml https://raw.githubusercontent.com/pwlodek/ECommerce.Microservices/master/docker-compose.azure.yml
+#  - login to the remote registry on your manager and worker nodes: docker login ecommercesampleregistry.azurecr.io -u ecommercesampleregistry -p 6ooli14nIM3Wxt31q9dAcx3Ur1oKuGD=
 #  - deploy stack on manager node: docker stack deploy -c docker-compose.yml app1 --with-registry-auth
+#
+# Remember to create load balancing rule for port 8083 (Sales service) so that you can connect from external hosts
+#
+
 version: '3'
 services:
 
