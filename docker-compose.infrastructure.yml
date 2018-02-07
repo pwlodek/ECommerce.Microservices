@@ -3,6 +3,13 @@
 # It is useful in debugging from Visual Studio, just run the infrastructure in Docker,
 # and services from the VS.
 #
+# Useful commands
+#
+# 1) Deploys stack with images from custom private repository 
+# docker stack deploy -c docker-compose.yml apka --with-registry-auth
+# 2) Create/connect to Azure vm 
+# docker-machine create --driver generic --generic-ip-address=<ip> --generic-ssh-key ~/.ssh/id_rsa <vmname>
+#
 version: '3'
 services:
   # Rabbit MQ
