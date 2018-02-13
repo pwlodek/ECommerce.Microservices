@@ -95,6 +95,22 @@ services:
     hostname: shipping-host
     container_name: shipping-host
 
+# Reporting Microservice
+  reporting-api:
+    build: ./Services/ECommerce.Reporting.Api
+    image: ecommerce/reporting-api
+    environment:
+      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Reporting
+      - RabbitHost=rabbit
+      - CustomersServiceHost=customers-api
+    ports:
+    - "8084:80"
+    depends_on: 
+    - rabbit
+    - sqlserver
+    hostname: reporting-host
+    container_name: reporting-host
+
 # Logging Microservice
   logging-host:
     build: ./Services/ECommerce.Logging.Host

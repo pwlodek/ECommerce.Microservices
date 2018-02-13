@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using ECommerce.Reporting.Api.Consumers;
 using ECommerce.Services.Common.Logging;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,7 @@ namespace ECommerce.Reporting.Api.Modules
 
                     cfg.ReceiveEndpoint(host, "reporting_fanout", e =>
                     {
+                        e.Consumer<OrderSubmittedEventConsumer>(context);
                     });
                 });
 
