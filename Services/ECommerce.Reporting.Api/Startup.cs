@@ -2,6 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using ECommerce.Reporting.Api.Modules;
+using ECommerce.Reporting.Api.Services;
+using ECommerce.Services.Common.Configuration;
+using log4net;
+using MassTransit;
+using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -13,21 +21,48 @@ namespace ECommerce.Reporting.Api
 {
     public class Startup
     {
+        private static ILog Logger = LogManager.GetLogger(typeof(Startup));
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        public IContainer Container { get; set; }
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            var rabbitHost = Configuration["RabbitHost"];
+            Logger.Info($"Using RabbitHost='{rabbitHost}'.");
+
+            var connectionString = Configuration["ConnectionString"];
+            Logger.Info($"Using connectionString='{connectionString}'.");
+
+            var waiter = new DependencyAwaiter();
+            waiter.WaitForRabbit(rabbitHost);
+            waiter.WaitForSql(connectionString);
+
             services.AddMvc();
+
+            var builder = new ContainerBuilder();
+
+            builder.Populate(services);
+            builder.RegisterModule<BusModule>();
+            builder.RegisterModule<ConsumerModule>();
+
+            builder.RegisterType<DataService>().As<IDataService>().SingleInstance();
+            builder.RegisterType<OrderRepository>().As<IOrderRepository>().SingleInstance();
+
+            Container = builder.Build();
+
+            return new AutofacServiceProvider(Container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -35,6 +70,12 @@ namespace ECommerce.Reporting.Api
             }
 
             app.UseMvc();
+
+            var bus = Container.Resolve<IBusControl>();
+            var busHandle = TaskUtil.Await(() => bus.StartAsync());
+            lifetime.ApplicationStopping.Register(() => busHandle.Stop());
+
+            Logger.Info("Running Reporting microservice.");
         }
     }
 }
