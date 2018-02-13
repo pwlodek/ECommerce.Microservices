@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Xml;
 using Microsoft.AspNetCore;
@@ -24,8 +25,12 @@ namespace ECommerce.Catalog.Api
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
+                    .UseStartup<Startup>()
+                   .UseKestrel(o =>
+                   {
+                       o.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(1);
+                   })
+                   .Build();
     }
 
 

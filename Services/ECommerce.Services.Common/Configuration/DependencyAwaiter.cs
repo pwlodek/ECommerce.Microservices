@@ -28,6 +28,7 @@ namespace ECommerce.Services.Common.Configuration
 
     internal class SqlAwaiter
     {
+        private int _maxWaitTimeMilis = 16000;
         private int _count = 1;
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SqlAwaiter));
 
@@ -37,7 +38,7 @@ namespace ECommerce.Services.Common.Configuration
             {
                 if (i > 0)
                 {
-                    Thread.Sleep(1000 * _count);
+                    Thread.Sleep(Math.Min(1000 * _count, _maxWaitTimeMilis));
                     _count *= 2; //exponental backoff
 
                     Logger.Debug("Trying to connect to SQL database: " + i);
@@ -63,6 +64,7 @@ namespace ECommerce.Services.Common.Configuration
 
     internal class RabbitAwaiter
     {
+        private int _maxWaitTimeMilis = 16000;
         private int _count = 1;
         private static readonly ILog Logger = LogManager.GetLogger(typeof(RabbitAwaiter));
 
@@ -78,7 +80,7 @@ namespace ECommerce.Services.Common.Configuration
             {
                 if (i > 0)
                 {
-                    Thread.Sleep(1000 * _count);
+                    Thread.Sleep(Math.Min(1000 * _count, _maxWaitTimeMilis));
                     _count *= 2; //exponental backoff
 
                     Logger.Debug("Trying to connect to rabbit mq: " + i);
