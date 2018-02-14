@@ -1,14 +1,22 @@
-﻿# Use latest aspnetcore image
+﻿FROM microsoft/aspnetcore-build AS builder
+WORKDIR /source
+ARG CONFIG
+
+# copy projects 
+COPY . .
+
+# Set working directory to our service
+WORKDIR /source/Services/ECommerce.Reporting.Api
+
+# restore libraries
+RUN dotnet restore
+
+# build
+RUN dotnet publish --configuration ${CONFIG:-Debug} --output /app
+
+# build runtime image
 FROM microsoft/aspnetcore:latest
-
-# Expose port 80 so that it is accessible from outside the container
 EXPOSE 80
-
-# Set workdir
 WORKDIR /app
-
-# Copy published app into /app
-COPY /bin/Debug/netcoreapp2.0/publish .
-
-# Run the app
+COPY --from=builder /app .
 ENTRYPOINT ["dotnet", "ECommerce.Reporting.Api.dll"]

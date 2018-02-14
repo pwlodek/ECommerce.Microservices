@@ -1,6 +1,21 @@
-﻿FROM microsoft/dotnet:2.0.4-runtime
+﻿FROM microsoft/dotnet:sdk AS builder
+WORKDIR /source
+ARG CONFIG
 
+# copy projects 
+COPY . .
+
+# Set working directory to our service
+WORKDIR /source/Services/ECommerce.Payment.Host
+
+# restore libraries
+RUN dotnet restore
+
+# build
+RUN dotnet publish --configuration ${CONFIG:-Debug} --output /app
+
+# build runtime image
+FROM microsoft/dotnet:runtime
 WORKDIR /app
-COPY /bin/Debug/netcoreapp2.0/publish .
-
+COPY --from=builder /app .
 ENTRYPOINT ["dotnet", "ECommerce.Payment.Host.dll"]

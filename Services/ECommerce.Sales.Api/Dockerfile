@@ -19,4 +19,4 @@ FROM microsoft/aspnetcore:latest
 EXPOSE 80
 WORKDIR /app
 COPY --from=builder /app .
-ENTRYPOINT ["dotnet", "ECommerce.Sales.Host.dll"]
+ENTRYPOINT ["dotnet", "ECommerce.Sales.Api.dll"]

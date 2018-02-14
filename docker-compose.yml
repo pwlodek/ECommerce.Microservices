@@ -23,9 +23,11 @@ services:
     container_name: sqlserver
   
   # Catalog Microservice
-  catalog-api:
-    build: ./Services/ECommerce.Catalog.Api
+  catalog-api:    
     image: ecommerce/catalog-api
+    build:
+      context: .
+      dockerfile: ./Services/ECommerce.Catalog.Api/Dockerfile
     environment:
       - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products
       - RabbitHost=rabbit
@@ -41,8 +43,10 @@ services:
 
   # Customers Microservice
   customers-api:
-    build: ./Services/ECommerce.Customers.Api
     image: ecommerce/customers-api
+    build:
+      context: .
+      dockerfile: ./Services/ECommerce.Customers.Api/Dockerfile
     environment:
       - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers
       - RabbitHost=rabbit
@@ -77,8 +81,10 @@ services:
 
   # Payment Microservice
   payment-host:
-    build: ./Services/ECommerce.Payment.Host
     image: ecommerce/payment-host
+    build:
+      context: .
+      dockerfile: ./Services/ECommerce.Payment.Host/Dockerfile
     environment:
       - RabbitHost=rabbit
     depends_on: 
@@ -101,8 +107,10 @@ services:
 
 # Reporting Microservice
   reporting-api:
-    build: ./Services/ECommerce.Reporting.Api
     image: ecommerce/reporting-api
+    build:
+      context: .
+      dockerfile: ./Services/ECommerce.Reporting.Api/Dockerfile
     environment:
       - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Reporting
       - RabbitHost=rabbit
@@ -116,9 +124,11 @@ services:
     container_name: reporting-host
 
 # Logging Microservice
-  logging-host:
-    build: ./Services/ECommerce.Logging.Host
+  logging-host:    
     image: ecommerce/logging-host
+    build:
+      context: .
+      dockerfile: ./Services/ECommerce.Logging.Host/Dockerfile
     environment:
       - RabbitHost=rabbit
     depends_on: 
