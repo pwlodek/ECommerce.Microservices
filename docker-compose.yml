@@ -58,8 +58,10 @@ services:
 
   # Sales Microservice
   sales-api:
-    build: ./Services/ECommerce.Sales.Api
     image: ecommerce/sales-api
+    build:
+      context: .
+      dockerfile: ./Services/ECommerce.Sales.Api/Dockerfile
     environment:
       - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales
       - RabbitHost=rabbit
@@ -86,8 +88,10 @@ services:
 
   # Shipping Microservice
   shipping-host:
-    build: ./Services/ECommerce.Shipping.Host
     image: ecommerce/shipping-host
+    build:
+      context: .
+      dockerfile: ./Services/ECommerce.Shipping.Host/Dockerfile
     environment:
       - RabbitHost=rabbit
     depends_on: 
