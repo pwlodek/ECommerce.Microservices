@@ -126,7 +126,7 @@ services:
 
 # Reporting Microservice
   reporting-api:
-    image: ecommerce/reporting-api
+    image: ecommercesampleregistry.azurecr.io/reporting-api
     build:
       context: .
       dockerfile: ./Services/ECommerce.Reporting.Api/Dockerfile
