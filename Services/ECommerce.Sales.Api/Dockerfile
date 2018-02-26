@@ -12,7 +12,7 @@ WORKDIR /source/Services/ECommerce.Sales.Api
 RUN dotnet restore
 
 # build
-RUN dotnet publish --configuration ${CONFIG:-Debug} --output /app
+RUN dotnet publish --configuration ${CONFIG:-Debug} --output /app --no-restore
 
 # build runtime image
 FROM microsoft/aspnetcore:latest
