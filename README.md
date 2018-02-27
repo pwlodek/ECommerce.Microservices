@@ -13,7 +13,7 @@ The workflow starts by doing POST to http://localhost:8083/api/orders with the f
 ```javascript
 { customerId: 1, items: [ { productId: 1, quantity: 1 }, { productId: 2, quantity: 2 } ]}
 ```
-This creates an order for customer 1, who wishes to purchase 2 items. Now you can inspect/track the order by issuing GET to the same microservice (http://localhost:8083/api/orders). The Sales.Api microservice goes to the Catalog.Api microservice to get the actual items for the order, and to Customers.Api microservice to get details about the customers.
+This creates an order for customer 1, who wishes to purchase 2 items. After order is created, you can inspect/track it by issuing GET to the same microservice (http://localhost:8083/api/orders). The Sales.Api microservice goes to the Catalog.Api microservice to get the actual items for the order, and to Customers.Api microservice to get details about the customers.
 
 Next, an event is sent on the service bus indicating that an order has been created and as such, we can start processing payment (via the Payment.Host microservice) and packing (via the Shipping.Host microservice). Since payment and packing operations are *long running* we have to maintain the state of order using shipping saga. Shipping saga listens for two events, payment completed and order packed. Only after both are received for a particular order, shipping saga sends the order, and notifies Sales.Api service that it has shipped the order. Then, Sales.Api service marks the order as shipped, which concludes the workflow.
 
@@ -21,7 +21,7 @@ Next, an event is sent on the service bus indicating that an order has been crea
 You can launch the sample locally on Docker, on a local Docker Swarm, or Azure.
 
 ### Local Docker environment
-Since it is a backend composed of multiple microservices, we have to archestrate the entire app. The easies is to use docker compose. First build it, and then run it.
+Since the backend is composed of multiple microservices, we have to archestrate the entire app. The easies is to use docker compose. First build it, and then run it.
 
 ```
 docker-compose build
@@ -29,9 +29,9 @@ docker-compose up
 ```
 
 ### Azure
-First you need to set up Azure infrastructure. I recommend PaaS solution as it give you a lot of insights into the what and how. Unfortunately, at this point ACS does not support Swarm Mode, so I highly recommend community driven ACS-Engine found at https://azure.microsoft.com/en-us/resources/templates/101-acsengine-swarmmode/. Clik on the button "Deploy to Azure" and you will end up with fully configured Docker Swarm cluster. Once you have the cluster up and running, you have to create Azure Container Registry, which will hold all the images. The clusters' nodes will grab the app from there. Assuming your container registry is named *ecommercesampleregistry*, execute the following steps:
+First you need to set up Azure infrastructure. I recommend IaaS solution as it give you a lot of insights into the what and how. Unfortunately, at this point ACS does not support Swarm Mode, so I highly recommend community driven ACS-Engine found at https://azure.microsoft.com/en-us/resources/templates/101-acsengine-swarmmode/. Clik on the button "Deploy to Azure" and you will end up with fully configured Docker Swarm cluster. Once you have the cluster up and running, you have to create Azure Container Registry, which will hold all the images. The clusters' nodes will grab the app from there. Assuming your container registry is named *ecommercesampleregistry*, execute the following steps:
 
-* login to the remote registry on your local instance: 
+* login to the remote registry on your local developer instance: 
 ```
 docker login ecommercesampleregistry.azurecr.io -u ecommercesampleregistry -p <password>
 ```
@@ -55,6 +55,9 @@ docker login ecommercesampleregistry.azurecr.io -u ecommercesampleregistry -p <p
 ```
 docker stack deploy -c docker-compose.yml app1 --with-registry-auth
 ```
-* remember to create load balancing rule for port 8083 (Sales service) so that you can connect from external hosts
+* remember to create load balancing probe and rule for port 8083 (Sales service) so that you can connect from external hosts
 
 At this point you should be able to reach Sales.Api microservice to execute the workflow discussed above. Congratulations! Your first microservice based backend is deployed!
+
+## Wrapping up
+At this point you have the sample backend up and running but maybe you asked a question, why do I have to connect to my services via a port? The answer is simple. Each service wants to expose port 80, and there can be multiple services  running on the same node. Hence, each service has to map it's internal port 80 to a well-known port on the node. Which in turn means each service type needs its unique port. If you don't like that, you can introduce a layer of *gateway* microservices that mape their internal port 80 to external 80, and they act as the frontline for accepting requests, and relying them to proper microservices. This way, your internal microservice implementation is hidden from the world.
