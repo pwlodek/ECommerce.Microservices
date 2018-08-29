@@ -30,7 +30,7 @@ services:
       context: .
       dockerfile: Services/ECommerce.Catalog.Api/Dockerfile
     environment:      
-      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products      
+      ConnectionString: ${SQL_SERVER_CS}Database=ECommerce.Products      
       RabbitHost: rabbit
     ports:
       - "8085:80"
@@ -45,7 +45,7 @@ services:
       context: .
       dockerfile: Services/ECommerce.Customers.Api/Dockerfile
     environment:
-      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers
+      ConnectionString: ${SQL_SERVER_CS}Database=ECommerce.Customers
       RabbitHost: rabbit
     ports:
       - "8082:80"
@@ -82,7 +82,7 @@ services:
       context: .
       dockerfile: Services/ECommerce.Reporting.Api/Dockerfile
     environment:
-      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Reporting
+      ConnectionString: ${SQL_SERVER_CS}Database=ECommerce.Reporting
       RabbitHost: rabbit
       CustomersServiceHost: ecommerce.customers.api
     ports:
@@ -98,7 +98,7 @@ services:
       context: .
       dockerfile: Services/ECommerce.Sales.Api/Dockerfile
     environment:
-      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales
+      ConnectionString: ${SQL_SERVER_CS}Database=ECommerce.Sales
       RabbitHost: rabbit
       CustomersServiceHost: ecommerce.customers.api
       CatalogServiceHost: ecommerce.catalog.api
