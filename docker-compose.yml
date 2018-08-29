@@ -23,6 +23,7 @@ services:
       SA_PASSWORD: Zaq123#!
     container_name: sqlserver
 
+  # Catalog Microservice
   ecommerce.catalog.api:
     image: ecommerce/catalog.api
     build:
@@ -33,7 +34,11 @@ services:
       RabbitHost: rabbit
     ports:
       - "8085:80"
+    depends_on: 
+      - rabbit
+      - sqlserver
 
+  # Customers Microservice
   ecommerce.customers.api:
     image: ecommerce/customers.api
     build:
@@ -43,9 +48,12 @@ services:
       ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers
       RabbitHost: rabbit
     ports:
-    - "8082:80"
+      - "8082:80"
+    depends_on: 
+      - rabbit
+      - sqlserver
 
-
+# Logging Microservice
   ecommerce.logging.host:
     image: ecommerce/logging.host
     build:
@@ -53,8 +61,10 @@ services:
       dockerfile: Services/ECommerce.Logging.Host/Dockerfile
     environment:
       RabbitHost: rabbit
+    depends_on: 
+      - rabbit
 
-
+  # Payment Microservice
   ecommerce.payment.host:
     image: ecommerce/payment.host
     build:
@@ -62,8 +72,10 @@ services:
       dockerfile: Services/ECommerce.Payment.Host/Dockerfile
     environment:
       RabbitHost: rabbit
+    depends_on: 
+      - rabbit
 
-
+# Reporting Microservice
   ecommerce.reporting.api:
     image: ecommerce/reporting.api
     build:
@@ -74,9 +86,12 @@ services:
       RabbitHost: rabbit
       CustomersServiceHost: ecommerce.customers.api
     ports:
-    - "8084:80"
+      - "8084:80"
+    depends_on: 
+      - rabbit
+      - sqlserver
 
-
+# Sales Microservice
   ecommerce.sales.api:
     image: ecommerce/sales.api
     build:
@@ -88,9 +103,12 @@ services:
       CustomersServiceHost: ecommerce.customers.api
       CatalogServiceHost: ecommerce.catalog.api
     ports:
-    - "8083:80"
+      - "8083:80"
+    depends_on: 
+      - rabbit
+      - sqlserver
 
-
+  # Shipping Microservice
   ecommerce.shipping.host:
     image: ecommerce/shipping.host
     build:
@@ -98,4 +116,6 @@ services:
       dockerfile: Services/ECommerce.Shipping.Host/Dockerfile
     environment:
       RabbitHost: rabbit
+    depends_on: 
+      - rabbit
 
