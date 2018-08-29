@@ -1,27 +1,30 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2048
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{2BEEC8AE-B036-487F-8309-CCC1317BD1D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Catalog.Api", "Services\ECommerce.Catalog.Api\ECommerce.Catalog.Api.csproj", "{EE19D81B-E3B9-416C-9E5B-7E6CF3DF3792}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Catalog.Api", "Services\ECommerce.Catalog.Api\ECommerce.Catalog.Api.csproj", "{EE19D81B-E3B9-416C-9E5B-7E6CF3DF3792}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Customers.Api", "Services\ECommerce.Customers.Api\ECommerce.Customers.Api.csproj", "{F7D55DD1-B8E8-47CA-829E-BB29B3A8C0E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Customers.Api", "Services\ECommerce.Customers.Api\ECommerce.Customers.Api.csproj", "{F7D55DD1-B8E8-47CA-829E-BB29B3A8C0E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Sales.Api", "Services\ECommerce.Sales.Api\ECommerce.Sales.Api.csproj", "{E7687C24-CD53-4C0C-A85D-2CC254FE487D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Sales.Api", "Services\ECommerce.Sales.Api\ECommerce.Sales.Api.csproj", "{E7687C24-CD53-4C0C-A85D-2CC254FE487D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Common", "Services\ECommerce.Common\ECommerce.Common.csproj", "{5EBFEE28-9A4A-4DFC-A8BC-566FB4E6244F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Common", "Services\ECommerce.Common\ECommerce.Common.csproj", "{5EBFEE28-9A4A-4DFC-A8BC-566FB4E6244F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{4D36B37F-A799-4D9D-A61E-DEC380021A92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Services.Common", "Services\ECommerce.Services.Common\ECommerce.Services.Common.csproj", "{9ED22070-2F75-4D69-AF01-0BC4D10E9469}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Services.Common", "Services\ECommerce.Services.Common\ECommerce.Services.Common.csproj", "{9ED22070-2F75-4D69-AF01-0BC4D10E9469}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Payment.Host", "Services\ECommerce.Payment.Host\ECommerce.Payment.Host.csproj", "{89C3EDC6-822F-488B-BF8C-7FA5E3BF3D7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Payment.Host", "Services\ECommerce.Payment.Host\ECommerce.Payment.Host.csproj", "{89C3EDC6-822F-488B-BF8C-7FA5E3BF3D7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Shipping.Host", "Services\ECommerce.Shipping.Host\ECommerce.Shipping.Host.csproj", "{2AC53649-DC51-41CE-A540-FC5FFD10FC0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Shipping.Host", "Services\ECommerce.Shipping.Host\ECommerce.Shipping.Host.csproj", "{2AC53649-DC51-41CE-A540-FC5FFD10FC0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Logging.Host", "Services\ECommerce.Logging.Host\ECommerce.Logging.Host.csproj", "{40D004E3-3C66-4B83-BAB2-E688260282F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Logging.Host", "Services\ECommerce.Logging.Host\ECommerce.Logging.Host.csproj", "{40D004E3-3C66-4B83-BAB2-E688260282F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Reporting.Api", "Services\ECommerce.Reporting.Api\ECommerce.Reporting.Api.csproj", "{2DE16DD1-023E-486A-B49B-C4768BB273CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Reporting.Api", "Services\ECommerce.Reporting.Api\ECommerce.Reporting.Api.csproj", "{2DE16DD1-023E-486A-B49B-C4768BB273CD}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{4E902C72-5D16-461E-B844-CFB8835D51AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +68,13 @@ Global
 		{2DE16DD1-023E-486A-B49B-C4768BB273CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DE16DD1-023E-486A-B49B-C4768BB273CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DE16DD1-023E-486A-B49B-C4768BB273CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E902C72-5D16-461E-B844-CFB8835D51AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E902C72-5D16-461E-B844-CFB8835D51AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E902C72-5D16-461E-B844-CFB8835D51AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E902C72-5D16-461E-B844-CFB8835D51AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EE19D81B-E3B9-416C-9E5B-7E6CF3DF3792} = {2BEEC8AE-B036-487F-8309-CCC1317BD1D0}
@@ -77,5 +87,8 @@ Global
 		{2AC53649-DC51-41CE-A540-FC5FFD10FC0B} = {2BEEC8AE-B036-487F-8309-CCC1317BD1D0}
 		{40D004E3-3C66-4B83-BAB2-E688260282F7} = {2BEEC8AE-B036-487F-8309-CCC1317BD1D0}
 		{2DE16DD1-023E-486A-B49B-C4768BB273CD} = {2BEEC8AE-B036-487F-8309-CCC1317BD1D0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0F549F0D-7CAD-41D4-8954-F836B8D278F9}
 	EndGlobalSection
 EndGlobal

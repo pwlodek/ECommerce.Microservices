@@ -1,22 +1,21 @@
-﻿FROM microsoft/aspnetcore-build AS builder
-WORKDIR /source
-ARG CONFIG
-
-# copy projects 
-COPY . .
-
-# Set working directory to our service
-WORKDIR /source/Services/ECommerce.Reporting.Api
-
-# restore libraries
-RUN dotnet restore
-
-# build
-RUN dotnet publish --configuration ${CONFIG:-Debug} --output /app
-
-# build runtime image
-FROM microsoft/aspnetcore:latest
-EXPOSE 80
+FROM microsoft/aspnetcore:2.0 AS base
 WORKDIR /app
-COPY --from=builder /app .
+EXPOSE 80
+
+FROM microsoft/aspnetcore-build:2.0 AS build
+WORKDIR /src
+COPY Services/ECommerce.Reporting.Api/ECommerce.Reporting.Api.csproj Services/ECommerce.Reporting.Api/
+COPY Services/ECommerce.Common/ECommerce.Common.csproj Services/ECommerce.Common/
+COPY Services/ECommerce.Services.Common/ECommerce.Services.Common.csproj Services/ECommerce.Services.Common/
+RUN dotnet restore Services/ECommerce.Reporting.Api/ECommerce.Reporting.Api.csproj
+COPY . .
+WORKDIR /src/Services/ECommerce.Reporting.Api
+RUN dotnet build ECommerce.Reporting.Api.csproj -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish ECommerce.Reporting.Api.csproj -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "ECommerce.Reporting.Api.dll"]

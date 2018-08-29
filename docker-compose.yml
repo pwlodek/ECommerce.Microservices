@@ -1,137 +1,50 @@
-version: '3'
+version: '3.4'
+
 services:
-
-  # Rabbit MQ
-  rabbit:
-    image: rabbitmq:3.6-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    container_name: rabbit
-  
-  # SQL Server for Linux
-  sqlserver:
-    image: sqlserver
-    build:
-      context: ./Database
-      dockerfile: Dockerfile
-    ports:
-      - "1433:1433"
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=Zaq123#!
-    container_name: sqlserver
-  
-  # Catalog Microservice
-  catalog-api:    
-    image: ecommerce/catalog-api
+  ecommerce.catalog.api:
+    image: ${DOCKER_REGISTRY}ecommerce/catalog.api
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Catalog.Api/Dockerfile
-    environment:
-      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products
-      - RabbitHost=rabbit
-    ports:
-    - "8081:80"
-    depends_on: 
-    - rabbit
-    - sqlserver
-    deploy:
-      replicas: 2
-    hostname: catalog-api
-    container_name: catalog-api
+      dockerfile: Services/ECommerce.Catalog.Api/Dockerfile
 
-  # Customers Microservice
-  customers-api:
-    image: ecommerce/customers-api
+  ecommerce.customers.api:
+    image: ${DOCKER_REGISTRY}ecommerce/customers.api
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Customers.Api/Dockerfile
-    environment:
-      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers
-      - RabbitHost=rabbit
-    ports:
-    - "8082:80"
-    depends_on: 
-    - rabbit
-    - sqlserver
-    deploy:
-      replicas: 2
-    hostname: customers-api
-    container_name: customers-api
+      dockerfile: Services/ECommerce.Customers.Api/Dockerfile
 
-  # Sales Microservice
-  sales-api:
-    image: ecommerce/sales-api
+
+  ecommerce.logging.host:
+    image: ${DOCKER_REGISTRY}ecommerce/logging.host
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Sales.Api/Dockerfile
-    environment:
-      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales
-      - RabbitHost=rabbit
-      - CustomersServiceHost=customers-api
-      - CatalogServiceHost=catalog-api
-    ports:
-    - "8083:80"
-    depends_on: 
-    - rabbit
-    - sqlserver
-    hostname: sales-api
-    container_name: sales-api
+      dockerfile: Services/ECommerce.Logging.Host/Dockerfile
 
-  # Payment Microservice
-  payment-host:
-    image: ecommerce/payment-host
+
+  ecommerce.payment.host:
+    image: ${DOCKER_REGISTRY}ecommerce/payment.host
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Payment.Host/Dockerfile
-    environment:
-      - RabbitHost=rabbit
-    depends_on: 
-    - rabbit
-    hostname: payment-host
-    container_name: payment-host
+      dockerfile: Services/ECommerce.Payment.Host/Dockerfile
 
-  # Shipping Microservice
-  shipping-host:
-    image: ecommerce/shipping-host
+
+  ecommerce.reporting.api:
+    image: ${DOCKER_REGISTRY}ecommerce/reporting.api
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Shipping.Host/Dockerfile
-    environment:
-      - RabbitHost=rabbit
-    depends_on: 
-    - rabbit
-    hostname: shipping-host
-    container_name: shipping-host
+      dockerfile: Services/ECommerce.Reporting.Api/Dockerfile
 
-# Reporting Microservice
-  reporting-api:
-    image: ecommerce/reporting-api
+
+  ecommerce.sales.api:
+    image: ${DOCKER_REGISTRY}ecommerce/sales.api
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Reporting.Api/Dockerfile
-    environment:
-      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Reporting
-      - RabbitHost=rabbit
-      - CustomersServiceHost=customers-api
-    ports:
-    - "8084:80"
-    depends_on: 
-    - rabbit
-    - sqlserver
-    hostname: reporting-host
-    container_name: reporting-host
+      dockerfile: Services/ECommerce.Sales.Api/Dockerfile
 
-# Logging Microservice
-  logging-host:    
-    image: ecommerce/logging-host
+
+  ecommerce.shipping.host:
+    image: ${DOCKER_REGISTRY}ecommerce/shipping.host
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Logging.Host/Dockerfile
-    environment:
-      - RabbitHost=rabbit
-    depends_on: 
-    - rabbit
-    hostname: logging-host
-    container_name: logging-host
+      dockerfile: Services/ECommerce.Shipping.Host/Dockerfile
+
