@@ -1,50 +1,101 @@
 version: '3.4'
 
 services:
+
+  # Rabbit MQ
+  rabbit:
+    image: rabbitmq:3.6-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    container_name: rabbit
+  
+  # SQL Server for Linux
+  sqlserver:
+    image: sqlserver
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: Zaq123#!
+    container_name: sqlserver
+
   ecommerce.catalog.api:
-    image: ${DOCKER_REGISTRY}ecommerce/catalog.api
+    image: ecommerce/catalog.api
     build:
       context: .
       dockerfile: Services/ECommerce.Catalog.Api/Dockerfile
+    environment:      
+      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products      
+      RabbitHost: rabbit
+    ports:
+      - "8085:80"
 
   ecommerce.customers.api:
-    image: ${DOCKER_REGISTRY}ecommerce/customers.api
+    image: ecommerce/customers.api
     build:
       context: .
       dockerfile: Services/ECommerce.Customers.Api/Dockerfile
+    environment:
+      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers
+      RabbitHost: rabbit
+    ports:
+    - "8082:80"
 
 
   ecommerce.logging.host:
-    image: ${DOCKER_REGISTRY}ecommerce/logging.host
+    image: ecommerce/logging.host
     build:
       context: .
       dockerfile: Services/ECommerce.Logging.Host/Dockerfile
+    environment:
+      RabbitHost: rabbit
 
 
   ecommerce.payment.host:
-    image: ${DOCKER_REGISTRY}ecommerce/payment.host
+    image: ecommerce/payment.host
     build:
       context: .
       dockerfile: Services/ECommerce.Payment.Host/Dockerfile
+    environment:
+      RabbitHost: rabbit
 
 
   ecommerce.reporting.api:
-    image: ${DOCKER_REGISTRY}ecommerce/reporting.api
+    image: ecommerce/reporting.api
     build:
       context: .
       dockerfile: Services/ECommerce.Reporting.Api/Dockerfile
+    environment:
+      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Reporting
+      RabbitHost: rabbit
+      CustomersServiceHost: ecommerce.customers.api
+    ports:
+    - "8084:80"
 
 
   ecommerce.sales.api:
-    image: ${DOCKER_REGISTRY}ecommerce/sales.api
+    image: ecommerce/sales.api
     build:
       context: .
       dockerfile: Services/ECommerce.Sales.Api/Dockerfile
+    environment:
+      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales
+      RabbitHost: rabbit
+      CustomersServiceHost: ecommerce.customers.api
+      CatalogServiceHost: ecommerce.catalog.api
+    ports:
+    - "8083:80"
 
 
   ecommerce.shipping.host:
-    image: ${DOCKER_REGISTRY}ecommerce/shipping.host
+    image: ecommerce/shipping.host
     build:
       context: .
       dockerfile: Services/ECommerce.Shipping.Host/Dockerfile
+    environment:
+      RabbitHost: rabbit
 
