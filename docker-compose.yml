@@ -119,3 +119,15 @@ services:
     depends_on: 
       - rabbit
 
+
+  ecommerce.webapp:
+    image: ecommerce/webapp
+    build:
+      context: .
+      dockerfile: Web/ECommerce.WebApp/Dockerfile
+    depends_on: 
+      - ecommerce.catalog.api
+      - ecommerce.customers.api
+      - ecommerce.reporting.api
+      - ecommerce.sales.api
+
