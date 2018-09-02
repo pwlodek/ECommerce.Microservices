@@ -4,17 +4,17 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>4e902c72-5d16-461e-b844-cfb8835d51aa</ProjectGuid>
-    <DockerLaunchAction>None</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/api/products</DockerServiceUrl>
-    <DockerServiceName>ecommerce.catalog.api</DockerServiceName>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
+    <DockerServiceName>ecommerce.webapp</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
-	<None Include="docker-compose.azure.yml" />
-	<None Include="docker-compose.infrastructure.yml" />
+    <None Include="docker-compose.azure.yml" />
+    <None Include="docker-compose.infrastructure.yml" />
     <None Include=".dockerignore" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,48 @@
+﻿@page
+@Html.AntiForgeryToken()
+@model ECommerce.WebApp.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to e-Commerce on Containers Sample Application!</h1>
+        <p class="lead">This is sample containerized application with a simple web interface backed by few microservices.</p>
+        <hr class="my-4">
+        <p>The aim of this sample is to show how to design, structure and implement .NET core microservices based application that leverages Docker for running containers.</p>        
+    </div>
+
+    <h1>Products</h1>
+        
+    <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Products)
+            {
+            <tr>
+                <th scope="row">@item.ProductId</th>
+                <td>@item.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+                <td>
+                    <button class="clicker btn btn-outline-warning" value="@item.ProductId">
+                        Buy
+                    </button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    
+</div>

@@ -125,6 +125,10 @@ services:
     build:
       context: .
       dockerfile: Web/ECommerce.WebApp/Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      CatalogServiceHost: ecommerce.catalog.api
     depends_on: 
       - ecommerce.catalog.api
       - ecommerce.customers.api
