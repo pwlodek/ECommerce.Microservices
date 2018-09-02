@@ -12,11 +12,11 @@
         <h1 class="display-4">Welcome to e-Commerce on Containers Sample Application!</h1>
         <p class="lead">This is sample containerized application with a simple web interface backed by few microservices.</p>
         <hr class="my-4">
-        <p>The aim of this sample is to show how to design, structure and implement .NET core microservices based application that leverages Docker for running containers.</p>        
+        <p>The aim of this sample is to show how to design, structure and implement .NET core microservices based application that leverages Docker for running containers.</p>
     </div>
 
     <h1>Products</h1>
-        
+
     <table class="table table-hover">
         <thead class="thead-dark">
             <tr>
@@ -30,19 +30,21 @@
         <tbody>
             @foreach (var item in Model.Products)
             {
-            <tr>
-                <th scope="row">@item.ProductId</th>
-                <td>@item.Name</td>
-                <td>@item.Quantity</td>
-                <td>@item.Price</td>
-                <td>
-                    <button class="clicker btn btn-outline-warning" value="@item.ProductId">
-                        Buy
-                    </button>
-                </td>
-            </tr>
+                <tr>
+                    <th scope="row">@item.ProductId</th>
+                    <td>@item.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@string.Format("${0}", item.Price)</td>
+                    <td>
+                        <button class="btn btn-outline-warning buyButton" value="@item.ProductId">
+                            Buy
+                        </button>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
-    
+
+    <script src="~/js/Index.js" defer></script>
+
 </div>
