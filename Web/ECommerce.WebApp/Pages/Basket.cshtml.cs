@@ -12,10 +12,12 @@ namespace ECommerce.WebApp.Pages
     public class BasketModel : PageModelBase
     {
         private readonly IBasketService _basketService;
+        private readonly IOrderService _orderService;
 
-        public BasketModel(IBasketService basketService)
+        public BasketModel(IBasketService basketService, IOrderService orderService)
         {
             this._basketService = basketService;
+            this._orderService = orderService;
         }
 
         public IList<Product> Products { get; private set; }
@@ -25,8 +27,9 @@ namespace ECommerce.WebApp.Pages
             Products = _basketService.GetProducts().ToList();
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
+            await _orderService.OrderBasketAsync();
             return RedirectToPage("/Index");
         }
     }

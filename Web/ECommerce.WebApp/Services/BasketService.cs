@@ -13,6 +13,8 @@ namespace ECommerce.WebApp.Services
         void AddProduct(Product product);
 
         IEnumerable<Product> GetProducts();
+
+        void Clear();
     }
 
     public class BasketService : IBasketService
@@ -44,6 +46,11 @@ namespace ECommerce.WebApp.Services
                 new List<Product>();
 
             return basket;
+        }
+
+        public void Clear()
+        {
+            _httpContextAccessor.HttpContext.Session.SetString("Basket", "[]");
         }
     }
 }

@@ -129,6 +129,7 @@ services:
       - "8080:80"
     environment:
       CatalogServiceHost: ecommerce.catalog.api
+      SalesServiceHost: ecommerce.sales.api
     depends_on: 
       - ecommerce.catalog.api
       - ecommerce.customers.api
