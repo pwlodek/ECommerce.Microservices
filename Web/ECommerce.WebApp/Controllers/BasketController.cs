@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ECommerce.WebApp.Models;
+using ECommerce.WebApp.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,18 +13,18 @@ namespace ECommerce.WebApp.Controllers
     [ApiController]
     public class BasketController : ControllerBase
     {
-        private readonly IHttpContextAccessor _accessor;
+        private readonly IBasketService _basketService;
 
-        public BasketController(IHttpContextAccessor accessor)
+        public BasketController(IBasketService basketService)
         {
-            this._accessor = accessor;
+            this._basketService = basketService;
         }
 
         // POST: api/Basket
         [HttpPost]
-        public void Post(string id)
+        public void Post([FromBody]Product product)
         {
-            
+            _basketService.AddProduct(product);
         }
     }
 }

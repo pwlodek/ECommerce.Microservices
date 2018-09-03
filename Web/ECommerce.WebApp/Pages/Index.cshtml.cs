@@ -29,9 +29,10 @@ namespace ECommerce.WebApp.Pages
                 var products = await _productService.GetProductsAsync();
                 Products = products.ToList();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                HasError = true;
+                ErrorMessage = ex.Message;
             }
         }
     }

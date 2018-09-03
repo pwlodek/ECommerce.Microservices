@@ -28,6 +28,7 @@ namespace ECommerce.WebApp
             });
 
             services.AddSingleton<IProductService, ProductService>();
+            services.AddSingleton<IBasketService, BasketService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

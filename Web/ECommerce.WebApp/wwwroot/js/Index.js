@@ -14,9 +14,9 @@ var IndexPage = {
         this.settings.buyButtons.click(function (e) {
             e.preventDefault();
 
-            var x = "/api/basket?id=" + $(this).val();
+            var data = $(this).val();
 
-            Common.sendPost(x);
+            Common.sendPost("/api/basket", data);
         });
     },
 };

@@ -2,10 +2,11 @@
 
 var Common = {
 
-    sendPost: function (postUrl) {
+    sendPost: function (postUrl, postData) {
         $.ajax({
             type: "POST",
             url: postUrl,
+            data: postData,
             contentType: "application/json; charset=utf-8",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("XSRF-TOKEN",

@@ -11,5 +11,9 @@ namespace ECommerce.WebApp.Pages
         public bool DisplaySearchBox { get; set; }
 
         public string SearchText { get; set; }
+
+        public bool HasError { get; protected set; }
+
+        public string ErrorMessage { get; protected set; }
     }
 }
