@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using ECommerce.WebApp.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace ECommerce.WebApp.Services
     public interface IOrderService
     {
         Task OrderBasketAsync();
+
+        Task<IList<Order>> GetOrdersAsync();
     }
 
     public class OrderService : IOrderService
@@ -23,6 +26,16 @@ namespace ECommerce.WebApp.Services
         {
             this._basketService = basketService;
             this._configuration = configuration;
+        }
+
+        public async Task<IList<Order>> GetOrdersAsync()
+        {
+            using (var client = new HttpClient())
+            {
+                var salesServiceHost = _configuration["SalesServiceHost"];
+                var response = await client.GetStringAsync($"http://{salesServiceHost}/api/orders");
+                return JsonConvert.DeserializeObject<List<Order>>(response);
+            }
         }
 
         public async Task OrderBasketAsync()

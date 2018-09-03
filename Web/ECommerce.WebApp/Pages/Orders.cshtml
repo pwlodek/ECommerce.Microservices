@@ -1,0 +1,59 @@
+﻿@page
+@model ECommerce.WebApp.Pages.OrdersModel
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+
+    @if (Model.HasError)
+    {
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Error :(</h4>
+            <p>Error has occured while processing the page. Please try again.</p>
+            <hr>
+            <p class="mb-0">@Model.ErrorMessage</p>
+        </div>
+    }
+
+    @if (!Model.HasError && Model.Orders.Count == 0)
+    {
+        <br />
+        <div class="alert alert-secondary" role="alert">
+            <h4 class="alert-heading">No orders yet!</h4>
+            <p>Please make some purchases first.</p>
+        </div>
+    }
+
+    @if (!Model.HasError && Model.Orders.Count > 0)
+    {
+        <h1>Orders</h1>
+
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Customer ID</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.Orders)
+                {
+                    <tr>
+                        <th scope="row">@item.OrderId</th>
+                        <td>@item.CustomerId</td>
+                        <td>@item.Status</td>
+                        <td>@string.Format("${0}", item.Total)</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    }
+
+</div>
