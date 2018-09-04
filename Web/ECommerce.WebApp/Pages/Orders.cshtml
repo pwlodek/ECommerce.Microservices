@@ -49,7 +49,7 @@
                     <tr>
                         <th scope="row">@item.OrderId</th>
                         <td>@item.CustomerId</td>
-                        <td>@item.Status</td>
+                        <td>@item.Status.ToString()</td>
                         <td>@string.Format("${0}", item.Total)</td>
                     </tr>
                 }

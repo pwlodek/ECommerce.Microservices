@@ -11,8 +11,18 @@ namespace ECommerce.WebApp.Models
 
         public int CustomerId { get; set; }
 
-        public int Status { get; set; }
+        public OrderStatus Status { get; set; }
 
         public double Total { get; set; }
+    }
+
+    [Flags]
+    public enum OrderStatus
+    {
+        None = 0,
+        Submitted = 1,
+        Packed = 2,
+        Payed = 4,
+        Shipped = 8
     }
 }
