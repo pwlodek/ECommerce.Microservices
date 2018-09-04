@@ -1,9 +1,9 @@
 #
-# This docker-compose file is meant to run entire ECommerce sample on Azure VMs in Docker Swarm mode 
-# from azure registry called ecommercesampleregistry.azurecr.io
+# This docker-compose file is meant to run entire ECommerce sample on Docker Swarm mode 
+# either locally or on Azure from azure registry
 #
 # Before you proceed, please make sure you have
-#  - Docker Swarm mode running on Azure (single VM, multiple VMs in availability set, or a scaleset)
+#  - Docker Swarm mode running either locally or on Azure (single VM, multiple VMs in availability set, or a scaleset)
 #  - private Azure Container Registry called ecommercesampleregistry
 #
 # Steps to run:
@@ -14,23 +14,22 @@
 #  - login to the remote registry on your manager and worker nodes: docker login ecommercesampleregistry.azurecr.io -u ecommercesampleregistry -p 6ooli14nIM3Wxt31q9dAcx3Ur1oKuGD=
 #  - deploy stack on manager node: docker stack deploy -c docker-compose.yml app1 --with-registry-auth
 #
-# Remember to create load balancing rule for port 8083 (Sales service) so that you can connect from external hosts
+# Remember to create load balancing rule for port 8080 (webapp) so that you can connect from external hosts
 #
 
-version: '3'
+version: '3.4'
 services:
 
   # Rabbit MQ
   rabbit:
-    image: rabbitmq:3.6-management
+    image: ${DOCKER_REGISTRY}rabbitmq:3.6-management
     ports:
       - "5672:5672"
       - "15672:15672"
-    container_name: rabbit
   
   # SQL Server for Linux
   sqlserver:
-    image: ecommercesampleregistry.azurecr.io/sqlserver
+    image: ${DOCKER_REGISTRY}sqlserver
     build:
       context: ./Database
       dockerfile: Dockerfile
@@ -39,118 +38,118 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Zaq123#!
-    container_name: sqlserver
-  
+
   # Catalog Microservice
-  catalog-api:
-    image: ecommercesampleregistry.azurecr.io/ecommerce/catalog-api
+  ecommerce-catalog-api:
+    image: ${DOCKER_REGISTRY}ecommerce/catalog.api
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Catalog.Api/Dockerfile
-    environment:
-      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products
-      - RabbitHost=rabbit
+      dockerfile: Services/ECommerce.Catalog.Api/Dockerfile
+    environment:      
+      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products      
+      RabbitHost: rabbit
     ports:
-    - "8081:80"
-    depends_on: 
-    - rabbit
-    - sqlserver
+      - "8085:80"
     deploy:
-      replicas: 10
-    hostname: catalog-api
-    container_name: catalog-api
+      replicas: 2
+    depends_on: 
+      - rabbit
+      - sqlserver
 
   # Customers Microservice
-  customers-api:
-    image: ecommercesampleregistry.azurecr.io/ecommerce/customers-api
+  ecommerce-customers-api:
+    image: ${DOCKER_REGISTRY}ecommerce/customers.api
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Customers.Api/Dockerfile
+      dockerfile: Services/ECommerce.Customers.Api/Dockerfile
     environment:
-      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers
-      - RabbitHost=rabbit
+      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers
+      RabbitHost: rabbit
     ports:
-    - "8082:80"
+      - "8082:80"
     depends_on: 
-    - rabbit
-    - sqlserver
-    deploy:
-      replicas: 10
-    hostname: customers-api
-    container_name: customers-api
+      - rabbit
+      - sqlserver
 
-  # Sales Microservice
-  sales-api:
-    image: ecommercesampleregistry.azurecr.io/ecommerce/sales-api
+  # Logging Microservice
+  ecommerce-logging-host:
+    image: ${DOCKER_REGISTRY}ecommerce/logging.host
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Sales.Api/Dockerfile
+      dockerfile: Services/ECommerce.Logging.Host/Dockerfile
     environment:
-      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales
-      - RabbitHost=rabbit
-      - CustomersServiceHost=customers-api
-      - CatalogServiceHost=catalog-api
-    ports:
-    - "8083:80"
+      RabbitHost: rabbit
     depends_on: 
-    - rabbit
-    - sqlserver
-    hostname: sales-api
-    container_name: sales-api
+      - rabbit
 
   # Payment Microservice
-  payment-host:
-    image: ecommercesampleregistry.azurecr.io/ecommerce/payment-host
+  ecommerce-payment-host:
+    image: ${DOCKER_REGISTRY}ecommerce/payment.host
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Payment.Host/Dockerfile
+      dockerfile: Services/ECommerce.Payment.Host/Dockerfile
     environment:
-      - RabbitHost=rabbit
+      RabbitHost: rabbit
     depends_on: 
-    - rabbit
-    hostname: payment-host
-    container_name: payment-host
+      - rabbit
+
+  # Reporting Microservice
+  ecommerce-reporting-api:
+    image: ${DOCKER_REGISTRY}ecommerce/reporting.api
+    build:
+      context: .
+      dockerfile: Services/ECommerce.Reporting.Api/Dockerfile
+    environment:
+      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Reporting
+      RabbitHost: rabbit
+      CustomersServiceHost: ecommerce-customers-api
+    ports:
+      - "8084:80"
+    depends_on: 
+      - rabbit
+      - sqlserver
+
+  # Sales Microservice
+  ecommerce-sales-api:
+    image: ${DOCKER_REGISTRY}ecommerce/sales.api
+    build:
+      context: .
+      dockerfile: Services/ECommerce.Sales.Api/Dockerfile
+    environment:
+      ConnectionString: Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales
+      RabbitHost: rabbit
+      CustomersServiceHost: ecommerce-customers-api
+      CatalogServiceHost: ecommerce-catalog-api
+    ports:
+      - "8083:80"
+    depends_on: 
+      - rabbit
+      - sqlserver
 
   # Shipping Microservice
-  shipping-host:
-    image: ecommercesampleregistry.azurecr.io/ecommerce/shipping-host
+  ecommerce-shipping-host:
+    image: ${DOCKER_REGISTRY}ecommerce/shipping.host
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Shipping.Host/Dockerfile
+      dockerfile: Services/ECommerce.Shipping.Host/Dockerfile
     environment:
-      - RabbitHost=rabbit
+      RabbitHost: rabbit
     depends_on: 
-    - rabbit
-    hostname: shipping-host
-    container_name: shipping-host
+      - rabbit
 
-# Reporting Microservice
-  reporting-api:
-    image: ecommercesampleregistry.azurecr.io/ecommerce/reporting-api
+  # WebApp Microservice
+  ecommerce-webapp:
+    image: ${DOCKER_REGISTRY}ecommerce/webapp
     build:
       context: .
-      dockerfile: ./Services/ECommerce.Reporting.Api/Dockerfile
-    environment:
-      - ConnectionString=Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Reporting
-      - RabbitHost=rabbit
-      - CustomersServiceHost=customers-api
+      dockerfile: Web/ECommerce.WebApp/Dockerfile
     ports:
-    - "8084:80"
-    depends_on: 
-    - rabbit
-    - sqlserver
-    hostname: reporting-host
-    container_name: reporting-host
-
-# Logging Microservice
-  logging-host:
-    image: ecommercesampleregistry.azurecr.io/ecommerce/logging-host
-    build:
-      context: .
-      dockerfile: ./Services/ECommerce.Logging.Host/Dockerfile
+      - "8080:80"
     environment:
-      - RabbitHost=rabbit
+      CatalogServiceHost: ecommerce-catalog-api
+      SalesServiceHost: ecommerce-sales-api
     depends_on: 
-    - rabbit
-    hostname: logging-host
-    container_name: logging-host
+      - ecommerce-catalog-api
+      - ecommerce-customers-api
+      - ecommerce-reporting-api
+      - ecommerce-sales-api
