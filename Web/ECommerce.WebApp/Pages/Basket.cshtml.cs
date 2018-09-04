@@ -24,6 +24,7 @@ namespace ECommerce.WebApp.Pages
         
         public void OnGet()
         {
+            CurrentPage = AppPage.Basket;
             Products = _basketService.GetProducts().ToList();
         }
 

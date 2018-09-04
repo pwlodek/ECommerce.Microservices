@@ -22,6 +22,8 @@ namespace ECommerce.WebApp.Pages
 
         public async Task OnGetAsync()
         {
+            CurrentPage = AppPage.Orders;
+
             try
             {
                 Orders = await _orderService.GetOrdersAsync();

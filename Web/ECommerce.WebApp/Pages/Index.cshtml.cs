@@ -22,6 +22,7 @@ namespace ECommerce.WebApp.Pages
 
         public async Task OnGetAsync()
         {
+            CurrentPage = AppPage.Index;
             DisplaySearchBox = true;
 
             try

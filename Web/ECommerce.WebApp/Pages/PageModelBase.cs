@@ -15,5 +15,19 @@ namespace ECommerce.WebApp.Pages
         public bool HasError { get; protected set; }
 
         public string ErrorMessage { get; protected set; }
+
+        public AppPage CurrentPage { get; protected set; }
+
+        public string GetActive(AppPage page)
+        {
+            return (CurrentPage == page ? "active" : "inactive");
+        }
+    }
+
+    public enum AppPage
+    {
+        Index,
+        Orders,
+        Basket
     }
 }
