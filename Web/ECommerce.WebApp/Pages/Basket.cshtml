@@ -10,7 +10,7 @@
 
     @if (Model.Products.Count == 0)
     {
-        <br/>
+        <br />
         <div class="alert alert-secondary" role="alert">
             <h4 class="alert-heading">Basket is empty</h4>
             <p>Your basket is currently empty.</p>
@@ -19,6 +19,7 @@
 
     @if (!Model.HasError && Model.Products.Count > 0)
     {
+        <br />
         <h1>Your Basket</h1>
 
         <table class="table table-hover">

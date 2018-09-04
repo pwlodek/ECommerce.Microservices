@@ -20,6 +20,10 @@ namespace ECommerce.WebApp.Pages
 
         public IList<Product> Products { get; private set; }
 
+        public string ServiceId { get; set; }
+
+        public string HostName { get; set; }
+
         public async Task OnGetAsync()
         {
             CurrentPage = AppPage.Index;
@@ -27,8 +31,10 @@ namespace ECommerce.WebApp.Pages
 
             try
             {
-                var products = await _productService.GetProductsAsync();
-                Products = products.ToList();
+                var response = await _productService.GetProductsAsync();
+                Products = response.Payload.ToList();
+                HostName = response.HostName;
+                ServiceId = response.InstanceId;
             }
             catch (Exception ex)
             {

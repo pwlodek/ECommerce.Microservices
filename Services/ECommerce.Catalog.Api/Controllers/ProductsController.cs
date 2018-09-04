@@ -26,10 +26,18 @@ namespace ECommerce.Catalog.Api.Controllers
 
         // GET api/products
         [HttpGet]
-        public IEnumerable<Product> Get()
+        public IActionResult Get(bool includeServiceInfo = false)
         {
             Logger.Debug($"Instance {_identityService.InstanceId} is returning products.");
-            return _productRepository.GetAll();
+
+            if (includeServiceInfo)
+            {
+                return Ok(new ServiceResponse<IEnumerable<Product>> { HostName = _identityService.HostName, InstanceId = _identityService.InstanceId, Payload = _productRepository.GetAll() });
+            }
+            else
+            {
+                return Ok(_productRepository.GetAll());
+            }            
         }
 
         // GET api/products/5

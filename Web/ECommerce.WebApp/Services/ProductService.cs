@@ -10,7 +10,7 @@ namespace ECommerce.WebApp.Services
 {
     public interface IProductService
     {
-        Task<IEnumerable<Product>> GetProductsAsync();
+        Task<ServiceResponse<IEnumerable<Product>>> GetProductsAsync();
     }
 
     public class ProductService : IProductService
@@ -22,13 +22,13 @@ namespace ECommerce.WebApp.Services
             this._configuration = configuration;
         }
 
-        public async Task<IEnumerable<Product>> GetProductsAsync()
+        public async Task<ServiceResponse<IEnumerable<Product>>> GetProductsAsync()
         {
             using (HttpClient client = new HttpClient())
             {
                 var catalogServiceHost = _configuration["CatalogServiceHost"];
-                var response = await client.GetStringAsync($"http://{catalogServiceHost}/api/products");
-                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Product>>(response);
+                var response = await client.GetStringAsync($"http://{catalogServiceHost}/api/products?includeServiceInfo=true");
+                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<ServiceResponse<IEnumerable<Product>>>(response);
                 return obj;
             }
         }

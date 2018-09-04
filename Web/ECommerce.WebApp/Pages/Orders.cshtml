@@ -10,6 +10,7 @@
 
     @if (Model.HasError)
     {
+        <br />
         <div class="alert alert-danger" role="alert">
             <h4 class="alert-heading">Error :(</h4>
             <p>Error has occured while processing the page. Please try again.</p>
@@ -29,6 +30,7 @@
 
     @if (!Model.HasError && Model.Orders.Count > 0)
     {
+        <br />
         <h1>Orders</h1>
 
         <table class="table table-hover">
