@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2047
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Ecommerce", "Ecommerce\Ecommerce.sfproj", "{9C97628C-0B23-41F3-A0AE-589354077A87}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9C97628C-0B23-41F3-A0AE-589354077A87}.Debug|x64.ActiveCfg = Debug|x64
+		{9C97628C-0B23-41F3-A0AE-589354077A87}.Debug|x64.Build.0 = Debug|x64
+		{9C97628C-0B23-41F3-A0AE-589354077A87}.Debug|x64.Deploy.0 = Debug|x64
+		{9C97628C-0B23-41F3-A0AE-589354077A87}.Release|x64.ActiveCfg = Release|x64
+		{9C97628C-0B23-41F3-A0AE-589354077A87}.Release|x64.Build.0 = Release|x64
+		{9C97628C-0B23-41F3-A0AE-589354077A87}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {223CC398-01F2-468D-8B7F-CAA63D0E8328}
+	EndGlobalSection
+EndGlobal

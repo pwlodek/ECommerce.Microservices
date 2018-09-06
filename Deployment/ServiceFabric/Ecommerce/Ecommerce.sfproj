@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets=";ValidateMSBuildFiles">
+  <Import Project="..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.props" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.props')" />
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>9c97628c-0b23-41f3-a0ae-589354077a87</ProjectGuid>
+    <ProjectVersion>2.2</ProjectVersion>
+    <MinToolsVersion>1.5</MinToolsVersion>
+    <SupportedMSBuildNuGetPackageVersion>1.6.6</SupportedMSBuildNuGetPackageVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ApplicationPackageRoot\ApplicationManifest.xml" />
+    <None Include="ApplicationParameters\Cloud.xml" />
+    <None Include="ApplicationParameters\Local.1Node.xml" />
+    <None Include="ApplicationParameters\Local.5Node.xml" />
+    <None Include="PublishProfiles\Cloud.xml" />
+    <None Include="PublishProfiles\Local.1Node.xml" />
+    <None Include="PublishProfiles\Local.5Node.xml" />
+    <None Include="Scripts\Deploy-FabricApplication.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ApplicationPackageRoot\Ecommerce.CatalogPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.CatalogPkg\ServiceManifest.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.CustomersPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.CustomersPkg\ServiceManifest.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.PaymentPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.PaymentPkg\ServiceManifest.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.ReportingPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.ReportingPkg\ServiceManifest.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.SalesPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.SalesPkg\ServiceManifest.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.ShippingPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.ShippingPkg\ServiceManifest.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.WebAppPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\Ecommerce.WebAppPkg\ServiceManifest.xml" />
+    <Content Include="ApplicationPackageRoot\RabbitMQPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\RabbitMQPkg\ServiceManifest.xml" />
+    <Content Include="ApplicationPackageRoot\SQLServerPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\SQLServerPkg\ServiceManifest.xml" />
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+  <PropertyGroup>
+    <ApplicationProjectTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Service Fabric Tools\Microsoft.VisualStudio.Azure.Fabric.ApplicationProject.targets</ApplicationProjectTargetsPath>
+  </PropertyGroup>
+  <Import Project="$(ApplicationProjectTargetsPath)" Condition="Exists('$(ApplicationProjectTargetsPath)')" />
+  <Import Project="..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.targets')" />
+  <Target Name="ValidateMSBuildFiles">
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.props')" Text="Unable to find the '..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.props' file. Please restore the 'Microsoft.VisualStudio.Azure.Fabric.MSBuild' Nuget package." />
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.targets')" Text="Unable to find the '..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.6\build\Microsoft.VisualStudio.Azure.Fabric.Application.targets' file. Please restore the 'Microsoft.VisualStudio.Azure.Fabric.MSBuild' Nuget package." />
+  </Target>
+</Project>

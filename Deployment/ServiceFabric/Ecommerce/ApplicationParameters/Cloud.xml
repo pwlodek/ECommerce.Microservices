@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application Name="fabric:/Ecommerce" xmlns="http://schemas.microsoft.com/2011/01/fabric" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Parameters>
+    <Parameter Name="RabbitMQ_InstanceCount" Value="1" />
+    <Parameter Name="SQLServer_InstanceCount" Value="1" />
+    <Parameter Name="Ecommerce.Catalog_InstanceCount" Value="-1" />
+    <Parameter Name="Ecommerce.Customers_InstanceCount" Value="-1" />
+    <Parameter Name="Ecommerce.Payment_InstanceCount" Value="1" />
+    <Parameter Name="Ecommerce.Reporting_InstanceCount" Value="1" />
+    <Parameter Name="Ecommerce.Sales_InstanceCount" Value="1" />
+    <Parameter Name="Ecommerce.Shipping_InstanceCount" Value="1" />
+    <Parameter Name="Ecommerce.WebApp_InstanceCount" Value="-1" />
+  </Parameters>
+</Application>
