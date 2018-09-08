@@ -26,12 +26,22 @@ namespace ECommerce.WebApp.Pages
 
         public async Task OnGetAsync()
         {
+            await LoadDataAsync(null);   
+        }
+
+        public async Task OnPostAsync()
+        {
+            await LoadDataAsync(SearchText);
+        }
+
+        private async Task LoadDataAsync(string filter)
+        {
             CurrentPage = AppPage.Index;
             DisplaySearchBox = true;
 
             try
             {
-                var response = await _productService.GetProductsAsync();
+                var response = await _productService.GetProductsAsync(filter);
                 Products = response.Payload.ToList();
                 HostName = response.HostName;
                 ServiceId = response.InstanceId;

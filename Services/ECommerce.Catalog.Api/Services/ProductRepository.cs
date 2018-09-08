@@ -46,6 +46,15 @@ namespace ECommerce.Catalog.Api.Services
             }
         }
 
+        public IEnumerable<Product> GetAll(string filter)
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                dbConnection.Open();
+                return dbConnection.Query<Product>($"SELECT * FROM Products P WHERE P.Name Like '%{filter}%'");
+            }
+        }
+
         public Product GetByID(int id)
         {
             using (IDbConnection dbConnection = Connection)
