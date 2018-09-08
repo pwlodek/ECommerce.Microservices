@@ -130,6 +130,7 @@ services:
     environment:
       CatalogServiceHost: ecommerce.catalog.api
       SalesServiceHost: ecommerce.sales.api
+      ReportingServiceHost: ecommerce.reporting.api
     depends_on: 
       - ecommerce.catalog.api
       - ecommerce.customers.api

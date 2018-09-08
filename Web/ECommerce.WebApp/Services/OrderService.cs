@@ -15,6 +15,8 @@ namespace ECommerce.WebApp.Services
         Task OrderBasketAsync();
 
         Task<IList<Order>> GetOrdersAsync();
+
+        Task<IList<OrderReportEntry>> GetOrderReportAsync();
     }
 
     public class OrderService : IOrderService
@@ -35,6 +37,16 @@ namespace ECommerce.WebApp.Services
                 var salesServiceHost = _configuration["SalesServiceHost"];
                 var response = await client.GetStringAsync($"http://{salesServiceHost}/api/orders");
                 return JsonConvert.DeserializeObject<List<Order>>(response);
+            }
+        }
+
+        public async Task<IList<OrderReportEntry>> GetOrderReportAsync()
+        {
+            using (var client = new HttpClient())
+            {
+                var reportingServiceHost = _configuration["ReportingServiceHost"];
+                var response = await client.GetStringAsync($"http://{reportingServiceHost}/api/reporting");
+                return JsonConvert.DeserializeObject<List<OrderReportEntry>>(response);
             }
         }
 
