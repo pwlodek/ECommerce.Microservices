@@ -21,7 +21,7 @@ var BasketPage = {
 
             // Purchase is implemented on form post
         });
-    },
+    }
 };
 
 (function () {

@@ -18,6 +18,15 @@ var Common = {
             failure: function (response) {
             }
         });
-    }
+    },
 
+    sendProductAdded: function (name) {
+        toastr.success(name);
+    }
 };
+
+toastr.options = {
+    "closeButton": false,
+    "newestOnTop": false,
+    "preventDuplicates": false
+}
