@@ -1,0 +1,371 @@
+#                      _____ ____ ___  __  __ __  __ _____ ____   ____ _____                  ____            _        _                                         
+#  _____ _____ _____  | ____/ ___/ _ \|  \/  |  \/  | ____|  _ \ / ___| ____|   ___  _ __    / ___|___  _ __ | |_ __ _(_)_ __   ___ _ __ ___   _____ _____ _____ 
+# |_____|_____|_____| |  _|| |  | | | | |\/| | |\/| |  _| | |_) | |   |  _|    / _ \| '_ \  | |   / _ \| '_ \| __/ _` | | '_ \ / _ \ '__/ __| |_____|_____|_____|
+# |_____|_____|_____| | |__| |__| |_| | |  | | |  | | |___|  _ <| |___| |___  | (_) | | | | | |__| (_) | | | | || (_| | | | | |  __/ |  \__ \ |_____|_____|_____|
+#                     |_____\____\___/|_|  |_|_|  |_|_____|_| \_\\____|_____|  \___/|_| |_|  \____\___/|_| |_|\__\__,_|_|_| |_|\___|_|  |___/                    
+#                                                                                                                                                                                                                                                            
+# This Kubernetes deployment file launches the entire sample on your local Kubernetes cluster. The best way to install Kubernetes locally is to install Docker for Windows (or macOS)
+# and then go to settings and enable Kubernetes integration.
+#
+# Rabbit MQ Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: rabbit
+  labels:
+    app: rabbit
+    tier: infrastructure
+spec:
+  selector:
+    app: rabbit
+    tier: infrastructure
+  ports:
+  - name: rabbit
+    protocol: TCP
+    port: 5672
+    targetPort: 5672
+  - name: management
+    protocol: TCP
+    port: 15672
+    targetPort: 15672
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbit
+spec:
+  selector:
+    matchLabels:
+      app: rabbit
+      tier: infrastructure
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rabbit
+        tier: infrastructure
+    spec:
+      containers:
+      - name: rabbit
+        image: rabbitmq:3.6-management
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 5672
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# SQL Server Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: sqlserver
+  labels:
+    app: sqlserver
+    tier: infrastructure
+spec:
+  selector:
+    app: sqlserver
+    tier: infrastructure
+  ports:
+  - name: sqlserver
+    protocol: TCP
+    port: 1433
+    targetPort: 1433
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqlserver
+spec:
+  selector:
+    matchLabels:
+      app: sqlserver
+      tier: infrastructure
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sqlserver
+        tier: infrastructure
+    spec:
+      containers:
+      - name: sqlserver
+        image: sqlserver
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 1433
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: SA_PASSWORD
+          value: "Zaq123#!"
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Catalog Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: catalog-api
+  labels:
+    app: catalog-api
+    tier: backend
+spec:
+  selector:
+    app: catalog-api
+    tier: backend
+  ports:
+  - name: catalog-api
+    protocol: TCP
+    port: 8085
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-api
+spec:
+  selector:
+    matchLabels:
+      app: catalog-api
+      tier: backend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: catalog-api
+        tier: backend
+    spec:
+      containers:
+      - name: catalog-api
+        image: ecommerce/catalog.api
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ConnectionString
+          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products"
+        - name: RabbitHost
+          value: "rabbit"
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Customers Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: customers-api
+  labels:
+    app: customers-api
+    tier: backend
+spec:
+  selector:
+    app: customers-api
+    tier: backend
+  ports:
+  - name: customers-api
+    protocol: TCP
+    port: 8082
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers-api
+spec:
+  selector:
+    matchLabels:
+      app: customers-api
+      tier: backend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: customers-api
+        tier: backend
+    spec:
+      containers:
+      - name: customers-api
+        image: ecommerce/customers.api
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ConnectionString
+          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers"
+        - name: RabbitHost
+          value: "rabbit"
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Payment Microservice Deployment
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-host
+spec:
+  selector:
+    matchLabels:
+      app: payment-host
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: payment-host
+        tier: backend
+    spec:
+      containers:
+      - name: payment-host
+        image: ecommerce/payment.host
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: RabbitHost
+          value: "rabbit"
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Sales Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: sales-api
+  labels:
+    app: sales-api
+    tier: backend
+spec:
+  selector:
+    app: sales-api
+    tier: backend
+  ports:
+  - name: sales-api
+    protocol: TCP
+    port: 8083
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sales-api
+spec:
+  selector:
+    matchLabels:
+      app: sales-api
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sales-api
+        tier: backend
+    spec:
+      containers:
+      - name: sales-api
+        image: ecommerce/sales.api
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ConnectionString
+          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales"
+        - name: RabbitHost
+          value: "rabbit"
+        - name: CustomersServiceHost
+          value: "customers-api:8082"
+        - name: CatalogServiceHost
+          value: "catalog-api:8085"  
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Shipping Microservice Deployment
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping-host
+spec:
+  selector:
+    matchLabels:
+      app: shipping-host
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: shipping-host
+        tier: backend
+    spec:
+      containers:
+      - name: shipping-host
+        image: ecommerce/shipping.host
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: RabbitHost
+          value: "rabbit"
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# WebApp Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+    tier: frontend
+spec:
+  type: NodePort
+  selector:
+    app: webapp
+    tier: frontend
+  ports:
+  - name: webapp
+    protocol: TCP
+    port: 8080
+    targetPort: 80
+    nodePort: 31800
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  selector:
+    matchLabels:
+      app: webapp
+      tier: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webapp
+        tier: frontend
+    spec:
+      containers:
+      - name: webapp
+        image: ecommerce/webapp
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: SalesServiceHost
+          value: "sales-api:8083"
+        - name: CatalogServiceHost
+          value: "catalog-api:8085"  
+      imagePullSecrets:
+      - name: registrysecret
+---
