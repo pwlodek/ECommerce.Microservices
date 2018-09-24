@@ -19,7 +19,10 @@ namespace ECommerce.WebApp
             services.AddMvc();
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
             services.AddHttpContextAccessor();
-            services.AddDistributedMemoryCache();
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = "redis:6379";
+            });
             services.AddSession(options =>
             {
                 // Set a short timeout for easy testing.

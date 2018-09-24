@@ -12,6 +12,14 @@
 #
 version: '3'
 services:
+
+  # Redis Cache
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    container_name: redis
+
   # Rabbit MQ
   rabbit:
     image: rabbitmq:3.6-management
