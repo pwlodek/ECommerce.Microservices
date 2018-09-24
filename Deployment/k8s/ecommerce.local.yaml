@@ -6,6 +6,52 @@
 #                                                                                                                                                                                                                                                            
 # This Kubernetes deployment file launches the entire sample on your local Kubernetes cluster. The best way to install Kubernetes locally is to install Docker for Windows (or macOS)
 # and then go to settings and enable Kubernetes integration.
+
+#
+# Redis Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis
+  labels:
+    app: redis
+    tier: infrastructure
+spec:
+  selector:
+    app: redis
+    tier: infrastructure
+  ports:
+  - name: redis
+    protocol: TCP
+    port: 6379
+    targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      tier: infrastructure
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        tier: infrastructure
+    spec:
+      containers:
+      - name: redis
+        image: redis
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 6379
+      imagePullSecrets:
+      - name: registrysecret
+---
 #
 # Rabbit MQ Deployment + Service
 #
