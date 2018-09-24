@@ -13,6 +13,7 @@ namespace ECommerce.WebApp.Pages
     {
         private readonly IBasketService _basketService;
         private readonly IOrderService _orderService;
+        private static readonly Guid _serviceId = Guid.NewGuid();
 
         public BasketModel(IBasketService basketService, IOrderService orderService)
         {
@@ -33,5 +34,9 @@ namespace ECommerce.WebApp.Pages
             await _orderService.OrderBasketAsync();
             return RedirectToPage("/Index");
         }
+
+        public string HostName => Environment.MachineName;
+
+        public string ServiceId => _serviceId.ToString();
     }
 }

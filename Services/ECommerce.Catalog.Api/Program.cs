@@ -25,7 +25,7 @@ namespace ECommerce.Catalog.Api
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                    .UseStartup<Startup>()
+                   .UseStartup<Startup>()
                    .UseKestrel(o =>
                    {
                        o.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(1);

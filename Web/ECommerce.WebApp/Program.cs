@@ -19,6 +19,11 @@ namespace ECommerce.WebApp
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .UseKestrel(o =>
+                {
+                    // This is to demonstrate multiple web apps
+                    o.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(1);
+                });
     }
 }
