@@ -45,6 +45,8 @@
     <Content Include="ApplicationPackageRoot\Ecommerce.WebAppPkg\ServiceManifest.xml" />
     <Content Include="ApplicationPackageRoot\RabbitMQPkg\Config\Settings.xml" />
     <Content Include="ApplicationPackageRoot\RabbitMQPkg\ServiceManifest.xml" />
+    <Content Include="ApplicationPackageRoot\RedisPkg\Config\Settings.xml" />
+    <Content Include="ApplicationPackageRoot\RedisPkg\ServiceManifest.xml" />
     <Content Include="ApplicationPackageRoot\SQLServerPkg\Config\Settings.xml" />
     <Content Include="ApplicationPackageRoot\SQLServerPkg\ServiceManifest.xml" />
     <Content Include="packages.config" />
