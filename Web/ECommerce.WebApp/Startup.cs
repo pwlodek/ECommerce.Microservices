@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ECommerce.WebApp.Services;
+﻿using ECommerce.WebApp.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
+using System;
 
 namespace ECommerce.WebApp
 {
@@ -22,13 +21,20 @@ namespace ECommerce.WebApp
             services.AddDistributedRedisCache(options =>
             {
                 options.Configuration = "redis:6379";
+                options.InstanceName = "master";
             });
             services.AddSession(options =>
             {
-                // Set a short timeout for easy testing.
-                options.IdleTimeout = TimeSpan.FromSeconds(90);
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
                 options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.None;
             });
+            
+            // Required in farm scenario
+            services
+                .AddDataProtection(opt => opt.ApplicationDiscriminator = "ecommerce-webapp")
+                .PersistKeysToRedis(ConnectionMultiplexer.Connect("redis:6379"));
 
             services.AddSingleton<IProductService, ProductService>();
             services.AddSingleton<IBasketService, BasketService>();
@@ -47,7 +53,6 @@ namespace ECommerce.WebApp
             app.UseSession();
             app.UseStaticFiles();
             app.UseMvc();
-
         }
     }
 }
