@@ -29,4 +29,4 @@ toastr.options = {
     "closeButton": false,
     "newestOnTop": false,
     "preventDuplicates": false
-}
+};

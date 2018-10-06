@@ -6,6 +6,7 @@ using ECommerce.Common;
 using ECommerce.Common.Commands;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ECommerce.Services.Common.Logging
 {
@@ -40,20 +41,20 @@ namespace ECommerce.Services.Common.Logging
             }
         }
 
-        private void Process(LoggingEvent loggingEvent)
+        private async void Process(LoggingEvent loggingEvent)
         {
             var message = RenderLoggingEvent(loggingEvent);
 
             try
             {
-                SendLog(message);
+                await SendLog(message);
             }
             catch (Exception ex)
             {
             }
         }
 
-        private async void SendLog(string message)
+        private async Task SendLog(string message)
         {
             var logMessage = new LogCommand() { HostName = Environment.MachineName, ServiceName = ServiceName, Message = message };
             var endpoint = await Bus.GetSendEndpoint(new Uri($"rabbitmq://{ECommerce.Common.Configuration.RabbitMqHost}/logging"));
