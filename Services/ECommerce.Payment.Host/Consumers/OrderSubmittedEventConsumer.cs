@@ -1,26 +1,29 @@
-﻿using System;
-using System.Threading.Tasks;
-using ECommerce.Common;
-using ECommerce.Common.Commands;
+﻿using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
-using log4net;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace ECommerce.Payment.Host.Consumers
 {
     public class OrderSubmittedEventConsumer : IConsumer<OrderSubmittedEvent>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(OrderSubmittedEventConsumer));
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<OrderSubmittedEventConsumer> _logger;
 
-        public OrderSubmittedEventConsumer()
+        public OrderSubmittedEventConsumer(IConfiguration configuration, ILogger<OrderSubmittedEventConsumer> logger)
         {
+            _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<OrderSubmittedEvent> context)
         {
-            var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/payment_initiate_payment"));
+            var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{_configuration["RabbitHost"]}/payment_initiate_payment"));
 
-            Logger.Info($"Initiating payment for customer {context.Message.CustomerId}, order {context.Message.OrderId} in total of {context.Message.Total}");
+            _logger.LogInformation($"Initiating payment for customer {context.Message.CustomerId}, order {context.Message.OrderId} in total of {context.Message.Total}");
 
             await endpoint.Send(new InitiatePaymentCommand() {
                 CustomerId = context.Message.CustomerId,

@@ -1,9 +1,8 @@
-﻿using System;
-using Autofac;
-using ECommerce.Common;
+﻿using Autofac;
 using ECommerce.Payment.Host.Consumers;
-using ECommerce.Services.Common.Logging;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
+using System;
 
 namespace ECommerce.Payment.Host.Modules
 {
@@ -15,7 +14,10 @@ namespace ECommerce.Payment.Host.Modules
             {
                 var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    var host = cfg.Host(new Uri($"rabbitmq://{Configuration.RabbitMqHost}"), h =>
+                    var config = context.Resolve<IConfiguration>();
+                    var rabbitHost = config["RabbitHost"];
+
+                    var host = cfg.Host(new Uri($"rabbitmq://{rabbitHost}"), h =>
                     {
                         h.Username("guest");
                         h.Password("guest");
@@ -36,8 +38,6 @@ namespace ECommerce.Payment.Host.Modules
                         e.Consumer<InitiatePaymentCommandConsumer>(context);
                     });
                 });
-
-                MassTransitAppender.Bus = busControl;
 
                 return busControl;
             })

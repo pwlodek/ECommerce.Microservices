@@ -2,22 +2,23 @@
 using System.Threading.Tasks;
 using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
-using log4net;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Payment.Host.Consumers
 {
     public class InitiatePaymentCommandConsumer : IConsumer<InitiatePaymentCommand>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(InitiatePaymentCommandConsumer));
+        private readonly ILogger<InitiatePaymentCommandConsumer> _logger;
 
-        public InitiatePaymentCommandConsumer()
+        public InitiatePaymentCommandConsumer(ILogger<InitiatePaymentCommandConsumer> logger)
         {
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<InitiatePaymentCommand> context)
         {
-            Logger.Info($"Processing payment for order {context.Message.OrderId} by customer {context.Message.CustomerId} in the amount of {context.Message.Total}");
+            _logger.LogInformation($"Processing payment for order {context.Message.OrderId} by customer {context.Message.CustomerId} in the amount of {context.Message.Total}");
 
             await Task.Delay(5000); // simulate payment
 

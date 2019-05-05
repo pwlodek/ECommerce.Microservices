@@ -1,45 +1,33 @@
-﻿using System;
+﻿using ECommerce.Payment.Host.Configuration;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.IO;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace ECommerce.Payment.Host
 {
     class Program
     {
-        // AutoResetEvent to signal when to exit the application.
-        private static readonly AutoResetEvent waitHandle = new AutoResetEvent(false);
-
         static void Main(string[] args)
         {
-            ConfigureLogging();
+            var host = new HostBuilder();
 
-            var host = new Host();
-
-            // Fire and forget
-            Task.Run(() => host.Run());
-
-            // Handle Control+C or Control+Break
-            Console.CancelKeyPress += (o, e) =>
-            {
-                Console.WriteLine("Exit");
-
-                // Allow the manin thread to continue and exit...
-                waitHandle.Set();
-            };
-
-            // Wait
-            waitHandle.WaitOne();
-        }
-
-        private static void ConfigureLogging()
-        {
-            XmlDocument log4netConfig = new XmlDocument();
-            log4netConfig.Load(File.OpenRead("log4net.config"));
-            var repo = log4net.LogManager.CreateRepository(Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
-            log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
+            host.UseConsoleLifetime()
+                .UseServiceProviderFactory(new DependencyProvider())
+                .ConfigureHostConfiguration(configHost =>
+                {
+                    configHost.SetBasePath(Directory.GetCurrentDirectory());
+                    configHost.AddJsonFile("appsettings.json", optional: false);
+                    configHost.AddEnvironmentVariables();
+                })
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddHostedService<PaymentService>();
+                })                
+                .AddLog4Net("log4net.config")
+                .Build()
+                .Run();
         }
     }
 }
