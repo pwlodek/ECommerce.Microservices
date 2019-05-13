@@ -3,15 +3,15 @@ using Automatonymous;
 using ECommerce.Common;
 using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
-using log4net;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Shipping.Host.Sagas
 {
     public class ShippingSaga : MassTransitStateMachine<Shipment>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(ShippingSaga));
+        private readonly ILogger<ShippingSaga> _logger;
 
-        public ShippingSaga()
+        public ShippingSaga(ILogger<ShippingSaga> logger)
         {
             InstanceState(t => t.CurrentState);
 
@@ -35,6 +35,8 @@ namespace ECommerce.Shipping.Host.Sagas
                   );
 
             SetCompletedWhenFinalized();
+
+            _logger = logger;
         }
 
         private async void OnOrderSubmitted(BehaviorContext<Shipment, OrderSubmittedEvent> context)
@@ -42,7 +44,7 @@ namespace ECommerce.Shipping.Host.Sagas
             context.Instance.CustomerId = context.Data.CustomerId;
             context.Instance.OrderId = context.Data.OrderId;
 
-            Logger.Info($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId}");
+            _logger.LogInformation($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId}");
 
             var endpoint = await context.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shipping_packorder"));
             await endpoint.Send(new InitiateOrderPackingCommand() { CustomerId = context.Instance.CustomerId, OrderId = context.Instance.OrderId });
@@ -52,7 +54,7 @@ namespace ECommerce.Shipping.Host.Sagas
         {
             context.Instance.IsPacked = true;
 
-            Logger.Info($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId} is packed.");
+            _logger.LogInformation($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId} is packed.");
 
             if (context.Instance.IsPacked && context.Instance.IsPayed)
             {
@@ -65,7 +67,7 @@ namespace ECommerce.Shipping.Host.Sagas
         {
             context.Instance.IsPayed = true;
 
-            Logger.Info($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId} is payed.");
+            _logger.LogInformation($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId} is payed.");
 
             if (context.Instance.IsPacked && context.Instance.IsPayed)
             {
@@ -76,7 +78,7 @@ namespace ECommerce.Shipping.Host.Sagas
 
         private async void OnOrderComplete(BehaviorContext<Shipment, OrderCompletedEvent> context)
         {
-            Logger.Info($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId} has shipped.");
+            _logger.LogInformation($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId} has shipped.");
         }
 
         public State Submitted { get; set; }

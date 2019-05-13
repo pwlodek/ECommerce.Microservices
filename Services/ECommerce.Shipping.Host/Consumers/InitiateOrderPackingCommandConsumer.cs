@@ -2,22 +2,23 @@
 using System.Threading.Tasks;
 using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
-using log4net;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Shipping.Host.Consumers
 {
     public class InitiateOrderPackingCommandConsumer : IConsumer<InitiateOrderPackingCommand>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(InitiateOrderPackingCommandConsumer));
+        private readonly ILogger<InitiateOrderPackingCommandConsumer> _logger;
 
-        public InitiateOrderPackingCommandConsumer()
+        public InitiateOrderPackingCommandConsumer(ILogger<InitiateOrderPackingCommandConsumer> logger)
         {
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<InitiateOrderPackingCommand> context)
         {
-            Logger.Debug($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} is being packed");
+            _logger.LogDebug($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} is being packed");
 
             await Task.Delay(10000);
 

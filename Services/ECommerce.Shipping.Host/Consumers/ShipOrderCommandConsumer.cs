@@ -2,22 +2,23 @@
 using System.Threading.Tasks;
 using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
-using log4net;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Shipping.Host.Consumers
 {
     public class ShipOrderCommandConsumer : IConsumer<ShipOrderCommand>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(ShipOrderCommandConsumer));
+        private readonly ILogger<ShipOrderCommandConsumer> _logger;
 
-        public ShipOrderCommandConsumer()
+        public ShipOrderCommandConsumer(ILogger<ShipOrderCommandConsumer> logger)
         {
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<ShipOrderCommand> context)
         {
-            Logger.Debug($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} is being shipped");
+            _logger.LogDebug($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} is being shipped");
                    
             await Task.Delay(5000); // shipping takes some time!
 
