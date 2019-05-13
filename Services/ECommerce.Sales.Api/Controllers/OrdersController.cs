@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ECommerce.Common;
 using ECommerce.Common.Commands;
 using ECommerce.Sales.Api.Model;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace ECommerce.Sales.Api.Controllers
 {
@@ -41,8 +39,7 @@ namespace ECommerce.Sales.Api.Controllers
                 Items = submittedOrder.Items.Select(t => new Item() { ProductId = t.ProductId, Quantity = t.Quantity }).ToArray()
             };
 
-            var sendEndpoint = await _bus.GetSendEndpoint(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/sales_submit_orders"));
-            await sendEndpoint.Send(command);
+            await _bus.Send(command);
         }
     }
 }

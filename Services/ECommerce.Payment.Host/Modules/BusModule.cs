@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using ECommerce.Common.Commands;
 using ECommerce.Payment.Host.Consumers;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +38,8 @@ namespace ECommerce.Payment.Host.Modules
                     {
                         e.Consumer<InitiatePaymentCommandConsumer>(context);
                     });
+
+                    EndpointConvention.Map<InitiatePaymentCommand>(new Uri($"rabbitmq://{rabbitHost}/payment_initiate_payment"));
                 });
 
                 return busControl;

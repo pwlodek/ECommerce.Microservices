@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using ECommerce.Common;
+using ECommerce.Common.Commands;
 using ECommerce.Services.Common.Logging;
 using ECommerce.Shipping.Host.Consumers;
 using MassTransit;
@@ -31,15 +32,14 @@ namespace ECommerce.Shipping.Host.Modules
                         e.LoadStateMachineSagas(context);
                     });
 
-                    cfg.ReceiveEndpoint(host, "shipping_shiporder", e =>
+                    cfg.ReceiveEndpoint(host, "shipping_order", e =>
                     {
                         e.Consumer<ShipOrderCommandConsumer>(context);
-                    });
-
-                    cfg.ReceiveEndpoint(host, "shipping_packorder", e =>
-                    {
                         e.Consumer<InitiateOrderPackingCommandConsumer>(context);
                     });
+                    
+                    EndpointConvention.Map<ShipOrderCommand>(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shipping_order"));
+                    EndpointConvention.Map<InitiateOrderPackingCommand>(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shipping_order"));
                 });
 
                 MassTransitAppender.Bus = busControl;
