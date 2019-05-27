@@ -3,7 +3,6 @@ using Autofac;
 using ECommerce.Common;
 using ECommerce.Common.Commands;
 using ECommerce.Sales.Api.Consumers;
-using ECommerce.Services.Common.Logging;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 
@@ -46,8 +45,6 @@ namespace ECommerce.Sales.Api.Modules
                     EndpointConvention.Map<SubmitOrderCommand>(new Uri($"rabbitmq://{rabbitHost}/sales_submit_orders"));
 
                 });
-
-                MassTransitAppender.Bus = busControl;
 
                 return busControl;
             })

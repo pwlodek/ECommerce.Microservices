@@ -60,17 +60,6 @@ services:
       - rabbit
       - sqlserver
 
-# Logging Microservice
-  ecommerce.logging.host:
-    image: ecommerce/logging.host
-    build:
-      context: .
-      dockerfile: Services/ECommerce.Logging.Host/Dockerfile
-    environment:
-      RabbitHost: rabbit
-    depends_on: 
-      - rabbit
-
   # Payment Microservice
   ecommerce.payment.host:
     image: ecommerce/payment.host

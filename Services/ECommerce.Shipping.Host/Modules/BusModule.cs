@@ -2,7 +2,6 @@
 using Autofac;
 using ECommerce.Common;
 using ECommerce.Common.Commands;
-using ECommerce.Services.Common.Logging;
 using ECommerce.Shipping.Host.Consumers;
 using MassTransit;
 
@@ -41,8 +40,6 @@ namespace ECommerce.Shipping.Host.Modules
                     EndpointConvention.Map<ShipOrderCommand>(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shipping_order"));
                     EndpointConvention.Map<InitiateOrderPackingCommand>(new Uri($"rabbitmq://{Configuration.RabbitMqHost}/shipping_order"));
                 });
-
-                MassTransitAppender.Bus = busControl;
 
                 return busControl;
             })

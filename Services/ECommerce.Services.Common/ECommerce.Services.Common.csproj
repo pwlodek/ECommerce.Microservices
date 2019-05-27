@@ -14,7 +14,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configuration\" />
-    <Folder Include="Logging\" />
     <Folder Include="Identity\" />
   </ItemGroup>
   <ItemGroup>

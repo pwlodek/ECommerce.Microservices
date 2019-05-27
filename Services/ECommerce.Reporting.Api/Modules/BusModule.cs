@@ -1,7 +1,6 @@
 ﻿using System;
 using Autofac;
 using ECommerce.Reporting.Api.Consumers;
-using ECommerce.Services.Common.Logging;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 
@@ -34,8 +33,6 @@ namespace ECommerce.Reporting.Api.Modules
                         e.Consumer<OrderSubmittedEventConsumer>(context);
                     });
                 });
-
-                MassTransitAppender.Bus = busControl;
 
                 return busControl;
             })

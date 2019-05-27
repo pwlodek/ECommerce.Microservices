@@ -1,6 +1,5 @@
 ﻿using System;
 using Autofac;
-using ECommerce.Services.Common.Logging;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 
@@ -28,8 +27,6 @@ namespace ECommerce.Catalog.Api.Modules
 
                     });
                 });
-
-                MassTransitAppender.Bus = busControl;
 
                 return busControl;
             })
