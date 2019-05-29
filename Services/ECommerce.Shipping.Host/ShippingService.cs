@@ -1,7 +1,6 @@
-﻿using ECommerce.Common;
-using ECommerce.Services.Common.Configuration;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,10 +19,17 @@ namespace ECommerce.Shipping.Host
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var waiter = new DependencyAwaiter();
-            waiter.WaitForRabbit(Configuration.RabbitMqHost);
+            _logger.LogDebug("Starting service bus");
 
-            await _busControl.StartAsync(cancellationToken);
+            try
+            {
+                await _busControl.StartAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while starting service bus.");
+                throw;
+            }
 
             _logger.LogInformation("Running Shipping microservice.");
         }

@@ -30,6 +30,7 @@ namespace ECommerce.WebApp
                 options.Cookie.IsEssential = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.None;
             });
+            services.AddHttpClient();
             
             // Required in farm scenario
             services

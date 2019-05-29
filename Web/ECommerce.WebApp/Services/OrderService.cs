@@ -23,31 +23,29 @@ namespace ECommerce.WebApp.Services
     {
         private readonly IBasketService _basketService;
         private readonly IConfiguration _configuration;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public OrderService(IBasketService basketService, IConfiguration configuration)
+        public OrderService(IBasketService basketService, IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
-            this._basketService = basketService;
-            this._configuration = configuration;
+            _basketService = basketService;
+            _configuration = configuration;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<IList<Order>> GetOrdersAsync()
         {
-            using (var client = new HttpClient())
-            {
-                var salesServiceHost = _configuration["SalesServiceHost"];
-                var response = await client.GetStringAsync($"http://{salesServiceHost}/api/orders");
-                return JsonConvert.DeserializeObject<List<Order>>(response);
-            }
+            var client = _httpClientFactory.CreateClient();
+            var salesServiceHost = _configuration["SalesServiceHost"];
+            var response = await client.GetStringAsync($"http://{salesServiceHost}/api/orders");
+            return JsonConvert.DeserializeObject<List<Order>>(response);
         }
 
         public async Task<IList<OrderReportEntry>> GetOrderReportAsync()
         {
-            using (var client = new HttpClient())
-            {
-                var reportingServiceHost = _configuration["ReportingServiceHost"];
-                var response = await client.GetStringAsync($"http://{reportingServiceHost}/api/reporting");
-                return JsonConvert.DeserializeObject<List<OrderReportEntry>>(response);
-            }
+            var client = _httpClientFactory.CreateClient();
+            var reportingServiceHost = _configuration["ReportingServiceHost"];
+            var response = await client.GetStringAsync($"http://{reportingServiceHost}/api/reporting");
+            return JsonConvert.DeserializeObject<List<OrderReportEntry>>(response);
         }
 
         public async Task OrderBasketAsync()
@@ -69,14 +67,12 @@ namespace ECommerce.WebApp.Services
                     Items = productItems.ToArray()
                 };
 
-                using (var client = new HttpClient())
-                {
-                    var stringContent = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
-                    var salesServiceHost = _configuration["SalesServiceHost"];
-                    var response = await client.PostAsync($"http://{salesServiceHost}/api/orders", stringContent);
+                var client = _httpClientFactory.CreateClient();
+                var stringContent = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
+                var salesServiceHost = _configuration["SalesServiceHost"];
+                var response = await client.PostAsync($"http://{salesServiceHost}/api/orders", stringContent);
 
-                    _basketService.Clear();
-                }
+                _basketService.Clear();
             }
         }
 

@@ -16,21 +16,21 @@ namespace ECommerce.WebApp.Services
     public class ProductService : IProductService
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public ProductService(IConfiguration configuration)
+        public ProductService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
-            this._configuration = configuration;
+            _configuration = configuration;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<ServiceResponse<IEnumerable<Product>>> GetProductsAsync(string filter)
         {
-            using (HttpClient client = new HttpClient())
-            {
-                var catalogServiceHost = _configuration["CatalogServiceHost"];
-                var response = await client.GetStringAsync($"http://{catalogServiceHost}/api/products?includeServiceInfo=true&filter={filter}");
-                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<ServiceResponse<IEnumerable<Product>>>(response);
-                return obj;
-            }
+            var client = _httpClientFactory.CreateClient();
+            var catalogServiceHost = _configuration["CatalogServiceHost"];
+            var response = await client.GetStringAsync($"http://{catalogServiceHost}/api/products?includeServiceInfo=true&filter={filter}");
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<ServiceResponse<IEnumerable<Product>>>(response);
+            return obj;
         }
     }
 }
