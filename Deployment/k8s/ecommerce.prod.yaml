@@ -22,12 +22,21 @@
 #
 
 #
+# App namespace
+#
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecommerce
+---
+#
 # Redis Deployment + Service
 #
 kind: Service
 apiVersion: v1
 metadata:
   name: redis
+  namespace: ecommerce
   labels:
     app: redis
     tier: infrastructure
@@ -45,6 +54,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
+  namespace: ecommerce
 spec:
   selector:
     matchLabels:
@@ -73,6 +83,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: rabbit
+  namespace: ecommerce
   labels:
     app: rabbit
     tier: infrastructure
@@ -94,6 +105,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rabbit
+  namespace: ecommerce
 spec:
   selector:
     matchLabels:
@@ -122,6 +134,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: sqlserver
+  namespace: ecommerce
   labels:
     app: sqlserver
     tier: infrastructure
@@ -139,6 +152,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sqlserver
+  namespace: ecommerce
 spec:
   selector:
     matchLabels:
@@ -172,6 +186,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: catalog-api
+  namespace: ecommerce
   labels:
     app: catalog-api
     tier: backend
@@ -189,6 +204,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: catalog-api
+  namespace: ecommerce
 spec:
   selector:
     matchLabels:
@@ -222,6 +238,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: customers-api
+  namespace: ecommerce
   labels:
     app: customers-api
     tier: backend
@@ -239,6 +256,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: customers-api
+  namespace: ecommerce
 spec:
   selector:
     matchLabels:
@@ -272,6 +290,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: payment-host
+  namespace: ecommerce
 spec:
   selector:
     matchLabels:
@@ -301,6 +320,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: sales-api
+  namespace: ecommerce
   labels:
     app: sales-api
     tier: backend
@@ -318,6 +338,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sales-api
+  namespace: ecommerce
 spec:
   selector:
     matchLabels:
@@ -355,6 +376,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shipping-host
+  namespace: ecommerce
 spec:
   selector:
     matchLabels:
@@ -384,6 +406,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: webapp
+  namespace: ecommerce
   labels:
     app: webapp
     tier: frontend
@@ -402,6 +425,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webapp
+  namespace: ecommerce
 spec:
   selector:
     matchLabels:
