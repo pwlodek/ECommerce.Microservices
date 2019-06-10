@@ -1,9 +1,12 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using ECommerce.Shipping.Host.Configuration;
 using ECommerce.Shipping.Host.Modules;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace ECommerce.Shipping.Host
 {
@@ -14,6 +17,8 @@ namespace ECommerce.Shipping.Host
             var host = new HostBuilder()
                 .ConfigureHostConfiguration(configHost =>
                 {
+                    configHost.SetBasePath(Directory.GetCurrentDirectory());
+                    configHost.AddEnvironmentVariables();
                 })
                 .ConfigureAppConfiguration((hostContext, configApp) =>
                 {
@@ -22,6 +27,7 @@ namespace ECommerce.Shipping.Host
                 {
                     services.AddLogging(c => c.SetMinimumLevel(LogLevel.Debug));
                     services.AddScoped<IHostedService, ShippingService>();
+                    services.Configure<ServiceConfigOptions>(hostContext.Configuration);
                 })
                 .ConfigureLogging((hostContext, configLogging) =>
                 {
