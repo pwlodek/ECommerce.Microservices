@@ -1,6 +1,5 @@
 ﻿using System;
 using ECommerce.Customers.Api.Services;
-using ECommerce.Services.Common.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,18 +19,8 @@ namespace ECommerce.Customers.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var rabbitHost = Configuration["RabbitHost"];
-            Console.WriteLine($"Using RabbitHost='{rabbitHost}'.");
-
-            var connectionString = Configuration["ConnectionString"];
-            Console.WriteLine($"Using connectionString='{connectionString}'.");
-
-            var waiter = new DependencyAwaiter();
-            waiter.WaitForRabbit(rabbitHost);
-            waiter.WaitForSql(connectionString);
-
             services.AddMvc();
-            services.AddScoped<ICustomerRepository>(c => new CustomerRepository(connectionString));
+            services.AddScoped<ICustomerRepository>(c => new CustomerRepository(Configuration["ConnectionString"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

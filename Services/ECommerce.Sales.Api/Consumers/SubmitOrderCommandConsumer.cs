@@ -5,24 +5,24 @@ using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
 using ECommerce.Sales.Api.Model;
 using ECommerce.Sales.Api.Services;
-using log4net;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Sales.Api.Consumers
 {
     public class SubmitOrderCommandConsumer : IConsumer<SubmitOrderCommand>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(SubmitOrderCommandConsumer));
-
         private readonly IDataService _dataService;
 
         private readonly SalesContext _salesContext;
+        private readonly ILogger<SubmitOrderCommandConsumer> _logger;
 
-        public SubmitOrderCommandConsumer(IDataService dataService, SalesContext salesContext)
+        public SubmitOrderCommandConsumer(IDataService dataService, SalesContext salesContext, ILogger<SubmitOrderCommandConsumer> logger)
         {
             _dataService = dataService;
             _salesContext = salesContext;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<SubmitOrderCommand> context)
@@ -31,7 +31,7 @@ namespace ECommerce.Sales.Api.Consumers
             if (customer == null)
             {
                 // probably we want to log this
-                Logger.Warn($"Submitted invalid order for customer {context.Message.CustomerId}. No such customer");
+                _logger.LogWarning($"Submitted invalid order for customer {context.Message.CustomerId}. No such customer");
 
                 return;
             }
@@ -54,14 +54,14 @@ namespace ECommerce.Sales.Api.Consumers
             if (total > 100)
             {
                 total = total * .9; // 10% off
-                Logger.Info($"Applying bonus for customer {customer.CustomerId} for the total amount of {total}");
+                _logger.LogInformation($"Applying bonus for customer {customer.CustomerId} for the total amount of {total}");
             }
             order.Total = total;
 
             _salesContext.Orders.Add(order);
             _salesContext.SaveChanges();
 
-            Logger.Info($"Created order {order.OrderId} for customer {customer.CustomerId} for the total amount of {order.Total}");
+            _logger.LogInformation($"Created order {order.OrderId} for customer {customer.CustomerId} for the total amount of {order.Total}");
 
             await context.Publish(new OrderSubmittedEvent() {
                 CustomerId = customer.CustomerId,

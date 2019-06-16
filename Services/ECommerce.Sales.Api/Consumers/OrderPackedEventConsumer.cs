@@ -3,21 +3,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using ECommerce.Common.Events;
 using ECommerce.Sales.Api.Model;
-using log4net;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Sales.Api.Consumers
 {
     public class OrderPackedEventConsumer : IConsumer<OrderPackedEvent>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(OrderPackedEventConsumer));
-
         private readonly SalesContext _salesContext;
+        private readonly ILogger<OrderPackedEventConsumer> _logger;
 
-        public OrderPackedEventConsumer(SalesContext salesContext)
+        public OrderPackedEventConsumer(SalesContext salesContext, ILogger<OrderPackedEventConsumer> logger)
         {
             _salesContext = salesContext;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<OrderPackedEvent> context)
@@ -30,7 +30,7 @@ namespace ECommerce.Sales.Api.Consumers
                 _salesContext.SaveChanges();
             }
 
-            Logger.Info($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as packed");
+            _logger.LogInformation($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as packed");
         }
     }
 }

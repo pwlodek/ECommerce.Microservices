@@ -6,7 +6,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ECommerce.Reporting.Api.Modules;
 using ECommerce.Reporting.Api.Services;
-using ECommerce.Services.Common.Configuration;
 using log4net;
 using MassTransit;
 using MassTransit.Util;
@@ -35,16 +34,6 @@ namespace ECommerce.Reporting.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            var rabbitHost = Configuration["RabbitHost"];
-            Logger.Info($"Using RabbitHost='{rabbitHost}'.");
-
-            var connectionString = Configuration["ConnectionString"];
-            Logger.Info($"Using connectionString='{connectionString}'.");
-
-            var waiter = new DependencyAwaiter();
-            waiter.WaitForRabbit(rabbitHost);
-            waiter.WaitForSql(connectionString);
-
             services.AddMvc();
 
             var builder = new ContainerBuilder();

@@ -8,7 +8,6 @@ using ECommerce.Sales.Api.Consumers;
 using ECommerce.Sales.Api.Model;
 using ECommerce.Sales.Api.Modules;
 using ECommerce.Sales.Api.Services;
-using ECommerce.Services.Common.Configuration;
 using log4net;
 using MassTransit;
 using MassTransit.Util;
@@ -38,16 +37,6 @@ namespace ECommerce.Sales.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            var rabbitHost = Configuration["RabbitHost"];
-            Logger.Info($"Using RabbitHost='{rabbitHost}'.");
-
-            var connectionString = Configuration["ConnectionString"];
-            Logger.Info($"Using connectionString='{connectionString}'.");
-
-            var waiter = new DependencyAwaiter();
-            waiter.WaitForRabbit(rabbitHost);
-            waiter.WaitForSql(connectionString);
-
             services.AddMvc();
 
             services.AddEntityFrameworkSqlServer()
