@@ -5,30 +5,33 @@ using System.Threading.Tasks;
 using ECommerce.Catalog.Api.Models;
 using ECommerce.Catalog.Api.Services;
 using ECommerce.Services.Common.Identity;
-using log4net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Catalog.Api.Controllers
 {
     [Route("api/[controller]")]
     public class ProductsController : Controller
     {
-        private static ILog Logger = LogManager.GetLogger(typeof(ProductsController));
-
         private readonly IProductRepository _productRepository;
         private readonly IIdentityService _identityService;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IProductRepository productRepository, IIdentityService identityService)
+        public ProductsController(
+            IProductRepository productRepository, 
+            IIdentityService identityService,
+            ILogger<ProductsController> logger)
         {
-            this._identityService = identityService;
-            this._productRepository = productRepository;
+            _identityService = identityService;
+            _logger = logger;
+            _productRepository = productRepository;
         }
 
         // GET api/products
         [HttpGet]
         public IActionResult Get(string filter = null, bool includeServiceInfo = false)
         {
-            Logger.Debug($"Instance {_identityService.InstanceId} is returning products.");
+            _logger.LogDebug($"Instance {_identityService.InstanceId} is returning products.");
 
             var products = !string.IsNullOrWhiteSpace(filter) ?
                 _productRepository.GetAll(filter) : _productRepository.GetAll();
