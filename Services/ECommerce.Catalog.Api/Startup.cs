@@ -32,6 +32,7 @@ namespace ECommerce.Catalog.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddHostedService<CatalogService>();
 
             var builder = new ContainerBuilder();
 
@@ -55,12 +56,6 @@ namespace ECommerce.Catalog.Api
 
             loggerFactory.AddLog4Net();
             app.UseMvc();
-
-            var bus = Container.Resolve<IBusControl>();
-            var busHandle = TaskUtil.Await(() => bus.StartAsync());
-            lifetime.ApplicationStopping.Register(() => busHandle.Stop());
-
-            Logger.Info("Running Catalog microservice.");
         }
     }
 }
