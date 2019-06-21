@@ -1,6 +1,7 @@
 ﻿using System;
 using ECommerce.Customers.Api.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,9 @@ namespace ECommerce.Customers.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks()
+                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" });
+
             services.AddMvc();
             services.AddScoped<ICustomerRepository>(c => new CustomerRepository(Configuration["ConnectionString"]));
         }
@@ -30,6 +34,15 @@ namespace ECommerce.Customers.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHealthChecks("/health/live", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count == 0
+            });
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count > 0
+            });
 
             app.UseMvc();
         }

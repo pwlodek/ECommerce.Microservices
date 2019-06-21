@@ -12,6 +12,7 @@ using log4net;
 using MassTransit;
 using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +40,10 @@ namespace ECommerce.Sales.Api
         {
             services.AddMvc();
 
+            services.AddHealthChecks()
+                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" })
+                .AddRabbitMQ($"amqp://guest:guest@{Configuration["RabbitHost"]}:5672", tags: new[] { "broker" });
+            
             services.AddEntityFrameworkSqlServer()
                     .AddDbContext<SalesContext>(options =>
                     {
@@ -73,6 +78,15 @@ namespace ECommerce.Sales.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHealthChecks("/health/live", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count == 0
+            });
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count > 0
+            });
 
             app.UseMvc();
             loggerFactory.AddLog4Net();

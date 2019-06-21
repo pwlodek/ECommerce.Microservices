@@ -8,9 +8,11 @@ using log4net;
 using MassTransit;
 using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Catalog.Api
@@ -31,7 +33,10 @@ namespace ECommerce.Catalog.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks();
+            services.AddHealthChecks()
+                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" })
+                .AddRabbitMQ($"amqp://guest:guest@{Configuration["RabbitHost"]}:5672", tags: new[] { "broker" });
+
             services.AddMvc();
             services.AddHostedService<CatalogService>();
 
@@ -57,7 +62,15 @@ namespace ECommerce.Catalog.Api
 
             loggerFactory.AddLog4Net();
 
-            app.UseHealthChecks("/health");
+            app.UseHealthChecks("/health/live", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count == 0
+            });
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count > 0
+            });
+
             app.UseMvc();
         }
     }
