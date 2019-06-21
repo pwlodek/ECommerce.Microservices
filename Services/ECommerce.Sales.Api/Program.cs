@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Sales.Api
 {

@@ -50,7 +50,10 @@ namespace ECommerce.Sales.Api
                     },
                         ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
                     );
-            
+
+            services.AddHttpClient();
+            services.AddHostedService<SalesService>();
+
             var builder = new ContainerBuilder();
 
             builder.Populate(services);
@@ -73,12 +76,6 @@ namespace ECommerce.Sales.Api
 
             app.UseMvc();
             loggerFactory.AddLog4Net();
-
-            var bus = Container.Resolve<IBusControl>();
-            var busHandle = TaskUtil.Await(() => bus.StartAsync());
-            lifetime.ApplicationStopping.Register(() => busHandle.Stop());
-
-            Logger.Info("Running Sales microservice.");
         }
     }
 }

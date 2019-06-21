@@ -31,6 +31,7 @@ namespace ECommerce.Catalog.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks();
             services.AddMvc();
             services.AddHostedService<CatalogService>();
 
@@ -55,6 +56,8 @@ namespace ECommerce.Catalog.Api
             }
 
             loggerFactory.AddLog4Net();
+
+            app.UseHealthChecks("/health");
             app.UseMvc();
         }
     }
