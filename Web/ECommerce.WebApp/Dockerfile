@@ -1,9 +1,9 @@
-FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
 WORKDIR /app
 EXPOSE 54703
 EXPOSE 44314
 
-FROM microsoft/dotnet:2.1-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
 COPY Web/ECommerce.WebApp/ECommerce.WebApp.csproj Web/ECommerce.WebApp/
 RUN dotnet restore Web/ECommerce.WebApp/ECommerce.WebApp.csproj
