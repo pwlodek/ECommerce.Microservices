@@ -36,9 +36,6 @@ services:
     build:
       context: .
       dockerfile: Services/ECommerce.Catalog.Api/Dockerfile
-    environment:      
-      ConnectionString: ${SQL_SERVER_CS}Database=ECommerce.Products      
-      RabbitHost: rabbit
     ports:
       - "8085:80"
     depends_on: 
@@ -66,8 +63,6 @@ services:
     build:
       context: .
       dockerfile: Services/ECommerce.Payment.Host/Dockerfile
-    environment:
-      RabbitHost: rabbit
     depends_on: 
       - rabbit
 

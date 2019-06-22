@@ -12,13 +12,15 @@ namespace ECommerce.Catalog.Api.Modules
             builder.Register(context =>
             {
                 var config = context.Resolve<IConfiguration>();
-                var rabbitHost = config["RabbitHost"];
+                var host = config["Brokers:RabbitMQ:Host"];
+                var username = config["Brokers:RabbitMQ:Username"];
+                var password = config["Brokers:RabbitMQ:Password"];
                 var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    var host = cfg.Host(new Uri($"rabbitmq://{rabbitHost}"), h =>
+                    cfg.Host(new Uri($"rabbitmq://{host}"), h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(username);
+                        h.Password(password);
                     });
                 });
 

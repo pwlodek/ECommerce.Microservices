@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -26,7 +26,6 @@
     <ProjectReference Include="..\ECommerce.Services.Common\ECommerce.Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="appsettings.json" />
     <None Remove="log4net.config" />
   </ItemGroup>
   <ItemGroup>

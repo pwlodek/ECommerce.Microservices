@@ -15,7 +15,7 @@ namespace ECommerce.Catalog.Api.Services
 
         public ProductRepository(IConfiguration cfg)
         {
-            _connectionString = cfg["ConnectionString"];
+            _connectionString = cfg["ConnectionStrings:ProductsDb"];
         }
 
         public IDbConnection Connection
