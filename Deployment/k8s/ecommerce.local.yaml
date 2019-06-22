@@ -214,6 +214,18 @@ spec:
           value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products"
         - name: RabbitHost
           value: "rabbit"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -266,6 +278,18 @@ spec:
           value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers"
         - name: RabbitHost
           value: "rabbit"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -351,7 +375,85 @@ spec:
         - name: CustomersServiceHost
           value: "customers-api:8082"
         - name: CatalogServiceHost
-          value: "catalog-api:8085"  
+          value: "catalog-api:8085"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Reporting Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: reporting-api
+  namespace: ecommerce
+  labels:
+    app: reporting-api
+    tier: backend
+spec:
+  selector:
+    app: reporting-api
+    tier: backend
+  ports:
+  - name: reporting-api
+    protocol: TCP
+    port: 8084
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-api
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: reporting-api
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reporting-api
+        tier: backend
+    spec:
+      containers:
+      - name: reporting-api
+        image: ecommerce/reporting.api
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ConnectionString
+          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Reporting"
+        - name: RabbitHost
+          value: "rabbit"
+        - name: CustomersServiceHost
+          value: "customers-api:8082"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -435,7 +537,21 @@ spec:
         - name: SalesServiceHost
           value: "sales-api:8083"
         - name: CatalogServiceHost
-          value: "catalog-api:8085"  
+          value: "catalog-api:8085"
+        - name: ReportingServiceHost
+          value: "reporting-api:8084"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
       imagePullSecrets:
       - name: registrysecret
 ---
