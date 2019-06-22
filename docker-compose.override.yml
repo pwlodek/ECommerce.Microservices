@@ -25,6 +25,12 @@ services:
     ports:
       - "80"
 
+  ecommerce.shipping.host:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    ports:
+      - "80"
+
   ecommerce.sales.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}

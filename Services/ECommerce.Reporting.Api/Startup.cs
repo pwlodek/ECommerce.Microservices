@@ -28,8 +28,8 @@ namespace ECommerce.Reporting.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks()
-                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" })
-                .AddRabbitMQ($"amqp://guest:guest@{Configuration["RabbitHost"]}:5672", tags: new[] { "broker" });
+                .AddSqlServer(Configuration["ConnectionStrings:ReportingDb"], tags: new[] { "db", "sql" })
+                .AddRabbitMQ(Configuration["Brokers:RabbitMQ:Url"], tags: new[] { "broker" });
             
             services.AddMvc();
             services.AddHostedService<ReportingService>();

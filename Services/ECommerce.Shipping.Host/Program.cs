@@ -15,13 +15,17 @@ namespace ECommerce.Shipping.Host
         static void Main(string[] args)
         {
             var host = new HostBuilder()
-                .ConfigureHostConfiguration(configHost =>
+                .ConfigureHostConfiguration(builder =>
                 {
-                    configHost.SetBasePath(Directory.GetCurrentDirectory());
-                    configHost.AddEnvironmentVariables();
+                    builder.SetBasePath(Directory.GetCurrentDirectory());
+                    builder.AddEnvironmentVariables(prefix: "ASPNETCORE_");
                 })
-                .ConfigureAppConfiguration((hostContext, configApp) =>
+                .ConfigureAppConfiguration((context, builder) =>
                 {
+                    builder.SetBasePath(Directory.GetCurrentDirectory());
+                    builder.AddJsonFile($"appsettings.json", optional: false);
+                    builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: false);
+                    builder.AddEnvironmentVariables();
                 })
                 .ConfigureServices((hostContext, services) =>
                 {

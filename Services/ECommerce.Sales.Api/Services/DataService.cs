@@ -21,7 +21,7 @@ namespace ECommerce.Sales.Api.Services
         public async Task<Customer> GetCustomerAsync(int id)
         {
             var client = _httpClientFactory.CreateClient();
-            var customersServiceHost = _configuration["CustomersServiceHost"];
+            var customersServiceHost = _configuration["Services:Customer"];
             var response = await client.GetStringAsync($"http://{customersServiceHost}/api/customers/{id}");
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(response);
             return obj;
@@ -30,7 +30,7 @@ namespace ECommerce.Sales.Api.Services
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             var client = _httpClientFactory.CreateClient();
-            var catalogServiceHost = _configuration["CatalogServiceHost"];
+            var catalogServiceHost = _configuration["Services:Catalog"];
             var response = await client.GetStringAsync($"http://{catalogServiceHost}/api/products");
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Product>>(response);
             return obj;
