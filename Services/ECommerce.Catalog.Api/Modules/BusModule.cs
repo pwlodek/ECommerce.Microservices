@@ -20,12 +20,6 @@ namespace ECommerce.Catalog.Api.Modules
                         h.Username("guest");
                         h.Password("guest");
                     });
-
-                    // https://stackoverflow.com/questions/39573721/disable-round-robin-pattern-and-use-fanout-on-masstransit
-                    cfg.ReceiveEndpoint(host, "ecommerce_main_fanout" + Guid.NewGuid().ToString(), e =>
-                    {
-
-                    });
                 });
 
                 return busControl;

@@ -3,20 +3,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using ECommerce.Common.Events;
 using ECommerce.Sales.Api.Model;
-using log4net;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Sales.Api.Consumers
 {
     public class OrderCompletedEventConsumer : IConsumer<OrderCompletedEvent>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(OrderCompletedEventConsumer));
-
         private readonly SalesContext _salesContext;
+        private readonly ILogger<OrderCompletedEventConsumer> _logger;
 
-        public OrderCompletedEventConsumer(SalesContext salesContext)
+        public OrderCompletedEventConsumer(SalesContext salesContext, ILogger<OrderCompletedEventConsumer> logger)
         {
             _salesContext = salesContext;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<OrderCompletedEvent> context)
@@ -30,7 +30,7 @@ namespace ECommerce.Sales.Api.Consumers
                 _salesContext.SaveChanges();
             }
 
-            Logger.Info($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as shipped");
+            _logger.LogInformation($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as shipped");
         }
     }
 }

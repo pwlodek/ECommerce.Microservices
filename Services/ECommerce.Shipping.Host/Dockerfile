@@ -1,7 +1,7 @@
-FROM microsoft/dotnet:2.2-runtime AS base
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS base
 WORKDIR /app
 
-FROM microsoft/dotnet:2.2-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
 COPY Services/ECommerce.Shipping.Host/ECommerce.Shipping.Host.csproj Services/ECommerce.Shipping.Host/
 COPY Services/ECommerce.Common/ECommerce.Common.csproj Services/ECommerce.Common/

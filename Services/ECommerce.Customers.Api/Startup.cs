@@ -1,7 +1,7 @@
 ﻿using System;
 using ECommerce.Customers.Api.Services;
-using ECommerce.Services.Common.Configuration;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,18 +20,11 @@ namespace ECommerce.Customers.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var rabbitHost = Configuration["RabbitHost"];
-            Console.WriteLine($"Using RabbitHost='{rabbitHost}'.");
-
-            var connectionString = Configuration["ConnectionString"];
-            Console.WriteLine($"Using connectionString='{connectionString}'.");
-
-            var waiter = new DependencyAwaiter();
-            waiter.WaitForRabbit(rabbitHost);
-            waiter.WaitForSql(connectionString);
+            services.AddHealthChecks()
+                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" });
 
             services.AddMvc();
-            services.AddScoped<ICustomerRepository>(c => new CustomerRepository(connectionString));
+            services.AddScoped<ICustomerRepository>(c => new CustomerRepository(Configuration["ConnectionString"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +34,15 @@ namespace ECommerce.Customers.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHealthChecks("/health/live", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count == 0
+            });
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count > 0
+            });
 
             app.UseMvc();
         }

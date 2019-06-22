@@ -3,21 +3,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using ECommerce.Common.Events;
 using ECommerce.Sales.Api.Model;
-using log4net;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Sales.Api.Consumers
 {
     public class PaymentAcceptedEventConsumer : IConsumer<PaymentAcceptedEvent>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(PaymentAcceptedEventConsumer));
-
         private readonly SalesContext _salesContext;
+        private readonly ILogger<PaymentAcceptedEventConsumer> _logger;
 
-        public PaymentAcceptedEventConsumer(SalesContext salesContext)
+        public PaymentAcceptedEventConsumer(SalesContext salesContext, ILogger<PaymentAcceptedEventConsumer> logger)
         {
             _salesContext = salesContext;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<PaymentAcceptedEvent> context)
@@ -29,7 +29,7 @@ namespace ECommerce.Sales.Api.Consumers
                 _salesContext.SaveChanges();
             }
 
-            Logger.Info($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as payed");
+            _logger.LogInformation($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as payed");
         }
     }
 }

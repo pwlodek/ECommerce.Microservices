@@ -10,32 +10,30 @@ namespace ECommerce.Sales.Api.Services
     public class DataService : IDataService
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public DataService(IConfiguration configuration)
+        public DataService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
-            this._configuration = configuration;
+            _configuration = configuration;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<Customer> GetCustomerAsync(int id)
         {
-            using (HttpClient client = new HttpClient())
-            {
-                var customersServiceHost = _configuration["CustomersServiceHost"];
-                var response = await client.GetStringAsync($"http://{customersServiceHost}/api/customers/{id}");
-                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(response);
-                return obj;
-            }
+            var client = _httpClientFactory.CreateClient();
+            var customersServiceHost = _configuration["CustomersServiceHost"];
+            var response = await client.GetStringAsync($"http://{customersServiceHost}/api/customers/{id}");
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(response);
+            return obj;
         }
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
-            using (HttpClient client = new HttpClient())
-            {
-                var catalogServiceHost = _configuration["CatalogServiceHost"];
-                var response = await client.GetStringAsync($"http://{catalogServiceHost}/api/products");
-                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Product>>(response);
-                return obj;
-            }
+            var client = _httpClientFactory.CreateClient();
+            var catalogServiceHost = _configuration["CatalogServiceHost"];
+            var response = await client.GetStringAsync($"http://{catalogServiceHost}/api/products");
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Product>>(response);
+            return obj;
         }
     }
 }

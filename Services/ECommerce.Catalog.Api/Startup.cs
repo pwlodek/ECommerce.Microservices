@@ -3,15 +3,16 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ECommerce.Catalog.Api.Modules;
 using ECommerce.Catalog.Api.Services;
-using ECommerce.Services.Common.Configuration;
 using ECommerce.Services.Common.Identity;
 using log4net;
 using MassTransit;
 using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Catalog.Api
@@ -32,17 +33,12 @@ namespace ECommerce.Catalog.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            var rabbitHost = Configuration["RabbitHost"];
-            Logger.Info($"Using RabbitHost='{rabbitHost}'.");
-
-            var connectionString = Configuration["ConnectionString"];
-            Logger.Info($"Using connectionString='{connectionString}'.");
-
-            var waiter = new DependencyAwaiter();
-            waiter.WaitForRabbit(rabbitHost);
-            waiter.WaitForSql(connectionString);
+            services.AddHealthChecks()
+                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" })
+                .AddRabbitMQ($"amqp://guest:guest@{Configuration["RabbitHost"]}:5672", tags: new[] { "broker" });
 
             services.AddMvc();
+            services.AddHostedService<CatalogService>();
 
             var builder = new ContainerBuilder();
 
@@ -65,13 +61,17 @@ namespace ECommerce.Catalog.Api
             }
 
             loggerFactory.AddLog4Net();
+
+            app.UseHealthChecks("/health/live", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count == 0
+            });
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count > 0
+            });
+
             app.UseMvc();
-
-            var bus = Container.Resolve<IBusControl>();
-            var busHandle = TaskUtil.Await(() => bus.StartAsync());
-            lifetime.ApplicationStopping.Register(() => busHandle.Stop());
-
-            Logger.Info("Running Catalog microservice.");
         }
     }
 }

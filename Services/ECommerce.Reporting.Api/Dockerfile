@@ -1,8 +1,8 @@
-FROM microsoft/aspnetcore:2.0 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM microsoft/aspnetcore-build:2.0 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
 COPY Services/ECommerce.Reporting.Api/ECommerce.Reporting.Api.csproj Services/ECommerce.Reporting.Api/
 COPY Services/ECommerce.Common/ECommerce.Common.csproj Services/ECommerce.Common/

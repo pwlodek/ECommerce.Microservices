@@ -8,11 +8,11 @@ using ECommerce.Sales.Api.Consumers;
 using ECommerce.Sales.Api.Model;
 using ECommerce.Sales.Api.Modules;
 using ECommerce.Sales.Api.Services;
-using ECommerce.Services.Common.Configuration;
 using log4net;
 using MassTransit;
 using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -38,18 +38,12 @@ namespace ECommerce.Sales.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            var rabbitHost = Configuration["RabbitHost"];
-            Logger.Info($"Using RabbitHost='{rabbitHost}'.");
-
-            var connectionString = Configuration["ConnectionString"];
-            Logger.Info($"Using connectionString='{connectionString}'.");
-
-            var waiter = new DependencyAwaiter();
-            waiter.WaitForRabbit(rabbitHost);
-            waiter.WaitForSql(connectionString);
-
             services.AddMvc();
 
+            services.AddHealthChecks()
+                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" })
+                .AddRabbitMQ($"amqp://guest:guest@{Configuration["RabbitHost"]}:5672", tags: new[] { "broker" });
+            
             services.AddEntityFrameworkSqlServer()
                     .AddDbContext<SalesContext>(options =>
                     {
@@ -61,7 +55,10 @@ namespace ECommerce.Sales.Api
                     },
                         ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
                     );
-            
+
+            services.AddHttpClient();
+            services.AddHostedService<SalesService>();
+
             var builder = new ContainerBuilder();
 
             builder.Populate(services);
@@ -82,14 +79,17 @@ namespace ECommerce.Sales.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseHealthChecks("/health/live", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count == 0
+            });
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count > 0
+            });
+
             app.UseMvc();
             loggerFactory.AddLog4Net();
-
-            var bus = Container.Resolve<IBusControl>();
-            var busHandle = TaskUtil.Await(() => bus.StartAsync());
-            lifetime.ApplicationStopping.Register(() => busHandle.Stop());
-
-            Logger.Info("Running Sales microservice.");
         }
     }
 }

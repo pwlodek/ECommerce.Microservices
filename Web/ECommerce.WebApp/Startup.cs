@@ -1,8 +1,11 @@
-﻿using ECommerce.WebApp.Services;
+﻿using ECommerce.WebApp.HealthChecks;
+using ECommerce.WebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using System;
@@ -11,10 +14,23 @@ namespace ECommerce.WebApp
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks()
+                .AddCheck("redis", new RedisHealthCheck("redis:6379"), tags: new[] { "redis" })
+                .AddUrlGroup(new Uri($"http://{Configuration["CatalogServiceHost"]}/health/ready"), name: "catalog", tags: new[] { "url" })
+                .AddUrlGroup(new Uri($"http://{Configuration["SalesServiceHost"]}/health/ready"), name: "sales", tags: new[] { "url"})
+                .AddUrlGroup(new Uri($"http://{Configuration["ReportingServiceHost"]}/health/ready"), name: "reporting", tags: new[] { "url" });
+
             services.AddMvc();
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
             services.AddHttpContextAccessor();
@@ -49,6 +65,15 @@ namespace ECommerce.WebApp
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHealthChecks("/health/live", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count == 0
+            });
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions()
+            {
+                Predicate = p => p.Tags.Count > 0
+            });
 
             app.UseCookiePolicy();
             app.UseSession();
