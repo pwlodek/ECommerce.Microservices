@@ -77,6 +77,7 @@ services:
       dockerfile: Services/ECommerce.Reporting.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ORCHESTRATOR=Docker
     ports:
       - "8084:80"
     depends_on: 
@@ -91,6 +92,7 @@ services:
       dockerfile: Services/ECommerce.Sales.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ORCHESTRATOR=Docker
     ports:
       - "8083:80"
     depends_on: 
@@ -118,6 +120,7 @@ services:
       - "8080:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ORCHESTRATOR=Docker
     depends_on: 
       - ecommerce.catalog.api
       - ecommerce.customers.api
