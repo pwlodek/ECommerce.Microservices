@@ -21,10 +21,10 @@ namespace ECommerce.Customers.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks()
-                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" });
+                .AddSqlServer(Configuration["ConnectionStrings:CustomersDb"], tags: new[] { "db", "sql" });
 
             services.AddMvc();
-            services.AddScoped<ICustomerRepository>(c => new CustomerRepository(Configuration["ConnectionString"]));
+            services.AddScoped<ICustomerRepository>(c => new CustomerRepository(Configuration["ConnectionStrings:CustomersDb"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

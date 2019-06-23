@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 
 namespace ECommerce.Payment.Host
@@ -15,11 +16,16 @@ namespace ECommerce.Payment.Host
 
             host.UseConsoleLifetime()
                 .UseServiceProviderFactory(new DependencyProvider())
-                .ConfigureHostConfiguration(configHost =>
+                .ConfigureHostConfiguration(builder => 
                 {
-                    configHost.SetBasePath(Directory.GetCurrentDirectory());
-                    configHost.AddJsonFile("appsettings.json", optional: false);
-                    configHost.AddEnvironmentVariables();
+                    builder.AddEnvironmentVariables(prefix: "ASPNETCORE_");
+                })
+                .ConfigureAppConfiguration((context, builder) =>
+                {
+                    builder.SetBasePath(Directory.GetCurrentDirectory());
+                    builder.AddJsonFile($"appsettings.json", optional: false);
+                    builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: false);
+                    builder.AddEnvironmentVariables();
                 })
                 .ConfigureServices((hostContext, services) =>
                 {

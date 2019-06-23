@@ -25,18 +25,19 @@ namespace ECommerce.WebApp
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var redisUrl = Configuration["Cache:Redis"];
             services.AddHealthChecks()
-                .AddCheck("redis", new RedisHealthCheck("redis:6379"), tags: new[] { "redis" })
-                .AddUrlGroup(new Uri($"http://{Configuration["CatalogServiceHost"]}/health/ready"), name: "catalog", tags: new[] { "url" })
-                .AddUrlGroup(new Uri($"http://{Configuration["SalesServiceHost"]}/health/ready"), name: "sales", tags: new[] { "url"})
-                .AddUrlGroup(new Uri($"http://{Configuration["ReportingServiceHost"]}/health/ready"), name: "reporting", tags: new[] { "url" });
+                .AddCheck("redis", new RedisHealthCheck(redisUrl), tags: new[] { "redis" })
+                .AddUrlGroup(new Uri($"http://{Configuration["Services:Catalog"]}/health/ready"), name: "catalog", tags: new[] { "url" })
+                .AddUrlGroup(new Uri($"http://{Configuration["Services:Sales"]}/health/ready"), name: "sales", tags: new[] { "url"})
+                .AddUrlGroup(new Uri($"http://{Configuration["Services:Reporting"]}/health/ready"), name: "reporting", tags: new[] { "url" });
 
             services.AddMvc();
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
             services.AddHttpContextAccessor();
             services.AddDistributedRedisCache(options =>
             {
-                options.Configuration = "redis:6379";
+                options.Configuration = redisUrl;
                 options.InstanceName = "master";
             });
             services.AddSession(options =>
@@ -51,7 +52,7 @@ namespace ECommerce.WebApp
             // Required in farm scenario
             services
                 .AddDataProtection(opt => opt.ApplicationDiscriminator = "ecommerce-webapp")
-                .PersistKeysToRedis(ConnectionMultiplexer.Connect("redis:6379"));
+                .PersistKeysToRedis(ConnectionMultiplexer.Connect(redisUrl));
 
             services.AddSingleton<IProductService, ProductService>();
             services.AddSingleton<IBasketService, BasketService>();

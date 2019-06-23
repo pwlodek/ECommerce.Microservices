@@ -19,11 +19,20 @@ namespace ECommerce.WebApp
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseKestrel(o =>
-                {
-                    // This is to demonstrate multiple web apps
-                    o.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(1);
-                });
+                   .ConfigureAppConfiguration((context, builder) =>
+                   {
+                       var orchestrator = context.Configuration["ORCHESTRATOR"];
+                       builder.SetBasePath(Directory.GetCurrentDirectory());
+                       builder.AddJsonFile($"appsettings.json", optional: false);
+                       builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: false);
+                       builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.{orchestrator}.json", optional: true);
+                       builder.AddEnvironmentVariables();
+                   })
+                   .UseStartup<Startup>()
+                   .UseKestrel(o =>
+                   {
+                       // This is to demonstrate multiple web apps
+                       o.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(1);
+                   });
     }
 }

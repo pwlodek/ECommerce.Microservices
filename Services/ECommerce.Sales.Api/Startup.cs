@@ -24,8 +24,6 @@ namespace ECommerce.Sales.Api
 {
     public class Startup
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -41,13 +39,13 @@ namespace ECommerce.Sales.Api
             services.AddMvc();
 
             services.AddHealthChecks()
-                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" })
-                .AddRabbitMQ($"amqp://guest:guest@{Configuration["RabbitHost"]}:5672", tags: new[] { "broker" });
+                .AddSqlServer(Configuration["ConnectionStrings:SalesDb"], tags: new[] { "db", "sql" })
+                .AddRabbitMQ(Configuration["Brokers:RabbitMQ:Url"], tags: new[] { "broker" });
             
             services.AddEntityFrameworkSqlServer()
                     .AddDbContext<SalesContext>(options =>
                     {
-                        options.UseSqlServer(Configuration["ConnectionString"],
+                        options.UseSqlServer(Configuration["ConnectionStrings:SalesDb"],
                             sqlServerOptionsAction: sqlOptions =>
                             {
                                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);

@@ -27,7 +27,7 @@ namespace ECommerce.WebApp.Services
         public async Task<ServiceResponse<IEnumerable<Product>>> GetProductsAsync(string filter)
         {
             var client = _httpClientFactory.CreateClient();
-            var catalogServiceHost = _configuration["CatalogServiceHost"];
+            var catalogServiceHost = _configuration["Services:Catalog"];
             var response = await client.GetStringAsync($"http://{catalogServiceHost}/api/products?includeServiceInfo=true&filter={filter}");
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<ServiceResponse<IEnumerable<Product>>>(response);
             return obj;

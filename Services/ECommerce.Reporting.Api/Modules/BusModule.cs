@@ -13,19 +13,15 @@ namespace ECommerce.Reporting.Api.Modules
             builder.Register(context =>
             {
                 var config = context.Resolve<IConfiguration>();
-                var rabbitHost = config["RabbitHost"];
+                var rabbitHost = config["Brokers:RabbitMQ:Host"];
+                var username = config["Brokers:RabbitMQ:Username"];
+                var password = config["Brokers:RabbitMQ:Password"];
                 var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
                     var host = cfg.Host(new Uri($"rabbitmq://{rabbitHost}"), h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
-                    });
-
-                    // https://stackoverflow.com/questions/39573721/disable-round-robin-pattern-and-use-fanout-on-masstransit
-                    cfg.ReceiveEndpoint(host, "ecommerce_main_fanout" + Guid.NewGuid().ToString(), e =>
-                    {
-
+                        h.Username(username);
+                        h.Password(password);
                     });
 
                     cfg.ReceiveEndpoint(host, "reporting_fanout", e =>

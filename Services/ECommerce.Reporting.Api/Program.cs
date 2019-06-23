@@ -19,7 +19,16 @@ namespace ECommerce.Reporting.Api
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
+                   .ConfigureAppConfiguration((context, builder) =>
+                   {
+                       var orchestrator = context.Configuration["ORCHESTRATOR"];
+                       builder.SetBasePath(Directory.GetCurrentDirectory());
+                       builder.AddJsonFile($"appsettings.json", optional: false);
+                       builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: false);
+                       builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.{orchestrator}.json", optional: true);
+                       builder.AddEnvironmentVariables();
+                   })
+                   .UseStartup<Startup>()
+                   .Build();
     }
 }

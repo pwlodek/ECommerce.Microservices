@@ -210,10 +210,10 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionString
-          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products"
-        - name: RabbitHost
-          value: "rabbit"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
         livenessProbe:
           httpGet:
             path: /health/live
@@ -274,10 +274,10 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionString
-          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers"
-        - name: RabbitHost
-          value: "rabbit"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
         livenessProbe:
           httpGet:
             path: /health/live
@@ -318,8 +318,10 @@ spec:
         image: ecommerce/payment.host
         imagePullPolicy: IfNotPresent
         env:
-        - name: RabbitHost
-          value: "rabbit"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -368,14 +370,10 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionString
-          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales"
-        - name: RabbitHost
-          value: "rabbit"
-        - name: CustomersServiceHost
-          value: "customers-api:8082"
-        - name: CatalogServiceHost
-          value: "catalog-api:8085"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
         livenessProbe:
           httpGet:
             path: /health/live
@@ -436,12 +434,10 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionString
-          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Reporting"
-        - name: RabbitHost
-          value: "rabbit"
-        - name: CustomersServiceHost
-          value: "customers-api:8082"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
         livenessProbe:
           httpGet:
             path: /health/live
@@ -482,8 +478,10 @@ spec:
         image: ecommerce/shipping.host
         imagePullPolicy: IfNotPresent
         env:
-        - name: RabbitHost
-          value: "rabbit"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -534,12 +532,10 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: SalesServiceHost
-          value: "sales-api:8083"
-        - name: CatalogServiceHost
-          value: "catalog-api:8085"
-        - name: ReportingServiceHost
-          value: "reporting-api:8084"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
         livenessProbe:
           httpGet:
             path: /health/live

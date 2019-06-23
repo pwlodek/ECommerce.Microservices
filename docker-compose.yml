@@ -36,9 +36,8 @@ services:
     build:
       context: .
       dockerfile: Services/ECommerce.Catalog.Api/Dockerfile
-    environment:      
-      ConnectionString: ${SQL_SERVER_CS}Database=ECommerce.Products      
-      RabbitHost: rabbit
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "8085:80"
     depends_on: 
@@ -52,8 +51,7 @@ services:
       context: .
       dockerfile: Services/ECommerce.Customers.Api/Dockerfile
     environment:
-      ConnectionString: ${SQL_SERVER_CS}Database=ECommerce.Customers
-      RabbitHost: rabbit
+      - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "8082:80"
     depends_on: 
@@ -67,7 +65,7 @@ services:
       context: .
       dockerfile: Services/ECommerce.Payment.Host/Dockerfile
     environment:
-      RabbitHost: rabbit
+      - ASPNETCORE_ENVIRONMENT=Development
     depends_on: 
       - rabbit
 
@@ -78,9 +76,8 @@ services:
       context: .
       dockerfile: Services/ECommerce.Reporting.Api/Dockerfile
     environment:
-      ConnectionString: ${SQL_SERVER_CS}Database=ECommerce.Reporting
-      RabbitHost: rabbit
-      CustomersServiceHost: ecommerce.customers.api
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ORCHESTRATOR=Docker
     ports:
       - "8084:80"
     depends_on: 
@@ -94,10 +91,8 @@ services:
       context: .
       dockerfile: Services/ECommerce.Sales.Api/Dockerfile
     environment:
-      ConnectionString: ${SQL_SERVER_CS}Database=ECommerce.Sales
-      RabbitHost: rabbit
-      CustomersServiceHost: ecommerce.customers.api
-      CatalogServiceHost: ecommerce.catalog.api
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ORCHESTRATOR=Docker
     ports:
       - "8083:80"
     depends_on: 
@@ -111,7 +106,7 @@ services:
       context: .
       dockerfile: Services/ECommerce.Shipping.Host/Dockerfile
     environment:
-      RabbitHost: rabbit
+      - ASPNETCORE_ENVIRONMENT=Development
     depends_on: 
       - rabbit
 
@@ -124,9 +119,8 @@ services:
     ports:
       - "8080:80"
     environment:
-      CatalogServiceHost: ecommerce.catalog.api
-      SalesServiceHost: ecommerce.sales.api
-      ReportingServiceHost: ecommerce.reporting.api
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ORCHESTRATOR=Docker
     depends_on: 
       - ecommerce.catalog.api
       - ecommerce.customers.api

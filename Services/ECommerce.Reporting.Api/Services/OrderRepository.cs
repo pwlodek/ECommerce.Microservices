@@ -21,7 +21,7 @@ namespace ECommerce.Reporting.Api.Services
 
         public OrderRepository(IConfiguration cfg)
         {
-            _connectionString = cfg["ConnectionString"];
+            _connectionString = cfg["ConnectionStrings:ReportingDb"];
         }
 
         public IDbConnection Connection

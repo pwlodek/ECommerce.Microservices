@@ -35,7 +35,7 @@ namespace ECommerce.WebApp.Services
         public async Task<IList<Order>> GetOrdersAsync()
         {
             var client = _httpClientFactory.CreateClient();
-            var salesServiceHost = _configuration["SalesServiceHost"];
+            var salesServiceHost = _configuration["Services:Sales"];
             var response = await client.GetStringAsync($"http://{salesServiceHost}/api/orders");
             return JsonConvert.DeserializeObject<List<Order>>(response);
         }
@@ -43,7 +43,7 @@ namespace ECommerce.WebApp.Services
         public async Task<IList<OrderReportEntry>> GetOrderReportAsync()
         {
             var client = _httpClientFactory.CreateClient();
-            var reportingServiceHost = _configuration["ReportingServiceHost"];
+            var reportingServiceHost = _configuration["Services:Reporting"];
             var response = await client.GetStringAsync($"http://{reportingServiceHost}/api/reporting");
             return JsonConvert.DeserializeObject<List<OrderReportEntry>>(response);
         }
@@ -69,7 +69,7 @@ namespace ECommerce.WebApp.Services
 
                 var client = _httpClientFactory.CreateClient();
                 var stringContent = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
-                var salesServiceHost = _configuration["SalesServiceHost"];
+                var salesServiceHost = _configuration["Services:Sales"];
                 var response = await client.PostAsync($"http://{salesServiceHost}/api/orders", stringContent);
 
                 _basketService.Clear();

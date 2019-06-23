@@ -4,9 +4,6 @@ using Autofac.Extensions.DependencyInjection;
 using ECommerce.Catalog.Api.Modules;
 using ECommerce.Catalog.Api.Services;
 using ECommerce.Services.Common.Identity;
-using log4net;
-using MassTransit;
-using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -19,8 +16,6 @@ namespace ECommerce.Catalog.Api
 {
     public class Startup
     {
-        private static ILog Logger = LogManager.GetLogger(typeof(Startup));
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -34,8 +29,8 @@ namespace ECommerce.Catalog.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks()
-                .AddSqlServer(Configuration["ConnectionString"], tags: new[] { "db", "sql" })
-                .AddRabbitMQ($"amqp://guest:guest@{Configuration["RabbitHost"]}:5672", tags: new[] { "broker" });
+                .AddSqlServer(Configuration["ConnectionStrings:ProductsDb"], tags: new[] { "db", "sql" })
+                .AddRabbitMQ(Configuration["Brokers:RabbitMQ:Url"], tags: new[] { "broker" });
 
             services.AddMvc();
             services.AddHostedService<CatalogService>();

@@ -24,7 +24,7 @@ namespace ECommerce.Reporting.Api.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                var customersServiceHost = _configuration["CustomersServiceHost"];
+                var customersServiceHost = _configuration["Services:Customer"];
                 var response = await client.GetStringAsync($"http://{customersServiceHost}/api/customers/{id}");
                 var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(response);
                 return obj;
