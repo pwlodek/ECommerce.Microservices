@@ -34,9 +34,10 @@ namespace ECommerce.Payment.Host.Modules
                     cfg.ReceiveEndpoint(host, "payment_initiate_payment", e =>
                     {
                         e.Consumer<InitiatePaymentCommandConsumer>(context);
+
+                        EndpointConvention.Map<InitiatePaymentCommand>(e.InputAddress);
                     });
 
-                    EndpointConvention.Map<InitiatePaymentCommand>(new Uri($"rabbitmq://{rabbitHost}/payment_initiate_payment"));
                 });
 
                 return busControl;

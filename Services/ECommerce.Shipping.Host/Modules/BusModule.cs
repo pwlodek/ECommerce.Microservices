@@ -22,6 +22,7 @@ namespace ECommerce.Shipping.Host.Modules
                     var rabbitHost = config["Brokers:RabbitMQ:Host"];
                     var username = config["Brokers:RabbitMQ:Username"];
                     var password = config["Brokers:RabbitMQ:Password"];
+
                     var host = cfg.Host(new Uri($"rabbitmq://{rabbitHost}"), h =>
                     {
                         h.Username(username);
@@ -37,10 +38,10 @@ namespace ECommerce.Shipping.Host.Modules
                     {
                         e.Consumer<ShipOrderCommandConsumer>(context);
                         e.Consumer<InitiateOrderPackingCommandConsumer>(context);
+
+                        EndpointConvention.Map<ShipOrderCommand>(e.InputAddress);
+                        EndpointConvention.Map<InitiateOrderPackingCommand>(e.InputAddress);
                     });
-                    
-                    EndpointConvention.Map<ShipOrderCommand>(new Uri($"rabbitmq://{rabbitHost}/shipping_order"));
-                    EndpointConvention.Map<InitiateOrderPackingCommand>(new Uri($"rabbitmq://{rabbitHost}/shipping_order"));
                 });
 
                 return busControl;

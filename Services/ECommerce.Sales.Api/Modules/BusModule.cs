@@ -36,10 +36,10 @@ namespace ECommerce.Sales.Api.Modules
                     cfg.ReceiveEndpoint(host, "sales_submit_orders", e =>
                     {
                         e.Consumer<SubmitOrderCommandConsumer>(context);
+
+                        EndpointConvention.Map<SubmitOrderCommand>(e.InputAddress);
                     });
-
-                    EndpointConvention.Map<SubmitOrderCommand>(new Uri($"rabbitmq://{rabbitHost}/sales_submit_orders"));
-
+                    
                 });
 
                 return busControl;
