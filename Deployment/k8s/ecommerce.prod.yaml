@@ -5,7 +5,7 @@
 #                     |_____\____\___/|_|  |_|_|  |_|_____|_| \_\\____|_____|  \___/|_| |_|  \____\___/|_| |_|\__\__,_|_|_| |_|\___|_|  |___/                    
 #                                                                                                                                                                                                                                                            
 #
-# This Kubernetes deployment file launches the entire sample on Azure AKS
+# This Kubernetes deployment file launches the entire sample with infrastructure on Azure AKS
 #
 # Before you proceed, please make sure you have
 #  - Azure AKS instance
@@ -224,10 +224,22 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionString
-          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Products"
-        - name: RabbitHost
-          value: "rabbit"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -276,10 +288,22 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionString
-          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Customers"
-        - name: RabbitHost
-          value: "rabbit"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -308,8 +332,10 @@ spec:
         image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/payment.host
         imagePullPolicy: IfNotPresent
         env:
-        - name: RabbitHost
-          value: "rabbit"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -358,14 +384,86 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionString
-          value: "Server=sqlserver;User=sa;Password=Zaq123#!;Database=ECommerce.Sales"
-        - name: RabbitHost
-          value: "rabbit"
-        - name: CustomersServiceHost
-          value: "customers-api:8082"
-        - name: CatalogServiceHost
-          value: "catalog-api:8085"  
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3 
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Reporting Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: reporting-api
+  namespace: ecommerce
+  labels:
+    app: reporting-api
+    tier: backend
+spec:
+  selector:
+    app: reporting-api
+    tier: backend
+  ports:
+  - name: reporting-api
+    protocol: TCP
+    port: 8084
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-api
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: reporting-api
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reporting-api
+        tier: backend
+    spec:
+      containers:
+      - name: reporting-api
+        image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/reporting.api
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -394,8 +492,10 @@ spec:
         image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/shipping.host
         imagePullPolicy: IfNotPresent
         env:
-        - name: RabbitHost
-          value: "rabbit"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
       imagePullSecrets:
       - name: registrysecret
 ---
@@ -445,10 +545,22 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: SalesServiceHost
-          value: "sales-api:8083"
-        - name: CatalogServiceHost
-          value: "catalog-api:8085"  
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
       imagePullSecrets:
       - name: registrysecret
 ---
