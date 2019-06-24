@@ -1,7 +1,6 @@
 ﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using ECommerce.Catalog.Api.Modules;
 using ECommerce.Catalog.Api.Services;
 using ECommerce.Services.Common.Identity;
 using Microsoft.AspNetCore.Builder;
@@ -29,8 +28,7 @@ namespace ECommerce.Catalog.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks()
-                .AddSqlServer(Configuration["ConnectionStrings:ProductsDb"], tags: new[] { "db", "sql" })
-                .AddRabbitMQ(Configuration["Brokers:RabbitMQ:Url"], tags: new[] { "broker" });
+                .AddSqlServer(Configuration["ConnectionStrings:ProductsDb"], tags: new[] { "db", "sql" });
 
             services.AddMvc();
             services.AddHostedService<CatalogService>();
@@ -38,7 +36,6 @@ namespace ECommerce.Catalog.Api
             var builder = new ContainerBuilder();
 
             builder.Populate(services);
-            builder.RegisterModule<BusModule>();
             builder.RegisterType<ProductRepository>().As<IProductRepository>();
             builder.RegisterType<IdentityService>().AsImplementedInterfaces().SingleInstance();
 

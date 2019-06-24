@@ -34,7 +34,7 @@ namespace ECommerce.Payment.Host.Modules
                     cfg.ReceiveEndpoint(host, "payment_initiate_payment", e =>
                     {
                         e.Consumer<InitiatePaymentCommandConsumer>(context);
-
+                        
                         EndpointConvention.Map<InitiatePaymentCommand>(e.InputAddress);
                     });
 

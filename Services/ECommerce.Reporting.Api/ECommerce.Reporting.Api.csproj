@@ -18,11 +18,11 @@
     <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="2.2.1" />
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="MassTransit" Version="4.0.1" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.1" />
-    <PackageReference Include="MassTransit.Autofac" Version="4.0.1" />
-    <PackageReference Include="Autofac" Version="4.6.2" />
-    <PackageReference Include="Dapper" Version="1.50.4" />
+    <PackageReference Include="MassTransit" Version="5.5.2" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="5.5.2" />
+    <PackageReference Include="MassTransit.Autofac" Version="5.5.2" />
+    <PackageReference Include="Autofac" Version="4.9.2" />
+    <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="log4net" Version="2.0.8" />
   </ItemGroup>
 

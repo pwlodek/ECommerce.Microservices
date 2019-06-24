@@ -10,8 +10,6 @@
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Autofac" Version="4.6.2" />
-    <PackageReference Include="MassTransit" Version="4.0.0" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
     <PackageReference Include="Dapper" Version="1.50.4" />
   </ItemGroup>
