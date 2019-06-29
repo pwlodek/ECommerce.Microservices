@@ -24,9 +24,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.2.11" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="5.5.2" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Modules\" />
     <Folder Include="Sagas\" />
     <Folder Include="Consumers\" />
   </ItemGroup>

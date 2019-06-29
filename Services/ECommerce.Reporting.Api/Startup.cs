@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using ECommerce.Reporting.Api.Modules;
 using ECommerce.Reporting.Api.Services;
@@ -24,20 +25,32 @@ namespace ECommerce.Reporting.Api
         
         public IConfiguration Configuration { get; }
 
+        public bool UseCloudServices => Configuration.GetValue<bool>("UseCloudServices");
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks()
-                .AddSqlServer(Configuration["ConnectionStrings:ReportingDb"], tags: new[] { "db", "sql" })
-                .AddRabbitMQ(Configuration["Brokers:RabbitMQ:Url"], tags: new[] { "broker" });
-            
+            var healthCheckBuilder = services.AddHealthChecks()
+                .AddSqlServer(Configuration["ConnectionStrings:ReportingDb"], tags: new[] { "db", "sql" });
+
+            if (UseCloudServices)
+            {
+                healthCheckBuilder
+                    .AddAzureServiceBusQueue(Configuration["Brokers:ServiceBus:Url"], "reporting_fanout", name: "sales_fanout_queue", tags: new[] { "broker" });
+            }
+            else
+            {
+                healthCheckBuilder
+                    .AddRabbitMQ(Configuration["Brokers:RabbitMQ:Url"], tags: new[] { "broker" });
+            }
+
             services.AddMvc();
             services.AddHostedService<ReportingService>();
 
             var builder = new ContainerBuilder();
 
             builder.Populate(services);
-            builder.RegisterModule<BusModule>();
+            builder.RegisterModule(GetBusModule());
             builder.RegisterModule<ConsumerModule>();
 
             builder.RegisterType<DataService>().As<IDataService>().SingleInstance();
@@ -64,6 +77,12 @@ namespace ECommerce.Reporting.Api
             });
 
             app.UseMvc();
+        }
+
+        private IModule GetBusModule()
+        {
+            return UseCloudServices ?
+                (IModule)new AzureBusModule() : new BusModule();
         }
     }
 }

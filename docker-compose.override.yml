@@ -4,42 +4,49 @@ services:
   ecommerce.catalog.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - AzureServicesAuthConnectionString=${MANAGED_IDENTITY}
     ports:
       - "80"
 
   ecommerce.customers.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - AzureServicesAuthConnectionString=${MANAGED_IDENTITY}
     ports:
       - "80"
 
   ecommerce.reporting.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - AzureServicesAuthConnectionString=${MANAGED_IDENTITY}
     ports:
       - "80"
 
   ecommerce.payment.host:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - AzureServicesAuthConnectionString=${MANAGED_IDENTITY}
     ports:
       - "80"
 
   ecommerce.shipping.host:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - AzureServicesAuthConnectionString=${MANAGED_IDENTITY}
     ports:
       - "80"
 
   ecommerce.sales.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - AzureServicesAuthConnectionString=${MANAGED_IDENTITY}
     ports:
       - "80"
 
   ecommerce.webapp:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - AzureServicesAuthConnectionString=${MANAGED_IDENTITY}
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_HTTPS_PORT=44314
     ports:

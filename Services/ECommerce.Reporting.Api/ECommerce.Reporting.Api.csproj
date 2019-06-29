@@ -8,18 +8,19 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
-    <Folder Include="Modules\" />
     <Folder Include="Consumers\" />
     <Folder Include="Models\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.AzureServiceBus" Version="2.2.4" />
     <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="2.2.1" />
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="MassTransit" Version="5.5.2" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="5.5.2" />
+    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="5.5.2" />
     <PackageReference Include="MassTransit.Autofac" Version="5.5.2" />
     <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="Dapper" Version="1.60.6" />

@@ -1,4 +1,5 @@
 ﻿using ECommerce.Payment.Host.Configuration;
+using ECommerce.Services.Common.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,6 +27,7 @@ namespace ECommerce.Payment.Host
                     builder.AddJsonFile($"appsettings.json", optional: false);
                     builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: false);
                     builder.AddEnvironmentVariables();
+                    builder.AddCloud();
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
