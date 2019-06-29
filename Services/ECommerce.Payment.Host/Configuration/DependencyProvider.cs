@@ -20,7 +20,6 @@ namespace ECommerce.Payment.Host.Configuration
             var configuration = provider.GetService<IConfiguration>();
             var useCloud = configuration.GetValue<bool>("UseCloudServices");
             builder.RegisterModule(useCloud ? (IModule)new AzureBusModule() : new BusModule());
-            builder.RegisterModule<BusModule>();
             builder.RegisterModule<ConsumerModule>();
             builder.Populate(services);
 
