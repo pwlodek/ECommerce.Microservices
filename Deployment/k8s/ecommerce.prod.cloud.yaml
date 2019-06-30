@@ -1,0 +1,417 @@
+#                      _____ ____ ___  __  __ __  __ _____ ____   ____ _____                  ____            _        _                                         
+#  _____ _____ _____  | ____/ ___/ _ \|  \/  |  \/  | ____|  _ \ / ___| ____|   ___  _ __    / ___|___  _ __ | |_ __ _(_)_ __   ___ _ __ ___   _____ _____ _____ 
+# |_____|_____|_____| |  _|| |  | | | | |\/| | |\/| |  _| | |_) | |   |  _|    / _ \| '_ \  | |   / _ \| '_ \| __/ _` | | '_ \ / _ \ '__/ __| |_____|_____|_____|
+# |_____|_____|_____| | |__| |__| |_| | |  | | |  | | |___|  _ <| |___| |___  | (_) | | | | | |__| (_) | | | | || (_| | | | | |  __/ |  \__ \ |_____|_____|_____|
+#                     |_____\____\___/|_|  |_|_|  |_|_____|_| \_\\____|_____|  \___/|_| |_|  \____\___/|_| |_|\__\__,_|_|_| |_|\___|_|  |___/                    
+#                                                                                                                                                                                                                                                            
+#
+# This Kubernetes deployment file launches the entire sample with infrastructure on Azure AKS
+#
+# Before you proceed, please make sure you have
+#  - Azure AKS instance
+#  - private Azure Container Registry
+#
+# Steps to run:
+#  - replace AZURE_PRIVATE_REGISTRY with your Azure Container Registry name
+#  - login to the remote registry on your local instance: docker login AZURE_PRIVATE_REGISTRY.azurecr.io -u AZURE_PRIVATE_REGISTRY -p PASSWORD
+#  - define DOCKER_REGISTRY varaible in .env file and let it point to full ACR repository address with "/" at the end
+#  - build local images: docker-compose -f docker-compose.prod.yml build  
+#  - push local images to the repository: docker-compose -f docker-compose.prod.yml push
+#  - create cluster wide secret so that Kubernetes knows how to pull images: kubectl create secret docker-registry registrysecret --docker-server=AZURE_PRIVATE_REGISTRY.azurecr.io --docker-username=AZURE_PRIVATE_REGISTRY --docker-password=PASSWORD --docker-email=VALID_EMAIL
+#  - make sure Azure AKS has assigned a managed identity
+#  - deploy the app: kubectl apply -f ecommerce.prod.yaml
+#
+
+#
+# App namespace
+#
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecommerce
+---
+#
+# Catalog Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: catalog-api
+  namespace: ecommerce
+  labels:
+    app: catalog-api
+    tier: backend
+spec:
+  selector:
+    app: catalog-api
+    tier: backend
+  ports:
+  - name: catalog-api
+    protocol: TCP
+    port: 8085
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-api
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: catalog-api
+      tier: backend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: catalog-api
+        tier: backend
+    spec:
+      containers:
+      - name: catalog-api
+        image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/catalog.api
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Customers Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: customers-api
+  namespace: ecommerce
+  labels:
+    app: customers-api
+    tier: backend
+spec:
+  selector:
+    app: customers-api
+    tier: backend
+  ports:
+  - name: customers-api
+    protocol: TCP
+    port: 8082
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers-api
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: customers-api
+      tier: backend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: customers-api
+        tier: backend
+    spec:
+      containers:
+      - name: customers-api
+        image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/customers.api
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Payment Microservice Deployment
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-host
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: payment-host
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: payment-host
+        tier: backend
+    spec:
+      containers:
+      - name: payment-host
+        image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/payment.host
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Sales Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: sales-api
+  namespace: ecommerce
+  labels:
+    app: sales-api
+    tier: backend
+spec:
+  selector:
+    app: sales-api
+    tier: backend
+  ports:
+  - name: sales-api
+    protocol: TCP
+    port: 8083
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sales-api
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: sales-api
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sales-api
+        tier: backend
+    spec:
+      containers:
+      - name: sales-api
+        image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/sales.api
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3 
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Reporting Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: reporting-api
+  namespace: ecommerce
+  labels:
+    app: reporting-api
+    tier: backend
+spec:
+  selector:
+    app: reporting-api
+    tier: backend
+  ports:
+  - name: reporting-api
+    protocol: TCP
+    port: 8084
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-api
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: reporting-api
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reporting-api
+        tier: backend
+    spec:
+      containers:
+      - name: reporting-api
+        image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/reporting.api
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Shipping Microservice Deployment
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping-host
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: shipping-host
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: shipping-host
+        tier: backend
+    spec:
+      containers:
+      - name: shipping-host
+        image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/shipping.host
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# WebApp Microservice Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: webapp
+  namespace: ecommerce
+  labels:
+    app: webapp
+    tier: frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: webapp
+    tier: frontend
+  ports:
+  - name: webapp
+    protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  namespace: ecommerce
+spec:
+  selector:
+    matchLabels:
+      app: webapp
+      tier: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webapp
+        tier: frontend
+    spec:
+      containers:
+      - name: webapp
+        image: AZURE_PRIVATE_REGISTRY.azurecr.io/ecommerce/webapp
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_ORCHESTRATOR
+          value: "k8s"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+      imagePullSecrets:
+      - name: registrysecret
+---

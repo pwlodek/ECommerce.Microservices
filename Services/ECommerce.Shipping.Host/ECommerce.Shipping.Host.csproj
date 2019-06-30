@@ -35,6 +35,7 @@
     <ProjectReference Include="..\ECommerce.Services.Common\ECommerce.Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="appsettings.Cloud.json" />
     <None Remove="appsettings.Development.json" />
     <None Remove="appsettings.json" />
     <None Remove="log4net.config" />
@@ -45,11 +46,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="appsettings.Cloud.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="appsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
