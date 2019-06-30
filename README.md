@@ -1,4 +1,4 @@
-# Microservices based sample app using Docker, Kubernetes and .NET Core
+# Microservices based cloud native app using Docker, Kubernetes and .NET Core
 Sample cloud native e-commerce application which uses microservices based architecture running on .NET Core and Docker, which can be orchestrated by either Docker Swarm, Kubernetes or Service Fabric. It can be configured to use only local resources (RabbitMQ, SQL Server, Redis) or it can use cloud resources. If using cloud resources, it is using Azure App Configuration and Key Vault to store sensitive information like connection strings. You can run it locally on Docker, Docker Swarm, or Kubernetes, or you can deploy it to Azure and run on either Kubernetes or Service Fabric.
 
 ## Assumptions
