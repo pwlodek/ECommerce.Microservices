@@ -1,5 +1,5 @@
-# Microservices based sample app using Docker and .NET Core
-Sample microservices based e-commerce backend running on .NET Core and Docker. You can run it locally on Docker, Docker Swarm, or you can deploy Docker Swarm Cluster to Azure and run it in the cloud.
+# Microservices based sample app using Docker, Kubernetes and .NET Core
+Sample cloud native e-commerce application which uses microservices based architecture running on .NET Core and Docker, which can be orchestrated by either Docker Swarm, Kubernetes or Service Fabric. It can be configured to use only local resources (RabbitMQ, SQL Server, Redis) or it can use cloud resources. If using cloud resources, it is using Azure App Configuration and Key Vault to store sensitive information like connection strings. You can run it locally on Docker, Docker Swarm, or Kubernetes, or you can deploy it to Azure and run on either Kubernetes or Service Fabric.
 
 ## Assumptions
 I assume you have basic understanding on Docker, orchestrations, and Azure. This small sample is only meant to introduce you to how a potential microservice based app might look like.
@@ -18,7 +18,7 @@ This creates an order for customer 1, who wishes to purchase 2 items. After orde
 Next, an event is sent on the service bus indicating that an order has been created and as such, we can start processing payment (via the Payment.Host microservice) and packing (via the Shipping.Host microservice). Since payment and packing operations are *long running* we have to maintain the state of order using shipping saga. Shipping saga listens for two events, payment completed and order packed. Only after both are received for a particular order, shipping saga sends the order, and notifies Sales.Api service that it has shipped the order. Then, Sales.Api service marks the order as shipped, which concludes the workflow.
 
 ## How to run it?
-You can launch the sample locally on Docker, on a local Docker Swarm, or Azure.
+You can launch the sample locally on Docker, on a local Docker Swarm, on local Kubernetes, or on Azure AKS.
 
 ### Local Docker environment
 Since the backend is composed of multiple microservices, we have to archestrate the entire app. The easies is to use docker compose. First build it, and then run it.
