@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using ECommerce.Services.Common.Configuration;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Reflection;
+using System.Xml;
 
 namespace ECommerce.Sales.Api
 {
@@ -37,6 +34,7 @@ namespace ECommerce.Sales.Api
                        builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: false);
                        builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.{orchestrator}.json", optional: true);
                        builder.AddEnvironmentVariables();
+                       builder.AddCloud();
                    })
                    .UseStartup<Startup>()
                    .Build();

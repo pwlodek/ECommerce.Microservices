@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="5.5.2" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="5.5.2" />
+    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="5.5.2" />
     <PackageReference Include="MassTransit.Autofac" Version="5.5.2" />
     <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="log4net" Version="2.0.8" />
@@ -18,7 +19,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.2.10" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Modules\" />
     <Folder Include="Consumers\" />
   </ItemGroup>
   <ItemGroup>
@@ -26,15 +26,19 @@
     <ProjectReference Include="..\ECommerce.Services.Common\ECommerce.Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="appsettings.Cloud.json" />
     <None Remove="appsettings.Development.json" />
     <None Remove="log4net.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="appsettings.Cloud.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="appsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

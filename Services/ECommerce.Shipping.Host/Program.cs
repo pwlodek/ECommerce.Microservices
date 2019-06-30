@@ -1,5 +1,7 @@
 ﻿using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
+using ECommerce.Services.Common.Configuration;
 using ECommerce.Shipping.Host.Configuration;
 using ECommerce.Shipping.Host.Modules;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +28,7 @@ namespace ECommerce.Shipping.Host
                     builder.AddJsonFile($"appsettings.json", optional: false);
                     builder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: false);
                     builder.AddEnvironmentVariables();
+                    builder.AddCloud();
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
@@ -37,11 +40,7 @@ namespace ECommerce.Shipping.Host
                 {
                     configLogging.AddLog4Net();
                 })
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory(builder => 
-                {
-                    builder.RegisterModule<BusModule>();
-                    builder.RegisterModule<ConsumerModule>();
-                }))
+                .UseServiceProviderFactory(new DependencyProvider())
                 .UseConsoleLifetime()
                 .Build();
 

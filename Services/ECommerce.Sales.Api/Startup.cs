@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using ECommerce.Sales.Api.Consumers;
 using ECommerce.Sales.Api.Model;
@@ -33,15 +34,28 @@ namespace ECommerce.Sales.Api
 
         public IConfiguration Configuration { get; }
 
+        public bool UseCloudServices => Configuration.GetValue<bool>("UseCloudServices");
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
 
-            services.AddHealthChecks()
-                .AddSqlServer(Configuration["ConnectionStrings:SalesDb"], tags: new[] { "db", "sql" })
-                .AddRabbitMQ(Configuration["Brokers:RabbitMQ:Url"], tags: new[] { "broker" });
-            
+            var healthCheckBuilder = services.AddHealthChecks()
+                .AddSqlServer(Configuration["ConnectionStrings:SalesDb"], tags: new[] { "db", "sql" });
+                
+            if (UseCloudServices)
+            {
+                healthCheckBuilder
+                    .AddAzureServiceBusQueue(Configuration["Brokers:ServiceBus:Url"], "sales_fanout", name: "sales_fanout_queue", tags: new[] { "broker" })
+                    .AddAzureServiceBusQueue(Configuration["Brokers:ServiceBus:Url"], "sales_submit_orders", name: "sales_submit_orders_queue", tags: new[] { "broker" });
+            }
+            else
+            {
+                healthCheckBuilder
+                    .AddRabbitMQ(Configuration["Brokers:RabbitMQ:Url"], tags: new[] { "broker" });
+            }
+
             services.AddEntityFrameworkSqlServer()
                     .AddDbContext<SalesContext>(options =>
                     {
@@ -60,7 +74,7 @@ namespace ECommerce.Sales.Api
             var builder = new ContainerBuilder();
 
             builder.Populate(services);
-            builder.RegisterModule<BusModule>();
+            builder.RegisterModule(GetBusModule());
             builder.RegisterModule<ConsumerModule>();
             builder.RegisterType<DataService>().As<IDataService>().SingleInstance();
 
@@ -88,6 +102,12 @@ namespace ECommerce.Sales.Api
 
             app.UseMvc();
             loggerFactory.AddLog4Net();
+        }
+
+        private IModule GetBusModule()
+        {
+            return  UseCloudServices ?
+                (IModule) new AzureBusModule() : new BusModule();
         }
     }
 }

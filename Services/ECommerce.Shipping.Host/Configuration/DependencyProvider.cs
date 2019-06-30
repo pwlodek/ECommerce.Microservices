@@ -1,14 +1,14 @@
 ﻿using Autofac;
 using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
-using ECommerce.Payment.Host.Modules;
+using ECommerce.Shipping.Host.Modules;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ECommerce.Payment.Host.Configuration
+namespace ECommerce.Shipping.Host.Configuration
 {
     class DependencyProvider : IServiceProviderFactory<ContainerBuilder>
     {
@@ -21,6 +21,7 @@ namespace ECommerce.Payment.Host.Configuration
             var useCloud = configuration.GetValue<bool>("UseCloudServices");
             builder.RegisterModule(useCloud ? (IModule)new AzureBusModule() : new BusModule());
             builder.RegisterModule<ConsumerModule>();
+
             builder.Populate(services);
 
             return builder;
