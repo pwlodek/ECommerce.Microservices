@@ -13,6 +13,7 @@
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.2.11" />
     <PackageReference Include="Autofac" Version="4.9.2" />
+    <PackageReference Include="CorrelationId" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@
 using Autofac;
 using ECommerce.Common;
 using ECommerce.Common.Commands;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Shipping.Host.Configuration;
 using ECommerce.Shipping.Host.Consumers;
 using MassTransit;
@@ -15,8 +16,10 @@ namespace ECommerce.Shipping.Host.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
+                var correlationContextAccessor = context.Resolve<IMessageCorrelationContextAccessor>();
                 var config = context.Resolve<IConfiguration>();
                 var serviceBusHost = config["Brokers:ServiceBus:Url"];
 
@@ -26,6 +29,8 @@ namespace ECommerce.Shipping.Host.Modules
                     var host = cfg.Host(serviceBusHost, h =>
                     {
                     });
+
+                    cfg.UseCorrelationId(correlationContextAccessor);
 
                     cfg.ReceiveEndpoint(host, "shipping_fanout", e =>
                     {

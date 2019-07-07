@@ -2,6 +2,7 @@
 using Autofac;
 using ECommerce.Common;
 using ECommerce.Common.Commands;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Sales.Api.Consumers;
 using MassTransit;
 using MassTransit.Azure.ServiceBus.Core;
@@ -13,8 +14,10 @@ namespace ECommerce.Sales.Api.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
+                var correlationContextAccessor = context.Resolve<IMessageCorrelationContextAccessor>();
                 var config = context.Resolve<IConfiguration>();
                 var serviceBusHost = config["Brokers:ServiceBus:Url"];
 
@@ -23,6 +26,8 @@ namespace ECommerce.Sales.Api.Modules
                     var host = cfg.Host(serviceBusHost, h =>
                     {
                     });
+
+                    cfg.UseCorrelationId(correlationContextAccessor);
 
                     cfg.ReceiveEndpoint(host, "sales_fanout", e =>
                     {

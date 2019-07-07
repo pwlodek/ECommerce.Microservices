@@ -24,6 +24,7 @@ namespace ECommerce.Payment.Host.Consumers
 
             // Payment was accepted
             await context.Publish(new PaymentAcceptedEvent() { 
+                CorrelationId = context.Message.CorrelationId,
                 OrderId = context.Message.OrderId,
                 CustomerId = context.Message.CustomerId,
                 Total = context.Message.Total

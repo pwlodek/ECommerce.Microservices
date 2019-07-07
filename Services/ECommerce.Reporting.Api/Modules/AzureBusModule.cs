@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Reporting.Api.Consumers;
 using MassTransit;
 using MassTransit.Azure.ServiceBus.Core;
@@ -10,8 +11,10 @@ namespace ECommerce.Reporting.Api.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
+                var correlationContextAccessor = context.Resolve<IMessageCorrelationContextAccessor>();
                 var config = context.Resolve<IConfiguration>();
                 var serviceBusHost = config["Brokers:ServiceBus:Url"];
 
@@ -20,6 +23,8 @@ namespace ECommerce.Reporting.Api.Modules
                     var host = cfg.Host(serviceBusHost, h =>
                     {
                     });
+
+                    cfg.UseCorrelationId(correlationContextAccessor);
 
                     cfg.ReceiveEndpoint(host, "reporting_fanout", e =>
                     {

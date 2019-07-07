@@ -25,6 +25,7 @@
     <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="CorrelationId" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>

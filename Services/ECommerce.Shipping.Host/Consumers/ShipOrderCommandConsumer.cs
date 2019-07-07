@@ -23,6 +23,7 @@ namespace ECommerce.Shipping.Host.Consumers
             await Task.Delay(5000); // shipping takes some time!
 
             await context.Publish(new OrderCompletedEvent() { 
+                CorrelationId = context.Message.CorrelationId,
                 OrderId = context.Message.OrderId,
                 CustomerId = context.Message.CustomerId
             });

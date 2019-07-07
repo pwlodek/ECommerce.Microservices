@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
+using CorrelationId;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Reporting.Api.Modules;
 using ECommerce.Reporting.Api.Services;
 using Microsoft.AspNetCore.Builder;
@@ -44,6 +46,11 @@ namespace ECommerce.Reporting.Api
                     .AddRabbitMQ(Configuration["Brokers:RabbitMQ:Url"], tags: new[] { "broker" });
             }
 
+            services.AddTransient<CorrelationIdDelegatingHandler>();
+            services.AddHttpClient("DefaultClient")
+                .AddHttpMessageHandler<CorrelationIdDelegatingHandler>();
+
+            services.AddCorrelationId();
             services.AddMvc();
             services.AddHostedService<ReportingService>();
 
@@ -74,6 +81,12 @@ namespace ECommerce.Reporting.Api
             app.UseHealthChecks("/health/ready", new HealthCheckOptions()
             {
                 Predicate = p => p.Tags.Count > 0
+            });
+
+            app.UseCorrelationId(new CorrelationIdOptions
+            {
+                UpdateTraceIdentifier = false,
+                UseGuidForCorrelationId = true
             });
 
             app.UseMvc();

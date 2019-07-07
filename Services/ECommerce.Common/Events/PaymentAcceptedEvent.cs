@@ -1,11 +1,14 @@
-﻿using System;
+﻿using MassTransit;
+using System;
 namespace ECommerce.Common.Events
 {
-    public class PaymentAcceptedEvent
+    public class PaymentAcceptedEvent : CorrelatedBy<Guid>
     {
         public PaymentAcceptedEvent()
         {
         }
+
+        public Guid CorrelationId { get; set; }
 
         public int OrderId { get; set; }
 

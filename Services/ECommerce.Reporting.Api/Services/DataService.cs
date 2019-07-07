@@ -14,21 +14,21 @@ namespace ECommerce.Reporting.Api.Services
     public class DataService : IDataService
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public DataService(IConfiguration configuration)
+        public DataService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             this._configuration = configuration;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<Customer> GetCustomerAsync(int id)
         {
-            using (HttpClient client = new HttpClient())
-            {
-                var customersServiceHost = _configuration["Services:Customer"];
-                var response = await client.GetStringAsync($"http://{customersServiceHost}/api/customers/{id}");
-                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(response);
-                return obj;
-            }
+            var client = _httpClientFactory.CreateClient("DefaultClient");
+            var customersServiceHost = _configuration["Services:Customer"];
+            var response = await client.GetStringAsync($"http://{customersServiceHost}/api/customers/{id}");
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(response);
+            return obj;
         }
     }
 }

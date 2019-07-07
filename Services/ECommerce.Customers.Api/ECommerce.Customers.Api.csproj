@@ -12,6 +12,7 @@
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
     <PackageReference Include="Dapper" Version="1.50.4" />
+    <PackageReference Include="CorrelationId" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
