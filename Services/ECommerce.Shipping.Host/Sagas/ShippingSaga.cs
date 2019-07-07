@@ -42,10 +42,15 @@ namespace ECommerce.Shipping.Host.Sagas
         {
             context.Instance.CustomerId = context.Data.CustomerId;
             context.Instance.OrderId = context.Data.OrderId;
+            context.Instance.CorrelationId = context.Data.CorrelationId;
 
             _logger.LogInformation($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId}");
 
-            await context.RespondAsync(new InitiateOrderPackingCommand() { CustomerId = context.Instance.CustomerId, OrderId = context.Instance.OrderId });
+            await context.RespondAsync(new InitiateOrderPackingCommand() {
+                CorrelationId = context.Instance.CorrelationId,
+                CustomerId = context.Instance.CustomerId,
+                OrderId = context.Instance.OrderId
+            });
         }
 
         private async void OnOrderPacked(BehaviorContext<Shipment, OrderPackedEvent> context)
@@ -56,7 +61,11 @@ namespace ECommerce.Shipping.Host.Sagas
 
             if (context.Instance.IsPacked && context.Instance.IsPayed)
             {
-                await context.RespondAsync(new ShipOrderCommand() { CustomerId = context.Instance.CustomerId, OrderId = context.Instance.OrderId });
+                await context.RespondAsync(new ShipOrderCommand() {
+                    CorrelationId = context.Instance.CorrelationId,
+                    CustomerId = context.Instance.CustomerId,
+                    OrderId = context.Instance.OrderId
+                });
             }
         }
 
@@ -68,7 +77,11 @@ namespace ECommerce.Shipping.Host.Sagas
 
             if (context.Instance.IsPacked && context.Instance.IsPayed)
             {
-                await context.RespondAsync(new ShipOrderCommand() { CustomerId = context.Instance.CustomerId, OrderId = context.Instance.OrderId });
+                await context.RespondAsync(new ShipOrderCommand() {
+                    CorrelationId = context.Instance.CorrelationId,
+                    CustomerId = context.Instance.CustomerId,
+                    OrderId = context.Instance.OrderId
+                });
             }
         }
 

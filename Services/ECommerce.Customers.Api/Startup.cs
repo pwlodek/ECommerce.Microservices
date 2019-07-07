@@ -1,4 +1,5 @@
 ﻿using System;
+using CorrelationId;
 using ECommerce.Customers.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -23,6 +24,7 @@ namespace ECommerce.Customers.Api
             services.AddHealthChecks()
                 .AddSqlServer(Configuration["ConnectionStrings:CustomersDb"], tags: new[] { "db", "sql" });
 
+            services.AddCorrelationId();
             services.AddMvc();
             services.AddScoped<ICustomerRepository>(c => new CustomerRepository(Configuration["ConnectionStrings:CustomersDb"]));
         }
@@ -42,6 +44,12 @@ namespace ECommerce.Customers.Api
             app.UseHealthChecks("/health/ready", new HealthCheckOptions()
             {
                 Predicate = p => p.Tags.Count > 0
+            });
+
+            app.UseCorrelationId(new CorrelationIdOptions
+            {
+                UpdateTraceIdentifier = false,
+                UseGuidForCorrelationId = true
             });
 
             app.UseMvc();

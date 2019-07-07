@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using CorrelationId;
 using ECommerce.Catalog.Api.Services;
 using ECommerce.Services.Common.Identity;
 using Microsoft.AspNetCore.Builder;
@@ -30,6 +31,7 @@ namespace ECommerce.Catalog.Api
             services.AddHealthChecks()
                 .AddSqlServer(Configuration["ConnectionStrings:ProductsDb"], tags: new[] { "db", "sql" });
 
+            services.AddCorrelationId();
             services.AddMvc();
             services.AddHostedService<CatalogService>();
 
@@ -61,6 +63,12 @@ namespace ECommerce.Catalog.Api
             app.UseHealthChecks("/health/ready", new HealthCheckOptions()
             {
                 Predicate = p => p.Tags.Count > 0
+            });
+
+            app.UseCorrelationId(new CorrelationIdOptions
+            {
+                UpdateTraceIdentifier = false,
+                UseGuidForCorrelationId = true
             });
 
             app.UseMvc();

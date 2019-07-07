@@ -20,6 +20,7 @@ namespace ECommerce.Payment.Host.Consumers
             _logger.LogInformation($"Initiating payment for customer {context.Message.CustomerId}, order {context.Message.OrderId} in total of {context.Message.Total}");
 
             await context.Send(new InitiatePaymentCommand() {
+                CorrelationId = context.Message.CorrelationId,
                 CustomerId = context.Message.CustomerId,
                 OrderId = context.Message.OrderId,
                 Total = context.Message.Total

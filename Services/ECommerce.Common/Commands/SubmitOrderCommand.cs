@@ -1,8 +1,11 @@
-﻿using System;
+﻿using MassTransit;
+using System;
 namespace ECommerce.Common.Commands
 {
-    public class SubmitOrderCommand
+    public class SubmitOrderCommand : CorrelatedBy<Guid>
     {
+        public Guid CorrelationId { get; set; }
+
         public int CustomerId { get; set; }
 
         public Item[] Items { get; set; }

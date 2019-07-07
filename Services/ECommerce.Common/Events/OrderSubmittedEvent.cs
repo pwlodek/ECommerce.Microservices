@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MassTransit;
+using System;
 
 namespace ECommerce.Common.Events
 {
-    public class OrderSubmittedEvent
+    public class OrderSubmittedEvent : CorrelatedBy<Guid>
     {
         public OrderSubmittedEvent()
         {
         }
+
+        public Guid CorrelationId { get; set; }
 
         public int OrderId { get; set; }
 

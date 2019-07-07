@@ -2,6 +2,7 @@
 using Autofac;
 using ECommerce.Common;
 using ECommerce.Common.Commands;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Shipping.Host.Configuration;
 using ECommerce.Shipping.Host.Consumers;
 using MassTransit;
@@ -14,10 +15,12 @@ namespace ECommerce.Shipping.Host.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
                 var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
+                    var correlationContextAccessor = context.Resolve<IMessageCorrelationContextAccessor>();
                     var config = context.Resolve<IConfiguration>();
                     var rabbitHost = config["Brokers:RabbitMQ:Host"];
                     var username = config["Brokers:RabbitMQ:Username"];
@@ -28,6 +31,8 @@ namespace ECommerce.Shipping.Host.Modules
                         h.Username(username);
                         h.Password(password);
                     });
+
+                    cfg.UseCorrelationId(correlationContextAccessor);
 
                     cfg.ReceiveEndpoint(host, "shipping_fanout", e =>
                     {

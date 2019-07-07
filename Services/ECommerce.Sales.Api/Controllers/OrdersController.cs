@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CorrelationId;
 using ECommerce.Common.Commands;
+using ECommerce.Common.Extensions;
 using ECommerce.Sales.Api.Model;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +16,13 @@ namespace ECommerce.Sales.Api.Controllers
     {
         private readonly IBus _bus;
         private readonly SalesContext _salesContext;
+        private readonly ICorrelationContextAccessor _correlationContextAccessor;
 
-        public OrdersController(IBus bus, SalesContext salesContext)
+        public OrdersController(IBus bus, SalesContext salesContext, ICorrelationContextAccessor correlationContextAccessor)
         {
             _bus = bus;
             _salesContext = salesContext;
+            _correlationContextAccessor = correlationContextAccessor;
         }
 
         // GET api/orders
@@ -35,6 +39,7 @@ namespace ECommerce.Sales.Api.Controllers
         {
             var command = new SubmitOrderCommand()
             {
+                CorrelationId = _correlationContextAccessor.CorrelationContext.CorrelationId.ToGuid(),
                 CustomerId = submittedOrder.CustomerId,
                 Items = submittedOrder.Items.Select(t => new Item() { ProductId = t.ProductId, Quantity = t.Quantity }).ToArray()
             };

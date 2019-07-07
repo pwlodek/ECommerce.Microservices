@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CorrelationId;
 using ECommerce.Customers.Api.Model;
 using ECommerce.Customers.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace ECommerce.Customers.Api.Controllers
     public class CustomersController : Controller
     {
         readonly ICustomerRepository _customerRepository;
+        private readonly ICorrelationContextAccessor _correlationContextAccessor;
 
-        public CustomersController(ICustomerRepository customerRepository)
+        public CustomersController(ICustomerRepository customerRepository, ICorrelationContextAccessor correlationContextAccessor)
         {
             this._customerRepository = customerRepository;
+            _correlationContextAccessor = correlationContextAccessor;
         }
 
         // GET api/customers
@@ -29,6 +32,7 @@ namespace ECommerce.Customers.Api.Controllers
         [HttpGet("{id}")]
         public Customer Get(int id)
         {
+            var correlationId = _correlationContextAccessor.CorrelationContext.CorrelationId;
             return _customerRepository.GetByID(id);
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Reporting.Api.Consumers;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -10,8 +11,10 @@ namespace ECommerce.Reporting.Api.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
+                var correlationContextAccessor = context.Resolve<IMessageCorrelationContextAccessor>();
                 var config = context.Resolve<IConfiguration>();
                 var rabbitHost = config["Brokers:RabbitMQ:Host"];
                 var username = config["Brokers:RabbitMQ:Username"];
@@ -23,6 +26,8 @@ namespace ECommerce.Reporting.Api.Modules
                         h.Username(username);
                         h.Password(password);
                     });
+
+                    cfg.UseCorrelationId(correlationContextAccessor);
 
                     cfg.ReceiveEndpoint(host, "reporting_fanout", e =>
                     {

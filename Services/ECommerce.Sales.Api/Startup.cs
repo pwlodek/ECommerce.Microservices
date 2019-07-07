@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
+using CorrelationId;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Sales.Api.Consumers;
 using ECommerce.Sales.Api.Model;
 using ECommerce.Sales.Api.Modules;
@@ -68,7 +70,11 @@ namespace ECommerce.Sales.Api
                         ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
                     );
 
-            services.AddHttpClient();
+            services.AddTransient<CorrelationIdDelegatingHandler>();
+            services.AddHttpClient("DefaultClient")
+                .AddHttpMessageHandler<CorrelationIdDelegatingHandler>();
+
+            services.AddCorrelationId();
             services.AddHostedService<SalesService>();
 
             var builder = new ContainerBuilder();
@@ -100,7 +106,13 @@ namespace ECommerce.Sales.Api
                 Predicate = p => p.Tags.Count > 0
             });
 
+            app.UseCorrelationId(new CorrelationIdOptions
+            {
+                UpdateTraceIdentifier = false,
+                UseGuidForCorrelationId = true
+            });
             app.UseMvc();
+            
             loggerFactory.AddLog4Net();
         }
 

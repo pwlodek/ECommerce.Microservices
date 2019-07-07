@@ -1,11 +1,14 @@
-﻿using System;
+﻿using MassTransit;
+using System;
 namespace ECommerce.Common.Commands
 {
-    public class InitiateOrderPackingCommand
+    public class InitiateOrderPackingCommand : CorrelatedBy<Guid>
     {
         public InitiateOrderPackingCommand()
         {
         }
+
+        public Guid CorrelationId { get; set; }
 
         public int OrderId { get; set; }
 

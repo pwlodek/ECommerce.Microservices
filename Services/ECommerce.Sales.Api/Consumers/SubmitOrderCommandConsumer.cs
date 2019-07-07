@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using ECommerce.Common.Commands;
 using ECommerce.Common.Events;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Sales.Api.Model;
 using ECommerce.Sales.Api.Services;
 using MassTransit;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Sales.Api.Consumers
@@ -14,7 +14,6 @@ namespace ECommerce.Sales.Api.Consumers
     public class SubmitOrderCommandConsumer : IConsumer<SubmitOrderCommand>
     {
         private readonly IDataService _dataService;
-
         private readonly SalesContext _salesContext;
         private readonly ILogger<SubmitOrderCommandConsumer> _logger;
 
@@ -64,6 +63,7 @@ namespace ECommerce.Sales.Api.Consumers
             _logger.LogInformation($"Created order {order.OrderId} for customer {customer.CustomerId} for the total amount of {order.Total}");
 
             await context.Publish(new OrderSubmittedEvent() {
+                CorrelationId = context.Message.CorrelationId,
                 CustomerId = customer.CustomerId,
                 OrderId = order.OrderId,
                 Total = order.Total,

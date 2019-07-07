@@ -1,15 +1,11 @@
-﻿using MassTransit;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ECommerce.Catalog.Api
 {
-    public class CatalogService : Microsoft.Extensions.Hosting.IHostedService
+    public class CatalogService : IHostedService
     {
         private readonly ILogger<CatalogService> _logger;
 
