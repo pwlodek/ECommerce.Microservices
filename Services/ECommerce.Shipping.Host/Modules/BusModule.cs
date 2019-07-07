@@ -15,7 +15,6 @@ namespace ECommerce.Shipping.Host.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
                 var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>

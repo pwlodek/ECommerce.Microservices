@@ -44,7 +44,7 @@ namespace ECommerce.Shipping.Host.Sagas
             context.Instance.OrderId = context.Data.OrderId;
             context.Instance.CorrelationId = context.Data.CorrelationId;
 
-            _logger.LogInformation($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId}");
+            _logger.LogInformation($"Saga: Order {context.Instance.OrderId} submitted by customer {context.Instance.CustomerId} for processing.");
 
             await context.RespondAsync(new InitiateOrderPackingCommand() {
                 CorrelationId = context.Instance.CorrelationId,

@@ -1,13 +1,14 @@
-﻿using Autofac;
-using Autofac.Core;
-using Autofac.Extensions.DependencyInjection;
-using ECommerce.Services.Common.Configuration;
+﻿using ECommerce.Services.Common.Configuration;
 using ECommerce.Shipping.Host.Configuration;
-using ECommerce.Shipping.Host.Modules;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ECommerce.Common.Infrastructure.Messaging;
+using Serilog;
+using Serilog.Events;
+using System;
 using System.IO;
 
 namespace ECommerce.Shipping.Host
@@ -16,7 +17,34 @@ namespace ECommerce.Shipping.Host
     {
         static void Main(string[] args)
         {
-            var host = new HostBuilder()
+            Log.Logger = new LoggerConfiguration()
+               .MinimumLevel.Debug()
+               .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+               .MinimumLevel.Override("System", LogEventLevel.Warning)
+               .Enrich.FromLogContext()
+               .WriteTo.Console()
+               .WriteTo.ApplicationInsights(TelemetryConfiguration.Active, TelemetryConverter.Traces)
+               .CreateLogger();
+
+            try
+            {
+                Log.Information("Starting host");
+                BuildHost(args).Run();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+                return;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+        }
+
+        public static IHost BuildHost(string[] args) =>
+            new HostBuilder()
                 .ConfigureHostConfiguration(builder =>
                 {
                     builder.SetBasePath(Directory.GetCurrentDirectory());
@@ -32,19 +60,16 @@ namespace ECommerce.Shipping.Host
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddLogging(c => c.SetMinimumLevel(LogLevel.Debug));
+                    services.AddSingleton<IMessageCorrelationContextAccessor, MessageCorrelationContextAccessor>();
+                    services.AddApplicationInsightsTelemetry(hostContext.Configuration);
                     services.AddScoped<IHostedService, ShippingService>();
-                    services.Configure<ServiceConfigOptions>(hostContext.Configuration);
                 })
                 .ConfigureLogging((hostContext, configLogging) =>
                 {
-                    configLogging.AddLog4Net();
                 })
+                .UseSerilog()
                 .UseServiceProviderFactory(new DependencyProvider())
                 .UseConsoleLifetime()
                 .Build();
-
-            host.Run();
-        }
     }
 }
