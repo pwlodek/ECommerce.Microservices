@@ -17,7 +17,7 @@ namespace ECommerce.Customers.Api.Controllers
 
         public CustomersController(ICustomerRepository customerRepository, ICorrelationContextAccessor correlationContextAccessor)
         {
-            this._customerRepository = customerRepository;
+            _customerRepository = customerRepository;
             _correlationContextAccessor = correlationContextAccessor;
         }
 

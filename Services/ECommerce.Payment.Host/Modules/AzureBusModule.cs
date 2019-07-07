@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using ECommerce.Common.Commands;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Payment.Host.Consumers;
 using MassTransit;
 using MassTransit.Azure.ServiceBus.Core;
@@ -11,17 +12,20 @@ namespace ECommerce.Payment.Host.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
+                var correlationContextAccessor = context.Resolve<IMessageCorrelationContextAccessor>();
                 var config = context.Resolve<IConfiguration>();
                 var serviceBusHost = config["Brokers:ServiceBus:Url"];
 
                 var busControl = Bus.Factory.CreateUsingAzureServiceBus(cfg =>
                 {
-
                     var host = cfg.Host(serviceBusHost, h =>
                     {
                     });
+
+                    cfg.UseCorrelationId(correlationContextAccessor);
 
                     cfg.ReceiveEndpoint(host, "payment_fanout", e =>
                     {

@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using ECommerce.Common.Commands;
+using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Payment.Host.Consumers;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -11,10 +12,12 @@ namespace ECommerce.Payment.Host.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
                 var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
+                    var correlationContextAccessor = context.Resolve<IMessageCorrelationContextAccessor>();
                     var config = context.Resolve<IConfiguration>();
                     var rabbitHost = config["Brokers:RabbitMQ:Host"];
                     var username = config["Brokers:RabbitMQ:Username"];
@@ -25,6 +28,8 @@ namespace ECommerce.Payment.Host.Modules
                         h.Username(username);
                         h.Password(password);
                     });
+
+                    cfg.UseCorrelationId(correlationContextAccessor);
 
                     cfg.ReceiveEndpoint(host, "payment_fanout", e =>
                     {
