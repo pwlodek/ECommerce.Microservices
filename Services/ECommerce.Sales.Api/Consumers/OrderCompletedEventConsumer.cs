@@ -27,7 +27,7 @@ namespace ECommerce.Sales.Api.Consumers
                 order.Status &= ~OrderStatus.Submitted; // unsettings Submitted state
                 order.Status |= OrderStatus.Shipped; // setting Shipped state
 
-                _salesContext.SaveChanges();
+                await _salesContext.SaveChangesAsync();
             }
 
             _logger.LogInformation($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} has been marked as shipped");
