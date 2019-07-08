@@ -12,7 +12,7 @@ namespace ECommerce.WebApp.Services
 {
     public interface IOrderService
     {
-        Task OrderBasketAsync();
+        Task<string> OrderBasketAsync();
 
         Task<IList<Order>> GetOrdersAsync();
 
@@ -48,7 +48,7 @@ namespace ECommerce.WebApp.Services
             return JsonConvert.DeserializeObject<List<OrderReportEntry>>(response);
         }
 
-        public async Task OrderBasketAsync()
+        public async Task<string> OrderBasketAsync()
         {
             var products = _basketService.GetProducts().ToList();
             if (products.Count > 0)
@@ -73,7 +73,14 @@ namespace ECommerce.WebApp.Services
                 var response = await client.PostAsync($"http://{salesServiceHost}/api/orders", stringContent);
 
                 _basketService.Clear();
+
+                if (response.Headers.Contains("X-Correlation-ID"))
+                {
+                    return response.Headers.GetValues("X-Correlation-ID").FirstOrDefault();
+                }
             }
+
+            return null;
         }
 
         // Data Structures

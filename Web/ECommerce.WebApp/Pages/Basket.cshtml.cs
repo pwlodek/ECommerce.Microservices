@@ -31,8 +31,8 @@ namespace ECommerce.WebApp.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            await _orderService.OrderBasketAsync();
-            return RedirectToPage("/Index");
+            var correlationId = await _orderService.OrderBasketAsync();            
+            return RedirectToPage("/Index", new { correlationId });
         }
 
         public string HostName => Environment.MachineName;
