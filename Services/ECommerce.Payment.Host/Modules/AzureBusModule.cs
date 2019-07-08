@@ -12,7 +12,6 @@ namespace ECommerce.Payment.Host.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
                 var correlationContextAccessor = context.Resolve<IMessageCorrelationContextAccessor>();

@@ -12,11 +12,13 @@
     <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="5.5.2" />
     <PackageReference Include="MassTransit.Autofac" Version="5.5.2" />
     <PackageReference Include="Autofac" Version="4.9.2" />
-    <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.2.10" />
+    <PackageReference Include="Microsoft.ApplicationInsights.DependencyCollector" Version="2.10.0" />    
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="2.0.0" />
+    <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.0.3" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Consumers\" />
@@ -28,7 +30,6 @@
   <ItemGroup>
     <None Remove="appsettings.Cloud.json" />
     <None Remove="appsettings.Development.json" />
-    <None Remove="log4net.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.Cloud.json">
@@ -39,9 +40,6 @@
     </Content>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="log4net.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>
