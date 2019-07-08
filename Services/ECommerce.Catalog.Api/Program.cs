@@ -3,9 +3,13 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using ECommerce.Services.Common.Configuration;
+using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Serilog;
+using Serilog.Events;
 
 namespace ECommerce.Catalog.Api
 {
@@ -13,7 +17,30 @@ namespace ECommerce.Catalog.Api
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            Log.Logger = new LoggerConfiguration()
+               .MinimumLevel.Debug()
+               .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+               .MinimumLevel.Override("System", LogEventLevel.Warning)
+               .Enrich.FromLogContext()
+               .WriteTo.Console()
+               .WriteTo.ApplicationInsights(TelemetryConfiguration.Active, TelemetryConverter.Traces)
+               .CreateLogger();
+
+            try
+            {
+                Log.Information("Starting web host");
+                BuildWebHost(args).Run();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+                return;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
@@ -29,12 +56,11 @@ namespace ECommerce.Catalog.Api
                        builder.AddCloud();
                    })
                    .UseStartup<Startup>()
+                   .UseSerilog()
                    .UseKestrel(o =>
                    {
                        o.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(1);
                    })
                    .Build();
     }
-
-
 }

@@ -6,25 +6,32 @@ using CorrelationId;
 using ECommerce.Customers.Api.Model;
 using ECommerce.Customers.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Customers.Api.Controllers
 {
     [Route("api/[controller]")]
     public class CustomersController : Controller
     {
-        readonly ICustomerRepository _customerRepository;
+        private readonly ICustomerRepository _customerRepository;
         private readonly ICorrelationContextAccessor _correlationContextAccessor;
+        private readonly ILogger<CustomersController> _logger;
 
-        public CustomersController(ICustomerRepository customerRepository, ICorrelationContextAccessor correlationContextAccessor)
+        public CustomersController(
+            ICustomerRepository customerRepository, 
+            ICorrelationContextAccessor correlationContextAccessor,
+            ILogger<CustomersController> logger)
         {
             _customerRepository = customerRepository;
             _correlationContextAccessor = correlationContextAccessor;
+            _logger = logger;
         }
 
         // GET api/customers
         [HttpGet]
         public IEnumerable<Customer> Get()
         {
+            _logger.LogDebug("Returning all customers");
             return _customerRepository.GetAll();
         }
 
@@ -33,6 +40,9 @@ namespace ECommerce.Customers.Api.Controllers
         public Customer Get(int id)
         {
             var correlationId = _correlationContextAccessor.CorrelationContext.CorrelationId;
+
+            _logger.LogDebug($"Returning customer with id '{id}'");
+
             return _customerRepository.GetByID(id);
         }
 

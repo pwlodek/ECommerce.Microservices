@@ -1,9 +1,13 @@
-﻿using ECommerce.Payment.Host.Configuration;
+﻿using ECommerce.Common.Infrastructure.Messaging;
+using ECommerce.Payment.Host.Configuration;
 using ECommerce.Services.Common.Configuration;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 using System;
 using System.IO;
 
@@ -13,11 +17,37 @@ namespace ECommerce.Payment.Host
     {
         static void Main(string[] args)
         {
-            var host = new HostBuilder();
+            Log.Logger = new LoggerConfiguration()
+               .MinimumLevel.Debug()
+               .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+               .MinimumLevel.Override("System", LogEventLevel.Warning)
+               .Enrich.FromLogContext()
+               .WriteTo.Console()
+               .WriteTo.ApplicationInsights(TelemetryConfiguration.Active, TelemetryConverter.Traces)
+               .CreateLogger();
 
-            host.UseConsoleLifetime()
+            try
+            {
+                Log.Information("Starting host");
+                BuildHost(args).Run();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+                return;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+        }
+
+        public static IHost BuildHost(string[] args) =>
+            new HostBuilder()
+                .UseConsoleLifetime()
                 .UseServiceProviderFactory(new DependencyProvider())
-                .ConfigureHostConfiguration(builder => 
+                .ConfigureHostConfiguration(builder =>
                 {
                     builder.AddEnvironmentVariables(prefix: "ASPNETCORE_");
                 })
@@ -31,11 +61,11 @@ namespace ECommerce.Payment.Host
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddSingleton<IMessageCorrelationContextAccessor, MessageCorrelationContextAccessor>();
+                    services.AddApplicationInsightsTelemetry(hostContext.Configuration);
                     services.AddHostedService<PaymentService>();
-                })                
-                .AddLog4Net("log4net.config")
-                .Build()
-                .Run();
-        }
+                })
+                .UseSerilog()
+                .Build();
     }
 }

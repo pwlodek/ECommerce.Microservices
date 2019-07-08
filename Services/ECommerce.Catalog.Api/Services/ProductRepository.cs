@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Dapper;
+using ECommerce.Catalog.Api.Models;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using ECommerce.Catalog.Api.Models;
-using Dapper;
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
 
 namespace ECommerce.Catalog.Api.Services
 {

@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using CorrelationId;
 using ECommerce.Common.Infrastructure.Messaging;
-using ECommerce.Sales.Api.Consumers;
+using ECommerce.Sales.Api.Configuration;
 using ECommerce.Sales.Api.Model;
 using ECommerce.Sales.Api.Modules;
 using ECommerce.Sales.Api.Services;
-using log4net;
 using MassTransit;
-using MassTransit.Util;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -21,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System;
 
 namespace ECommerce.Sales.Api
 {
@@ -74,6 +69,8 @@ namespace ECommerce.Sales.Api
             services.AddHttpClient("DefaultClient")
                 .AddHttpMessageHandler<CorrelationIdDelegatingHandler>();
 
+            services.AddSingleton<ITelemetryInitializer, CustomTelemetryInitializer>();
+            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddCorrelationId();
             services.AddHostedService<SalesService>();
 
@@ -112,8 +109,6 @@ namespace ECommerce.Sales.Api
                 UseGuidForCorrelationId = true
             });
             app.UseMvc();
-            
-            loggerFactory.AddLog4Net();
         }
 
         private IModule GetBusModule()

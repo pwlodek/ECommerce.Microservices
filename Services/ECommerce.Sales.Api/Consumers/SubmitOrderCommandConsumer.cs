@@ -26,6 +26,8 @@ namespace ECommerce.Sales.Api.Consumers
 
         public async Task Consume(ConsumeContext<SubmitOrderCommand> context)
         {
+            _logger.LogInformation($"Processing order for customer '{context.Message.CustomerId}'.");
+
             var customer = await _dataService.GetCustomerAsync(context.Message.CustomerId);
             if (customer == null)
             {

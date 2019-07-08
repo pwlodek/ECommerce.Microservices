@@ -1,7 +1,11 @@
 ﻿using ECommerce.Services.Common.Configuration;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Serilog;
+using Serilog.Events;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -12,16 +16,30 @@ namespace ECommerce.Sales.Api
     {
         public static void Main(string[] args)
         {
-            ConfigureLogging();
-            BuildWebHost(args).Run();
-        }
+            Log.Logger = new LoggerConfiguration()
+               .MinimumLevel.Debug()
+               .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+               .MinimumLevel.Override("System", LogEventLevel.Warning)
+               .Enrich.FromLogContext()
+               .WriteTo.Console()
+               .WriteTo.ApplicationInsights(TelemetryConfiguration.Active, TelemetryConverter.Traces)
+               .CreateLogger();
 
-        private static void ConfigureLogging()
-        {
-            XmlDocument log4netConfig = new XmlDocument();
-            log4netConfig.Load(File.OpenRead("log4net.config"));
-            var repo = log4net.LogManager.CreateRepository(Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
-            log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
+            try
+            {
+                Log.Information("Starting web host");
+                BuildWebHost(args).Run();
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+                return;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
@@ -37,6 +55,7 @@ namespace ECommerce.Sales.Api
                        builder.AddCloud();
                    })
                    .UseStartup<Startup>()
+                   .UseSerilog()
                    .Build();
     }
 }

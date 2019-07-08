@@ -18,12 +18,13 @@ namespace ECommerce.Shipping.Host.Consumers
 
         public async Task Consume(ConsumeContext<InitiateOrderPackingCommand> context)
         {
-            _logger.LogDebug($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} is being packed");
+            _logger.LogDebug($"Order {context.Message.OrderId} for customer {context.Message.CustomerId} is being packed.");
 
             await Task.Delay(10000);
 
             await context.Publish(new OrderPackedEvent()
             {
+                CorrelationId = context.Message.CorrelationId,
                 OrderId = context.Message.OrderId,
                 CustomerId = context.Message.CustomerId
             });

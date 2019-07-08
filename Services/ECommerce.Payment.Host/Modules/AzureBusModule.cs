@@ -2,6 +2,7 @@
 using ECommerce.Common.Commands;
 using ECommerce.Common.Infrastructure.Messaging;
 using ECommerce.Payment.Host.Consumers;
+using GreenPipes;
 using MassTransit;
 using MassTransit.Azure.ServiceBus.Core;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +13,6 @@ namespace ECommerce.Payment.Host.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<MessageCorrelationContextAccessor>().SingleInstance().As<IMessageCorrelationContextAccessor>();
             builder.Register(context =>
             {
                 var correlationContextAccessor = context.Resolve<IMessageCorrelationContextAccessor>();
@@ -32,9 +32,10 @@ namespace ECommerce.Payment.Host.Modules
                         e.Consumer<OrderSubmittedEventConsumer>(context);
                     });
 
-                    cfg.ReceiveEndpoint(host, "payment_initiate_payment", e =>
+                    cfg.ReceiveEndpoint(host, "payment", e =>
                     {
                         e.Consumer<InitiatePaymentCommandConsumer>(context);
+                        e.UseMessageRetry(r => r.Immediate(5));
 
                         EndpointConvention.Map<InitiatePaymentCommand>(e.InputAddress);
                     });

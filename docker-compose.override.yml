@@ -5,6 +5,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - AzureServicesAuthConnectionString=${MANAGED_IDENTITY}
+      - APPINSIGHTS_INSTRUMENTATIONKEY=${AI_KEY}
     ports:
       - "80"
 
