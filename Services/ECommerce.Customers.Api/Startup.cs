@@ -1,6 +1,8 @@
 ﻿using System;
 using CorrelationId;
+using ECommerce.Customers.Api.Configuration;
 using ECommerce.Customers.Api.Services;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +26,8 @@ namespace ECommerce.Customers.Api
             services.AddHealthChecks()
                 .AddSqlServer(Configuration["ConnectionStrings:CustomersDb"], tags: new[] { "db", "sql" });
 
+            services.AddSingleton<ITelemetryInitializer, CustomTelemetryInitializer>();
+            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddCorrelationId();
             services.AddMvc();
             services.AddScoped<ICustomerRepository>(c => new CustomerRepository(Configuration["ConnectionStrings:CustomersDb"]));

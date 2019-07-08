@@ -11,7 +11,6 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Dapper" Version="1.60.6" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.2.11" />
     <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="CorrelationId" Version="2.1.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />

@@ -8,6 +8,7 @@ using ECommerce.Sales.Api.Model;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Sales.Api.Controllers
 {
@@ -17,12 +18,18 @@ namespace ECommerce.Sales.Api.Controllers
         private readonly IBus _bus;
         private readonly SalesContext _salesContext;
         private readonly ICorrelationContextAccessor _correlationContextAccessor;
+        private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(IBus bus, SalesContext salesContext, ICorrelationContextAccessor correlationContextAccessor)
+        public OrdersController(
+            IBus bus, 
+            SalesContext salesContext, 
+            ICorrelationContextAccessor correlationContextAccessor,
+            ILogger<OrdersController> logger)
         {
             _bus = bus;
             _salesContext = salesContext;
             _correlationContextAccessor = correlationContextAccessor;
+            _logger = logger;
         }
 
         // GET api/orders
@@ -37,6 +44,8 @@ namespace ECommerce.Sales.Api.Controllers
         [HttpPost]
         public async void Post([FromBody]SubmitOrder submittedOrder)
         {
+            _logger.LogInformation($"A new order has been accepted for customer id '{submittedOrder.CustomerId}'.");
+
             var command = new SubmitOrderCommand()
             {
                 CorrelationId = _correlationContextAccessor.CorrelationContext.CorrelationId.ToGuid(),
