@@ -258,6 +258,9 @@ _Pvt_Extensions
 *.orig
 
 #other stuff
-Igloo.Mobile.Web.API/logs/
-Igloo.Mobile.App.Android/Resources/Resource.Designer.cs
 Build/
+
+#terraform
+.terraform
+*.tfstate
+*.tfstate.backup
