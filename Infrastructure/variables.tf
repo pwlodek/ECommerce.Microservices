@@ -14,6 +14,10 @@ variable "db_admin_password" {
     default = "Password1234!"
 }
 
+variable "azuread_app_password" {
+    default = "l6&lStl38C3WWE11Dc7x"
+}
+
 /*
  * Resource names
  */
@@ -21,30 +25,30 @@ variable "azuread_app_name" {
     default = "EcommerceApplication"
 }
 
-variable "azuread_app_password" {
-    default = "l6&lStl38C3WWE11Dc7x"
-}
-
 variable "rg_name" {
     default = "ecommerce-services"
 }
 
 variable "broker_name" {
-    default = "ecommerce-broker1"
+    default = "ecommerce-broker"
 }
 
 variable "kv_name" {
-    default = "ecommerce-keyvault1"
+    default = "ecommerce-keyvault"
 }
 
 variable "appconfig_name" {
-    default = "ecommerce-appconfig1"
+    default = "ecommerce-appconfig"
 }
 
 variable "ai_name" {
-    default = "ecommerce-appinsights"
+    default = "ecommerce-ai"
 }
 
 variable "redis_name" {
     default = "ecommerce-redis"
+}
+
+variable "dbserver_name" {
+    default = "ecommerce-dbserver"
 }
