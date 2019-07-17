@@ -39,3 +39,13 @@ resource "azurerm_key_vault_access_policy" "ecommerce_azuread_app" {
       "delete",
   ]
 }
+
+data "azurerm_subscription" "primary" {}
+
+# This assigns RBAc role of Owner to our Azure App EcommerceApplication on resource App Configuration
+resource "azurerm_role_assignment" "ecommerce_azuread_app" {
+  scope                = "${data.azurerm_subscription.primary.id}/resourceGroups/${azurerm_resource_group.rg.name}/providers/Microsoft.AppConfiguration/configurationStores/${var.appconfig_name}"
+  role_definition_name = "Owner"
+  principal_id         = "${azuread_service_principal.ecommerce_service_principal.id}"
+  depends_on           = ["azurerm_template_deployment.ecommerce_app_config"]
+}
