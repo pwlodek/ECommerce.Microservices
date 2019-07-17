@@ -38,6 +38,7 @@ resource "azurerm_key_vault_secret" "products_db" {
   name         = "ConnectionStrings-ProductsDb"
   value        = "Server=tcp:${azurerm_sql_server.ecommerce_dbserver.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_sql_database.products.name};Persist Security Info=False;User ID=${azurerm_sql_server.ecommerce_dbserver.administrator_login};Password=${azurerm_sql_server.ecommerce_dbserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   key_vault_id = "${azurerm_key_vault.ecommerce_kv.id}"
+  depends_on   = ["azurerm_key_vault_access_policy.admin_access"]
 
   tags = {
     environment = "Production"
@@ -76,6 +77,7 @@ resource "azurerm_key_vault_secret" "customers_db" {
   name         = "ConnectionStrings-CustomersDb"
   value        = "Server=tcp:${azurerm_sql_server.ecommerce_dbserver.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_sql_database.customers.name};Persist Security Info=False;User ID=${azurerm_sql_server.ecommerce_dbserver.administrator_login};Password=${azurerm_sql_server.ecommerce_dbserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   key_vault_id = "${azurerm_key_vault.ecommerce_kv.id}"
+  depends_on   = ["azurerm_key_vault_access_policy.admin_access"]
 
   tags = {
     environment = "Production"
@@ -114,6 +116,7 @@ resource "azurerm_key_vault_secret" "reporting_db" {
   name         = "ConnectionStrings-ReportingDb"
   value        = "Server=tcp:${azurerm_sql_server.ecommerce_dbserver.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_sql_database.reporting.name};Persist Security Info=False;User ID=${azurerm_sql_server.ecommerce_dbserver.administrator_login};Password=${azurerm_sql_server.ecommerce_dbserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   key_vault_id = "${azurerm_key_vault.ecommerce_kv.id}"
+  depends_on   = ["azurerm_key_vault_access_policy.admin_access"]
 
   tags = {
     environment = "Production"
@@ -152,6 +155,7 @@ resource "azurerm_key_vault_secret" "sales_db" {
   name         = "ConnectionStrings-SalesDb"
   value        = "Server=tcp:${azurerm_sql_server.ecommerce_dbserver.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_sql_database.sales.name};Persist Security Info=False;User ID=${azurerm_sql_server.ecommerce_dbserver.administrator_login};Password=${azurerm_sql_server.ecommerce_dbserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   key_vault_id = "${azurerm_key_vault.ecommerce_kv.id}"
+  depends_on   = ["azurerm_key_vault_access_policy.admin_access"]
 
   tags = {
     environment = "Production"

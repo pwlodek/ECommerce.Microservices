@@ -49,6 +49,7 @@ resource "azurerm_key_vault_secret" "ecommerce_broker" {
   name         = "Brokers-ServiceBus-Url"
   value        = "${azurerm_servicebus_namespace.ecommerce_broker.default_primary_connection_string}"
   key_vault_id = "${azurerm_key_vault.ecommerce_kv.id}"
+  depends_on   = ["azurerm_key_vault_access_policy.admin_access"]
 
   tags = {
     environment = "Production"
@@ -72,10 +73,11 @@ resource "azurerm_key_vault_secret" "ecommerce_ai" {
   name         = "ApplicationInsights-InstrumentationKey"
   value        = "${azurerm_application_insights.ecommerce_ai.instrumentation_key}"
   key_vault_id = "${azurerm_key_vault.ecommerce_kv.id}"
+  depends_on   = ["azurerm_key_vault_access_policy.admin_access"]
 
   tags = {
     environment = "Production"
-    source = "terraform"
+    source      = "terraform"
   }
 }
 
@@ -106,6 +108,7 @@ resource "azurerm_key_vault_secret" "ecommerce_redis" {
   name         = "Cache-Redis"
   value        = "${azurerm_redis_cache.ecommerce_redis.name}.redis.cache.windows.net:6380,password=${azurerm_redis_cache.ecommerce_redis.primary_access_key},ssl=True,abortConnect=False"
   key_vault_id = "${azurerm_key_vault.ecommerce_kv.id}"
+  depends_on   = ["azurerm_key_vault_access_policy.admin_access"]
 
   tags = {
     environment = "Production"
