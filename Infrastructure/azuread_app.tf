@@ -23,7 +23,7 @@ resource "azurerm_key_vault_access_policy" "ecommerce_azuread_app" {
   key_vault_id = "${azurerm_key_vault.ecommerce_kv.id}"
 
   tenant_id = "${data.azurerm_client_config.current.tenant_id}"
-  object_id = "${azuread_application.ecommerce_azuread_app.id}"
+  object_id = "${azuread_service_principal.ecommerce_service_principal.id}"
 
   key_permissions = [
       "create",
