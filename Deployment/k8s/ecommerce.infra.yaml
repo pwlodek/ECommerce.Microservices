@@ -1,0 +1,166 @@
+#                      _____ ____ ___  __  __ __  __ _____ ____   ____ _____                  ____            _        _                                         
+#  _____ _____ _____  | ____/ ___/ _ \|  \/  |  \/  | ____|  _ \ / ___| ____|   ___  _ __    / ___|___  _ __ | |_ __ _(_)_ __   ___ _ __ ___   _____ _____ _____ 
+# |_____|_____|_____| |  _|| |  | | | | |\/| | |\/| |  _| | |_) | |   |  _|    / _ \| '_ \  | |   / _ \| '_ \| __/ _` | | '_ \ / _ \ '__/ __| |_____|_____|_____|
+# |_____|_____|_____| | |__| |__| |_| | |  | | |  | | |___|  _ <| |___| |___  | (_) | | | | | |__| (_) | | | | || (_| | | | | |  __/ |  \__ \ |_____|_____|_____|
+#                     |_____\____\___/|_|  |_|_|  |_|_____|_| \_\\____|_____|  \___/|_| |_|  \____\___/|_| |_|\__\__,_|_|_| |_|\___|_|  |___/                    
+#                                                                                                                                                                                                                                                            
+# This Kubernetes deployment file lunches infrastructure.
+
+#
+# App namespace
+#
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecommerceinfra
+---
+#
+# Redis Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis
+  namespace: ecommerceinfra
+  labels:
+    app: redis
+    tier: infrastructure
+spec:
+  selector:
+    app: redis
+    tier: infrastructure
+  ports:
+  - name: redis
+    protocol: TCP
+    port: 6379
+    targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: ecommerceinfra
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      tier: infrastructure
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        tier: infrastructure
+    spec:
+      containers:
+      - name: redis
+        image: redis
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 6379
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# Rabbit MQ Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: rabbit
+  namespace: ecommerceinfra
+  labels:
+    app: rabbit
+    tier: infrastructure
+spec:
+  selector:
+    app: rabbit
+    tier: infrastructure
+  ports:
+  - name: rabbit
+    protocol: TCP
+    port: 5672
+    targetPort: 5672
+  - name: management
+    protocol: TCP
+    port: 15672
+    targetPort: 15672
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbit
+  namespace: ecommerceinfra
+spec:
+  selector:
+    matchLabels:
+      app: rabbit
+      tier: infrastructure
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rabbit
+        tier: infrastructure
+    spec:
+      containers:
+      - name: rabbit
+        image: rabbitmq:3.6-management
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 5672
+      imagePullSecrets:
+      - name: registrysecret
+---
+#
+# SQL Server Deployment + Service
+#
+kind: Service
+apiVersion: v1
+metadata:
+  name: sqlserver
+  namespace: ecommerceinfra
+  labels:
+    app: sqlserver
+    tier: infrastructure
+spec:
+  selector:
+    app: sqlserver
+    tier: infrastructure
+  ports:
+  - name: sqlserver
+    protocol: TCP
+    port: 1433
+    targetPort: 1433
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqlserver
+  namespace: ecommerceinfra
+spec:
+  selector:
+    matchLabels:
+      app: sqlserver
+      tier: infrastructure
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sqlserver
+        tier: infrastructure
+    spec:
+      containers:
+      - name: sqlserver
+        image: sqlserver
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 1433
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: SA_PASSWORD
+          value: "Zaq123#!"
+      imagePullSecrets:
+      - name: registrysecret
+---
